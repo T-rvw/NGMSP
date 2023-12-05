@@ -1,8 +1,30 @@
-# NGMSP
+```
+     ___           ___           ___           ___           ___   
+    /__/\         /  /\         /__/\         /  /\         /  /\  
+    \  \:\       /  /:/_       |  |::\       /  /:/_       /  /::\ 
+     \  \:\     /  /:/ /\      |  |:|:\     /  /:/ /\     /  /:/\:\
+ _____\__\:\   /  /:/_/::\   __|__|:|\:\   /  /:/ /::\   /  /:/~/:/
+/__/::::::::\ /__/:/__\/\:\ /__/::::| \:\ /__/:/ /:/\:\ /__/:/ /:/ 
+\  \:\~~\~~\/ \  \:\ /~~/:/ \  \:\~~\__\/ \  \:\/:/~/:/ \  \:\/:/  
+ \  \:\  ~~~   \  \:\  /:/   \  \:\        \  \::/ /:/   \  \::/   
+  \  \:\        \  \:\/:/     \  \:\        \__\/ /:/     \  \:\   
+   \  \:\        \  \::/       \  \:\         /__/:/       \  \:\  
+    \__\/         \__\/         \__\/         \__\/         \__\/ 
+```
 
-A proposal about Next Generation Mesh Shading Pipeline.
+A demo about Next Generation Mesh Shading Pipeline.
 
 
+
+#### Features (WIP)
+
+* Cull
+
+* LOD Selection
+
+* Procedural Content Generation
+  
+  
 
 #### Learning Resources
 
@@ -27,11 +49,13 @@ A proposal about Next Generation Mesh Shading Pipeline.
     * [xgl: Vulkan API Layer](https://github.com/GPUOpen-Drivers/xgl)
     * [pal: Platform Abstraction Library](https://github.com/GPUOpen-Drivers/pal)
   
-  * [Mesa ACO backend](https://cgit.freedesktop.org/mesa/mesa/tree/src/amd/compiler/README.md?id=68957a82562d13b3f0d21a04ce633ffd236e6036#n165)
+  * [Mesa ACO](https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/compiler/README.md#which-software-stage-runs-on-which-hardware-stage)
 
 * DirectX
   
   * [Reinventing the Geometry Pipeline: Mesh Shaders in DirectX 12](https://www.youtube.com/watch?v=CFXKTXtil34)
+    
+    * [Blog](https://devblogs.microsoft.com/directx/coming-to-directx-12-mesh-shaders-and-amplification-shaders-reinventing-the-geometry-pipeline/)
   
   * [Mesh Shader | DirectX-Specs](https://microsoft.github.io/DirectX-Specs/d3d/MeshShader.html)
 
@@ -63,3 +87,5 @@ A proposal about Next Generation Mesh Shading Pipeline.
   * [Mesh Shading for Vulkan](https://www.khronos.org/blog/mesh-shading-for-vulkanhttps://www.khronos.org/blog/mesh-shading-for-vulkan)
   
   * [Vulkanised 2023: Mesh shading best practices](https://www.youtube.com/watch?app=desktop&v=g9FoZcEQlbA)
+
+
