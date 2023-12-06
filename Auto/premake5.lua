@@ -59,6 +59,17 @@ project("Demo")
 	objdir("%{prj.location}/obj/%{cfg.buildcfg}")
 	targetdir("%{prj.location}/bin/%{cfg.buildcfg}")
 
+	--
+	defines
+	{
+		"LLCL_NAME=ngmsp"
+	}
+	
+	includedirs
+	{
+		path.join(ThirdPartySourcePath, "LLCL"),
+	}
+
 	-- use /MT /MTd, not /MD /MDd
 	staticruntime "on"
 	filter { "configurations:Debug" }
