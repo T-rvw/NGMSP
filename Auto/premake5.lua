@@ -53,7 +53,7 @@ group("")
 project("Demo")
 	kind("ConsoleApp")
 	language("C++")
-	cppdialect("c++latest")
+	cppdialect("c++20")
 
 	location(path.join(RootPath, "Build"))
 	objdir("%{prj.location}/obj/%{cfg.buildcfg}")
