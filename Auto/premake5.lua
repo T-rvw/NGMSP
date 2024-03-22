@@ -62,12 +62,10 @@ project("Demo")
 	--
 	defines
 	{
-		"LLCL_NAME=ngmsp"
 	}
 	
 	includedirs
 	{
-		path.join(ThirdPartySourcePath, "LLCL"),
 	}
 
 	-- use /MT /MTd, not /MD /MDd
