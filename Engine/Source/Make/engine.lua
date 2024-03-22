@@ -12,6 +12,7 @@ project("Engine")
 	}
 	
 	includedirs {
+		path.join(RuntimeSourcePath, "Public"),
 		ThirdPartySourcePath
 	}
 
