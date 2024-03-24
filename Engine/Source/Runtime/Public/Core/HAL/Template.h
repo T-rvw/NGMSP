@@ -5,8 +5,8 @@
 namespace ow
 {
 
-// The idea is from UE's MoveTemp. As MoveTemp is only valid for lvalue and non-const objects, it is helpful
-// to get warings when compiler find out wrong usages to avoid performance loss.
+// std::move is only valid for lvalue and non-const objects, but no compiler warnings if you make mistakes.
+// MoveTemp will validate in compile time to avoid possible performance loss.
 template<typename T>
 [[nodiscard]] constexpr std::remove_reference_t<T>&& MoveTemp(T&& value) noexcept
 {
