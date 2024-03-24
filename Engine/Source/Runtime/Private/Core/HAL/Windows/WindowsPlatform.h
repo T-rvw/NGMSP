@@ -1,41 +1,39 @@
 #pragma once
 
+#include <Core/HAL/BasicTypes.h>
+
 #define WIN32_LEAN_AND_MEAN
 #define NOGDICAPMASKS
-#define NOVIRTUALKEYCODES
-#define NOWINMESSAGES
-#define NOWINSTYLES
-#define NOSYSMETRICS
-#define NOMENUS
-#define NOICONS
-#define NOKEYSTATES
-#define NOSYSCOMMANDS
-#define NORASTEROPS
-#define NOSHOWWINDOW
+#define OEMRESOURCE
 #define NOATOM
-#define NOCLIPBOARD
-#define NOCOLOR
-#define NOCTLMGR
-#define NODRAWTEXT
-#define NOGDI
 #define NOKERNEL
-#define NOUSER
-#define NOMB
 #define NOMEMMGR
 #define NOMETAFILE
 #define NOMINMAX
-#define NOMSG
-#define NOOPENFILE
+#define NOOPENFIL
 #define NOSCROLL
 #define NOSERVICE
 #define NOSOUND
-#define NOTEXTMETRIC
-#define NOWH
-#define NOWINOFFSETS
 #define NOCOMM
 #define NOKANJI
 #define NOHELP
 #define NOPROFILER
 #define NODEFERWINDOWPOS
-#define NOMCX
-#include <Windows.h>
+#define NOCRYPT
+#define NOTAPE
+#define NOIMAGE
+#define NOPROXYSTUB
+#define NORPC
+#include <windows.h>
+
+static WCHAR* CreateWideStringFromUTF8(const char* pValue)
+{
+	int32 count = MultiByteToWideChar(CP_UTF8, 0, pValue, -1, NULL, 0);
+	WCHAR* pTarget = new WCHAR[count];
+	if (!MultiByteToWideChar(CP_UTF8, 0, pValue, -1, pTarget, count))
+	{
+		delete[] pTarget;
+		return NULL;
+	}
+	return pTarget;
+}

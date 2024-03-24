@@ -1,16 +1,8 @@
-#include "Engine.h"
-
-enum class AA
-{
-	A,
-	B,
-	C
-};
+#include <Engine.h>
 
 int main()
 {
-	constexpr int a = ow::EnumCount<AA>();
-	constexpr auto b = ow::EnumName<AA>(AA::C);
-
+	ow::WindowCreateInfo createInfo;
+	ow::PlatformWindow window(createInfo);
 	return 0;
 }

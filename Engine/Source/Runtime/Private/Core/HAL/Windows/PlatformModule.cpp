@@ -1,17 +1,7 @@
 #include <Core/HAL/PlatformModule.h>
 #include <Core/HAL/Template.h>
 
-#if defined(PLATFORM_ANDROID)
-#include "Android/PlatformModuleImpl.h"
-#elif defined(PLATFORM_IOS)
-#include "IOS/PlatformModuleImpl.h"
-#elif defined(PLATFORM_LINUX)
-#include "Linux/PlatformModuleImpl.h"
-#elif defined(PLATFORM_MAC)
-#include "Mac/PlatformModuleImpl.h"
-#elif defined(PLATFORM_WINDOWS)
-#include "Windows/PlatformModuleImpl.h"
-#endif
+#include "PlatformModuleImpl.h"
 
 namespace ow
 {

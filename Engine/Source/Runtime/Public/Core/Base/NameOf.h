@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/HAL/BasicTypes.h>
+
 #include <nameof/nameof.hpp>
 
 namespace ow

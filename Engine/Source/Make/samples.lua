@@ -7,7 +7,7 @@ local function MakeSample(projectPath)
 		kind("ConsoleApp")
 
 		Project.CppLanguage()
-		Project.Location(path.join(RootPath, "Build/Samples"))
+		Project.Location(path.join(BuildOutputPath, "Engine"))
 		
 		defines {
 			"PLATFORM_WINDOWS"
@@ -23,7 +23,7 @@ local function MakeSample(projectPath)
 		}
 
 		links {
-			--"Engine"
+			"Engine"
 		}
 end
 

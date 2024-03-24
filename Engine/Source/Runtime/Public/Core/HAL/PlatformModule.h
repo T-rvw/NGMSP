@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Core/HAL/Platform.h>
+
 namespace ow
 {
 
 class PlatformModuleImpl;
 
-class PlatformModule
+class ENGINE_API PlatformModule
 {
 public:
 	PlatformModule();
