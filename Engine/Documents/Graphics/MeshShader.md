@@ -13,8 +13,6 @@
 
 * AMD
   
-  * [RDNA2](https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf)
-  
   * [Timur’s blog](https://timur.hu/)
     
     * [Mesh and task shaders intro and basics](https://timur.hu/blog/2022/mesh-and-task-shaders)
@@ -27,13 +25,6 @@
     
     * [Mesh shaders arrive on your Linux computers](https://timur.hu/blog/2022/mesh-shaders-arrive-on-linux)
   
-  * [GPUOpen-Drivers/AMDVLK](https://github.com/GPUOpen-Drivers/AMDVLK)
-    
-    * [xgl: Vulkan API Layer](https://github.com/GPUOpen-Drivers/xgl)
-    * [pal: Platform Abstraction Library](https://github.com/GPUOpen-Drivers/pal)
-  
-  * [Mesa ACO](https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/compiler/README.md#which-software-stage-runs-on-which-hardware-stage)
-
 * DirectX
   
   * [Reinventing the Geometry Pipeline: Mesh Shaders in DirectX 12](https://www.youtube.com/watch?v=CFXKTXtil34)
@@ -52,8 +43,6 @@
   * [Humus - metaball demo](http://www.humus.name/index.php?page=3D&ID=93)
 
 * Nvidia
-  
-  * [Turing](https://developer.nvidia.com/blog/introduction-turing-mesh-shaders/)
   
   * [gl_vk_meshlet_cadscene](https://github.com/nvpro-samples/gl_vk_meshlet_cadscene)
   
