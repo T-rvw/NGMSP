@@ -5,7 +5,10 @@
 namespace ow
 {
 
-PlatformModule::PlatformModule() = default;
+PlatformModule::PlatformModule()
+{
+	m_pImpl = new PlatformModuleImpl();
+}
 
 PlatformModule::PlatformModule(PlatformModule&& other)
 {
@@ -37,14 +40,19 @@ void* PlatformModule::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-bool PlatformModule::Load(const char* pFilePath)
+bool PlatformModule::Init(const char* pFilePath)
 {
-	return m_pImpl->Load(pFilePath);
+	return m_pImpl->Init(pFilePath);
 }
 
-void PlatformModule::Unload()
+void PlatformModule::Free()
 {
-	m_pImpl->Unload();
+	m_pImpl->Free();
+}
+
+void* PlatformModule::GetFunctionAddress(const char* pFuncName)
+{
+	return m_pImpl->GetFunctionAddress(pFuncName);
 }
 
 }

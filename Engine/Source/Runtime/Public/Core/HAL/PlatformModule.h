@@ -24,11 +24,21 @@ public:
 	bool IsValid() const;
 	void* GetHandle() const;
 
-	bool Load(const char* pFilePath);
-	void Unload();
+	bool Init(const char* pFilePath);
+	void Free();
+
+	void* GetFunctionAddress(const char* pFuncName);
 
 private:
 	PlatformModuleImpl* m_pImpl = nullptr;
 };
+
+// Helper macro to load apis dynamically with assert
+#define LOAD_MODULE_API(Module, API)                          \
+        do                                                    \
+        {                                                     \
+            API = (API##Func)Module.GetFunctionAddress(#API); \
+			assert(API);									  \
+        } while (false)
 
 }

@@ -16,8 +16,10 @@ public:
 	~PlatformModuleImpl() = default;
 
 	HMODULE GetHandle() const;
-	bool Load(const char* pFilePath);
-	void Unload();
+	bool Init(const char* pFilePath);
+	void Free();
+
+	void* GetFunctionAddress(const char* pFuncName);
 
 private:
 	HMODULE m_module;

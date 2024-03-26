@@ -7,6 +7,7 @@ int32 WINAPI WinMain(_In_ HINSTANCE hInInstance, _In_opt_ HINSTANCE hPrevInstanc
 	UNUSED(nCmdShow);
 
 	using namespace ow;
+	
 	PlatformApplication app;
 	app.Init((void*)hInInstance);
 

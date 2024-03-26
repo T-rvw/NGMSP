@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Core/Base/TypeTraits.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
-#include <Core/HAL/TypeTraits.h>
 
 #define UNUSED(a) (a)
 
