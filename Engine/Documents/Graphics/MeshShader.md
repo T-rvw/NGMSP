@@ -42,7 +42,7 @@
   
   * [Humus - metaball demo](http://www.humus.name/index.php?page=3D&ID=93)
 
-* Nvidia
+* NVIDIA
   
   * [gl_vk_meshlet_cadscene](https://github.com/nvpro-samples/gl_vk_meshlet_cadscene)
   

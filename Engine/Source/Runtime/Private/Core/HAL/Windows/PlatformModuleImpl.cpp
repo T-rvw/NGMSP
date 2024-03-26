@@ -3,29 +3,15 @@
 namespace ow
 {
 
-void PlatformModuleImpl::SetFilePath(const char* pFilePath)
-{
-	m_filePath = pFilePath;
-}
-
-const char* PlatformModuleImpl::GetFilePath() const
-{
-	return m_filePath.c_str();
-}
-
 HMODULE PlatformModuleImpl::GetHandle() const
 {
 	return m_module;
 }
 
-bool PlatformModuleImpl::Load()
+bool PlatformModuleImpl::Load(const char* pFilePath)
 {
-	if (m_filePath.empty())
-	{
-		return false;
-	}
-
-	m_module = ::LoadLibraryA(m_filePath.c_str());
+	assert(!m_module);
+	m_module = ::LoadLibraryA(pFilePath);
 	return m_module != nullptr;
 }
 

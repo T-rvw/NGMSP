@@ -7,11 +7,14 @@ namespace ow
 
 class PlatformModuleImpl;
 
+/// <summary>
+/// Module means a dynamicly loading library, such as .dll in Windows.
+/// It is useful to decouple subsystems in different types or implement features such as PluginsManager.
+/// </summary>
 class ENGINE_API PlatformModule
 {
 public:
 	PlatformModule();
-	explicit PlatformModule(const char* pModuleFilePath);
 	PlatformModule(const PlatformModule&) = delete;
 	PlatformModule& operator=(const PlatformModule&) = delete;
 	PlatformModule(PlatformModule&& other);
@@ -21,7 +24,7 @@ public:
 	bool IsValid() const;
 	void* GetHandle() const;
 
-	bool Load();
+	bool Load(const char* pFilePath);
 	void Unload();
 
 private:

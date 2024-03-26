@@ -1,16 +1,13 @@
 #include <Core/HAL/PlatformWindow.h>
-#include <Core/HAL/Template.h>
 
 #include "PlatformWindowImpl.h"
 
 namespace ow
 {
 
-PlatformWindow::PlatformWindow() = default;
-
-PlatformWindow::PlatformWindow(const WindowCreateInfo& createInfo, void* pParentWindow)
+PlatformWindow::PlatformWindow()
 {
-	m_pImpl = new PlatformWindowImpl(createInfo, pParentWindow);
+	m_pImpl = new PlatformWindowImpl();
 }
 
 PlatformWindow::PlatformWindow(PlatformWindow&& other) noexcept
@@ -31,6 +28,11 @@ PlatformWindow::~PlatformWindow()
 		delete m_pImpl;
 		m_pImpl = nullptr;
 	}
+}
+
+void PlatformWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
+{
+	m_pImpl->Init(createInfo, pInstance);
 }
 
 bool PlatformWindow::IsValid() const
