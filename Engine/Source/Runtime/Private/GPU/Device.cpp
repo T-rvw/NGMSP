@@ -1,6 +1,6 @@
 #include <GPU/Device.h>
 
-#include "DeviceImpl.h"
+#include "D3D12/DeviceImpl.h"
 
 namespace ow::gpu
 {
