@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/Platform/Windows/WindowsPlatform.h>
+#include <Core/HAL/Platform/Windows/WindowsPlatform.hpp>
 
 namespace ow
 {
