@@ -8,6 +8,7 @@ project("Engine")
 	Project.Location(path.join(BuildOutputPath, "Engine"))
 
 	defines {
+		"ENGINE_BUILD_SHARED",
 		"PLATFORM_WINDOWS"
 	}
 	

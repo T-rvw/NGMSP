@@ -1,8 +1,6 @@
 #pragma once
 
-#include "WindowsPlatform.h"
-
-#include <string>
+#include <Core/HAL/Platform/Windows/WindowsPlatform.h>
 
 namespace ow
 {
@@ -17,15 +15,13 @@ public:
 	PlatformModuleImpl& operator=(PlatformModuleImpl&&) = default;
 	~PlatformModuleImpl() = default;
 
-	void SetFilePath(const char* pFilePath);
-	const char* GetFilePath() const;
-
 	HMODULE GetHandle() const;
-	bool Load();
-	void Unload();
+	bool Init(const char* pFilePath);
+	void Free();
+
+	void* GetFunctionAddress(const char* pFuncName);
 
 private:
-	std::string m_filePath;
 	HMODULE m_module;
 };
 

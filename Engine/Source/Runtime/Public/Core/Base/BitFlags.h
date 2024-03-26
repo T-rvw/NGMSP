@@ -1,40 +1,63 @@
-#pragma
+#pragma once
 
-#include <Core/Base/NameOf.h>
+#include <Core/HAL/APIDefinition.h>
 
-#include <vector>
+#include <type_traits>
 
 namespace ow
 {
 
-//
-// BitFlags avoid memory management and manipulate operations on bits.
-// Convenient to process bits on/off combined with enum class.
-//
+/// <summary>
+/// Helps to define bit flags in a safe way by using enum class.
+/// </summary>
+/// <typeparam name="T">Type of enum class</typeparam>
 template<typename T>
-class BitFlags
+class ENGINE_API BitFlags
 {
-public:
-	static_assert(std::is_enum_v<T>);
-	// Fixed size of bits calcualted in compile time.
-	static constexpr size_t EnumCount = EnumCount<T>();
+private:
+	static_assert(std::is_enum<T>::value);
+	using UT = std::underlying_type<T>::type;
+
+	static constexpr UT GetFlag(T v)
+	{
+		return 1 << static_cast<UT>(v);
+	}
 
 public:
-	BitFlags() { m_bits.resize(EnumCount, false); }
-	BitFlags(const BitFlags&) = default;
-	BitFlags& operator=(const BitFlags&) = default;
-	BitFlags(BitFlags&&) = default;
-	BitFlags& operator=(BitFlags&&) = default;
-	~BitFlags() = default;
+	constexpr BitFlags() :
+		m_flags(static_cast<UT>(0))
+	{
+	}
 
-	bool IsEnabled(T e) const { return m_bits[static_cast<size_t>(e)]; }
-	void Enable(T e) { m_bits[static_cast<size_t>(e)] = true; }
-	void Disable(T e) { m_bits[static_cast<size_t>(e)] = false; }
-	bool operator!=(const BitFlags<T>& rhs) { return m_bits != rhs.m_bits; }
-	bool operator==(const BitFlags<T>& rhs) { return m_bits == rhs.m_bits; }
+	constexpr BitFlags(T v) :
+		m_flags(GetFlag(v))
+	{
+	}
+
+	constexpr BitFlags operator|(T v) const
+	{
+		return BitFlags(m_flags | GetFlag(v));
+	}
+
+	constexpr BitFlags& operator|=(T v)
+	{
+		m_flags |= GetFlag(v);
+		return *this;
+	}
+
+	constexpr bool operator&(T v) const
+	{
+		return m_flags & GetFlag(v);
+	}
 
 private:
-	std::vector<bool> m_bits;
+	UT m_flags;
 };
+
+template<typename T>
+constexpr BitFlags<T> operator|(T lhs, T rhs)
+{
+	return BitFlags<T>(lhs) | rhs;
+}
 
 }

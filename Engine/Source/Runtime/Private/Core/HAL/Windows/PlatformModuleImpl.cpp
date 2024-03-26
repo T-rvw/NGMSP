@@ -3,39 +3,31 @@
 namespace ow
 {
 
-void PlatformModuleImpl::SetFilePath(const char* pFilePath)
-{
-	m_filePath = pFilePath;
-}
-
-const char* PlatformModuleImpl::GetFilePath() const
-{
-	return m_filePath.c_str();
-}
-
 HMODULE PlatformModuleImpl::GetHandle() const
 {
 	return m_module;
 }
 
-bool PlatformModuleImpl::Load()
+bool PlatformModuleImpl::Init(const char* pFilePath)
 {
-	if (m_filePath.empty())
-	{
-		return false;
-	}
-
-	m_module = ::LoadLibraryA(m_filePath.c_str());
+	assert(!m_module);
+	m_module = ::LoadLibraryA(pFilePath);
 	return m_module != nullptr;
 }
 
-void PlatformModuleImpl::Unload()
+void PlatformModuleImpl::Free()
 {
 	if (m_module != nullptr)
 	{
 		::FreeLibrary(m_module);
 		m_module = nullptr;
 	}
+}
+
+void* PlatformModuleImpl::GetFunctionAddress(const char* pFuncName)
+{
+	assert(m_module);
+	return ::GetProcAddress(m_module, pFuncName);
 }
 
 }

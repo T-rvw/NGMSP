@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Core/HAL/BasicTypes.h>
+#include <Core/HAL/Platform.h>
 
+// Include a minimal lightweight window.h
 #define WIN32_LEAN_AND_MEAN
 #define NOGDICAPMASKS
 #define OEMRESOURCE
@@ -26,14 +27,15 @@
 #define NORPC
 #include <windows.h>
 
-static WCHAR* CreateWideStringFromUTF8(const char* pValue)
+namespace ow
+{
+
+static std::vector<WCHAR> CreateWideStringFromUTF8(const char* pValue)
 {
 	int32 count = MultiByteToWideChar(CP_UTF8, 0, pValue, -1, NULL, 0);
-	WCHAR* pTarget = new WCHAR[count];
-	if (!MultiByteToWideChar(CP_UTF8, 0, pValue, -1, pTarget, count))
-	{
-		delete[] pTarget;
-		return NULL;
-	}
-	return pTarget;
+	std::vector<WCHAR> target(count, 0);
+	MultiByteToWideChar(CP_UTF8, 0, pValue, -1, target.data(), count);
+	return target;
+}
+
 }

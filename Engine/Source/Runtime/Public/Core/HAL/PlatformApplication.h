@@ -7,6 +7,10 @@ namespace ow
 
 class PlatformApplicationImpl;
 
+/// <summary>
+/// Application means the launching program which contains one or more windows.
+/// Or it is headless without GUI windows, such as a batch to process data.
+/// </summary>
 class ENGINE_API PlatformApplication
 {
 public:
@@ -16,6 +20,10 @@ public:
 	PlatformApplication(PlatformApplication&& other) noexcept;
 	PlatformApplication& operator=(PlatformApplication&& other) noexcept;
 	~PlatformApplication();
+
+	void Init(void* pInstance, void* pIcon = nullptr);
+	void* GetProcessInstance() const;
+	void Run();
 
 private:
 	PlatformApplicationImpl* m_pImpl = nullptr;

@@ -1,12 +1,14 @@
 #include <Core/HAL/PlatformApplication.h>
-#include <Core/HAL/Template.h>
 
 #include "PlatformApplicationImpl.h"
 
 namespace ow
 {
 
-PlatformApplication::PlatformApplication() = default;
+PlatformApplication::PlatformApplication()
+{
+	m_pImpl = new PlatformApplicationImpl();
+}
 
 PlatformApplication::PlatformApplication(PlatformApplication&& other) noexcept
 {
@@ -26,6 +28,21 @@ PlatformApplication::~PlatformApplication()
 		delete m_pImpl;
 		m_pImpl = nullptr;
 	}
+}
+
+void PlatformApplication::Init(void* pInstance, void* pIcon)
+{
+	m_pImpl->Init(pInstance, pIcon);
+}
+
+void* PlatformApplication::GetProcessInstance() const
+{
+	return m_pImpl->GetProcessInstance();
+}
+
+void PlatformApplication::Run()
+{
+	m_pImpl->Tick();
 }
 
 }

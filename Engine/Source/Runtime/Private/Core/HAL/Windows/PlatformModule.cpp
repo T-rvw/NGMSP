@@ -1,17 +1,13 @@
 #include <Core/HAL/PlatformModule.h>
-#include <Core/HAL/Template.h>
 
 #include "PlatformModuleImpl.h"
 
 namespace ow
 {
 
-PlatformModule::PlatformModule() = default;
-
-PlatformModule::PlatformModule(const char* pModuleFilePath)
+PlatformModule::PlatformModule()
 {
 	m_pImpl = new PlatformModuleImpl();
-	m_pImpl->SetFilePath(pModuleFilePath);
 }
 
 PlatformModule::PlatformModule(PlatformModule&& other)
@@ -44,14 +40,19 @@ void* PlatformModule::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-bool PlatformModule::Load()
+bool PlatformModule::Init(const char* pFilePath)
 {
-	return m_pImpl->Load();
+	return m_pImpl->Init(pFilePath);
 }
 
-void PlatformModule::Unload()
+void PlatformModule::Free()
 {
-	m_pImpl->Unload();
+	m_pImpl->Free();
+}
+
+void* PlatformModule::GetFunctionAddress(const char* pFuncName)
+{
+	return m_pImpl->GetFunctionAddress(pFuncName);
 }
 
 }
