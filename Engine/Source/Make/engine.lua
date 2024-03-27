@@ -43,3 +43,5 @@ project("Engine")
 	files {
 		path.join(RootPath, "Engine/Source/Runtime/**.*")
 	}
+
+	Project.LinkVulkan()

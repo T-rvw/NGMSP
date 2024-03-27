@@ -16,13 +16,13 @@ ThirdPartySourcePath = path.join(RootPath, "Engine/Source/ThirdParty")
 --------------------------------------------------------------
 -- Dump Info
 --------------------------------------------------------------
-DumpVariable("RootPath", RootPath)
-DumpVariable("EngineSourcePath", EngineSourcePath)
-DumpVariable("EditorSourcePath", EditorSourcePath)
-DumpVariable("PluginSourcePath", PluginSourcePath)
-DumpVariable("RuntimeSourcePath", RuntimeSourcePath)
-DumpVariable("SampleSourcePath", SampleSourcePath)
-DumpVariable("ThirdPartySourcePath", ThirdPartySourcePath)
+Dump.PrintVar("RootPath", RootPath)
+Dump.PrintVar("EngineSourcePath", EngineSourcePath)
+Dump.PrintVar("EditorSourcePath", EditorSourcePath)
+Dump.PrintVar("PluginSourcePath", PluginSourcePath)
+Dump.PrintVar("RuntimeSourcePath", RuntimeSourcePath)
+Dump.PrintVar("SampleSourcePath", SampleSourcePath)
+Dump.PrintVar("ThirdPartySourcePath", ThirdPartySourcePath)
 
 --------------------------------------------------------------
 -- Workspace

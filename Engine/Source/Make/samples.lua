@@ -29,7 +29,7 @@ end
 
 local sampleProjectFolders = os.matchdirs(path.join(SampleSourcePath, "*"))
 for _, sampleProject in pairs(sampleProjectFolders) do
-	print(sampleProject)
+	Log.Info(sampleProject)
 	local sampleFiles = os.matchfiles(path.join(sampleProject, "*.*"))
 	if sampleFiles and #sampleFiles > 0 then
 		MakeSample(sampleProject)
