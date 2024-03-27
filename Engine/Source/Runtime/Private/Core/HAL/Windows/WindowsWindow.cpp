@@ -1,6 +1,6 @@
-#include <Core/HAL/PlatformTypes.h>
-
 #include "WindowsWindow.h"
+
+#include <Core/HAL/PlatformTypes.h>
 
 namespace ow
 {

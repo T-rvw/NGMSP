@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Core/HAL/PlatformModule.h>
+#include "VulkanHeader.h"
 
-#include <vulkan.h>
+#include <Core/HAL/PlatformModule.h>
 
 namespace ow
 {

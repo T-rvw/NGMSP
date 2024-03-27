@@ -1,5 +1,6 @@
-#include "WindowsHeader.hpp"
 #include "WindowsTime.h"
+
+#include "WindowsHeader.hpp"
 
 namespace ow
 {

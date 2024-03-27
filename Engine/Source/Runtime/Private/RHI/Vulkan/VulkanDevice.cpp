@@ -1,6 +1,6 @@
-#include <RHI/RHITypes.h>
-
 #include "VulkanDevice.h"
+
+#include <RHI/RHITypes.h>
 
 namespace ow
 {

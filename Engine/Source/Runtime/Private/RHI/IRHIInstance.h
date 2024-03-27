@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/HAL/Platform.h>
+
 namespace ow
 {
 

@@ -6,6 +6,7 @@
 namespace ow
 {
 
+class RHIDevice;
 struct RHIInstanceCreateInfo;
 
 class VulkanInstance : public IRHIInstance
@@ -25,7 +26,8 @@ public:
 	virtual RHIDevice* GetDevice(int32 index) override;
 
 private:
-	VkInstance m_instance;
+	VkInstance m_instance = VK_NULL_HANDLE;
+	std::vector<RHIDevice> m_devices;
 };
 
 }

@@ -1,11 +1,13 @@
 #pragma once
 
+#include "../IRHIDevice.h"
+
 namespace ow
 {
 
 struct RHIDeviceCreateInfo;
 
-class VulkanDevice
+class VulkanDevice : public IRHIDevice
 {
 public:
 	VulkanDevice() = default;

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Core/HAL/PlatformModule.h>
-
 #include "D3D12Loader.h"
+
+#include <Core/HAL/PlatformModule.h>
 
 namespace ow
 {
