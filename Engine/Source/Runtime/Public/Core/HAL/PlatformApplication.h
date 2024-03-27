@@ -5,11 +5,11 @@
 namespace ow
 {
 
-class PlatformApplicationImpl;
+class IPlatformApplication;
 
 /// <summary>
-/// Application means the launching program which contains one or more windows.
-/// Or it is headless without GUI windows, such as a batch to process data.
+/// Application is the current launching program which contains one or more windows.
+/// Or it is headless without GUI windows, such as a batch process to process data.
 /// </summary>
 class ENGINE_API PlatformApplication
 {
@@ -21,12 +21,12 @@ public:
 	PlatformApplication& operator=(PlatformApplication&& other) noexcept;
 	~PlatformApplication();
 
-	void Init(void* pInstance, void* pIcon = nullptr);
+	void Init();
 	void* GetProcessInstance() const;
 	void Run();
 
 private:
-	PlatformApplicationImpl* m_pImpl = nullptr;
+	IPlatformApplication* m_pImpl = nullptr;
 };
 
 }

@@ -13,6 +13,8 @@
 
 #ifdef ENGINE_BUILD_SHARED
 #define ENGINE_API API_EXPORT
+#define RHI_API API_EXPORT
 #else
 #define ENGINE_API API_IMPORT
+#define RHI_API API_IMPORT
 #endif

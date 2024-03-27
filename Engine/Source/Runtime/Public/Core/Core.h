@@ -5,5 +5,6 @@
 #include <Core/HAL/Platform.h>
 #include <Core/HAL/PlatformApplication.h>
 #include <Core/HAL/PlatformModule.h>
+#include <Core/HAL/PlatformProcess.h>
 #include <Core/HAL/PlatformWindow.h>
-#include <Core/HAL/WindowCreateInfo.h>
+#include <Core/HAL/PlatformTypes.h>

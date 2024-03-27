@@ -2,7 +2,7 @@
 
 #include <d3d12.h>
 
-namespace ow::gpu
+namespace ow
 {
 
 using D3D12CreateDeviceFunc = HRESULT(WINAPI*)(

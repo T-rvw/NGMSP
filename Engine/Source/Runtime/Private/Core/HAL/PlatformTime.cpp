@@ -1,33 +1,23 @@
 #include <Core/HAL/PlatformTime.h>
 
-#include <Core/HAL/Platform/Windows/WindowsPlatform.hpp>
+#include "PlatformImplTypes.h"
 
 namespace ow
 {
 
-double PlatformTime::SecondsPerCycle = 0.0;
-
-double PlatformTime::Init()
+void PlatformTime::Init()
 {
-	LARGE_INTEGER frequency;
-	::QueryPerformanceFrequency(&frequency);
-
-	SecondsPerCycle = 1.0 / (double)frequency.QuadPart;
-
-	return PlatformTime::Seconds();
+	return Time_Init();
 }
 
 double PlatformTime::Seconds()
 {
-	LARGE_INTEGER cycles;
-	::QueryPerformanceCounter(&cycles);
-
-	return (double)cycles.QuadPart * GetSecondsPerCycle();
+	return Time_Seconds();
 }
 
 double PlatformTime::GetSecondsPerCycle()
 {
-	return SecondsPerCycle;
+	return Time_GetSecondsPerCycle();
 }
 
 }

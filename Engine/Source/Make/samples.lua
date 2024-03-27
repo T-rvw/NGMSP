@@ -4,7 +4,7 @@
 local function MakeSample(projectPath)
 	projectName = path.getbasename(projectPath)
 	project(projectName)
-		kind("WindowedApp")
+		kind("ConsoleApp")
 
 		Project.CppLanguage()
 		Project.Location(path.join(BuildOutputPath, "Engine"))

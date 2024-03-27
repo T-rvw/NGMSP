@@ -1,6 +1,6 @@
 #include <Core/HAL/PlatformApplication.h>
 
-#include "Windows/PlatformApplicationImpl.h"
+#include "PlatformImplTypes.h"
 
 namespace ow
 {
@@ -30,9 +30,9 @@ PlatformApplication::~PlatformApplication()
 	}
 }
 
-void PlatformApplication::Init(void* pInstance, void* pIcon)
+void PlatformApplication::Init()
 {
-	m_pImpl->Init(pInstance, pIcon);
+	m_pImpl->Init();
 }
 
 void* PlatformApplication::GetProcessInstance() const

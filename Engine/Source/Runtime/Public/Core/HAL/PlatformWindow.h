@@ -5,7 +5,7 @@
 namespace ow
 {
 
-class PlatformWindowImpl;
+class IPlatformWindow;
 struct WindowCreateInfo;
 
 /// <summary>
@@ -27,7 +27,7 @@ public:
 	void* GetHandle() const;
 
 private:
-	PlatformWindowImpl* m_pImpl = nullptr;
+	IPlatformWindow* m_pImpl = nullptr;
 };
 
 }

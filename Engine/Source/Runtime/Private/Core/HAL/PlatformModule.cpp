@@ -1,6 +1,6 @@
 #include <Core/HAL/PlatformModule.h>
 
-#include "Windows/PlatformModuleImpl.h"
+#include "PlatformImplTypes.h"
 
 namespace ow
 {
@@ -10,12 +10,12 @@ PlatformModule::PlatformModule()
 	m_pImpl = new PlatformModuleImpl();
 }
 
-PlatformModule::PlatformModule(PlatformModule&& other)
+PlatformModule::PlatformModule(PlatformModule&& other) noexcept
 {
 	*this = MoveTemp(other);
 }
 
-PlatformModule& PlatformModule::operator=(PlatformModule&& other)
+PlatformModule& PlatformModule::operator=(PlatformModule&& other) noexcept
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;
