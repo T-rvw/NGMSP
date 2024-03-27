@@ -1,21 +1,16 @@
-#include "PlatformModuleImpl.h"
+#include "WindowsModule.h"
 
 namespace ow
 {
 
-HMODULE PlatformModuleImpl::GetHandle() const
-{
-	return m_module;
-}
-
-bool PlatformModuleImpl::Init(const char* pFilePath)
+bool WindowsModule::Init(const char* pFilePath)
 {
 	assert(!m_module);
 	m_module = ::LoadLibraryA(pFilePath);
 	return m_module != nullptr;
 }
 
-void PlatformModuleImpl::Free()
+void WindowsModule::Free()
 {
 	if (m_module != nullptr)
 	{
@@ -24,7 +19,12 @@ void PlatformModuleImpl::Free()
 	}
 }
 
-void* PlatformModuleImpl::GetFunctionAddress(const char* pFuncName)
+void* WindowsModule::GetHandle() const
+{
+	return m_module;
+}
+
+void* WindowsModule::GetFunctionAddress(const char* pFuncName)
 {
 	assert(m_module);
 	return ::GetProcAddress(m_module, pFuncName);

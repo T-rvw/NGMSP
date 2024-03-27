@@ -1,13 +1,13 @@
 #include <Core/HAL/WindowCreateInfo.h>
 
-#include "PlatformWindowImpl.h"
+#include "WindowsWindow.h"
 
 namespace ow
 {
 
-const TCHAR PlatformWindowImpl::WindowClassName[] = TEXT("OW_WindowClass");
+const TCHAR WindowsWindow::WindowClassName[] = TEXT("OW_WindowClass");
 
-void PlatformWindowImpl::Init(const WindowCreateInfo& createInfo, void* pInstance)
+void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 {
 	int32 windowWidth = createInfo.Width;
 	int32 windowHeight = createInfo.Height;
@@ -16,8 +16,8 @@ void PlatformWindowImpl::Init(const WindowCreateInfo& createInfo, void* pInstanc
 	RECT windowRect = { 0, 0, windowWidth, windowHeight };
 	::AdjustWindowRect(&windowRect, windowStyle, FALSE);
 
-	std::vector<WCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
-	m_handle = ::CreateWindowEx(NULL, PlatformWindowImpl::WindowClassName, title.data(), windowStyle,
+	std::vector<TCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
+	m_handle = ::CreateWindowEx(NULL, WindowsWindow::WindowClassName, title.data(), windowStyle,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		(HWND)createInfo.ParentWindow, NULL, (HINSTANCE)pInstance, NULL);
@@ -25,7 +25,7 @@ void PlatformWindowImpl::Init(const WindowCreateInfo& createInfo, void* pInstanc
 	ShowWindow(m_handle, SW_SHOW);
 }
 
-HWND PlatformWindowImpl::GetHandle() const
+void* WindowsWindow::GetHandle() const
 {
 	return m_handle;
 }

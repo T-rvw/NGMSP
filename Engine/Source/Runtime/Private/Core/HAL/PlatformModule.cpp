@@ -1,6 +1,6 @@
 #include <Core/HAL/PlatformModule.h>
 
-#include "Windows/PlatformModuleImpl.h"
+#include "PlatformImpl.h"
 
 namespace ow
 {

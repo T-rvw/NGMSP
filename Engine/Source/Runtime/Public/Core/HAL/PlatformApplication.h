@@ -5,7 +5,7 @@
 namespace ow
 {
 
-class PlatformApplicationImpl;
+class IPlatformApplication;
 
 /// <summary>
 /// Application means the launching program which contains one or more windows.
@@ -26,7 +26,7 @@ public:
 	void Run();
 
 private:
-	PlatformApplicationImpl* m_pImpl = nullptr;
+	IPlatformApplication* m_pImpl = nullptr;
 };
 
 }

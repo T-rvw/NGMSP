@@ -5,7 +5,7 @@
 namespace ow
 {
 
-class PlatformModuleImpl;
+class IPlatformModule;
 
 /// <summary>
 /// Module means a dynamicly loading library, such as .dll in Windows.
@@ -30,7 +30,7 @@ public:
 	void* GetFunctionAddress(const char* pFuncName);
 
 private:
-	PlatformModuleImpl* m_pImpl = nullptr;
+	IPlatformModule* m_pImpl = nullptr;
 };
 
 // Helper macro to load apis dynamically with assert

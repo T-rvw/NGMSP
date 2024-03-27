@@ -1,20 +1,20 @@
 #include <Core/HAL/PlatformTime.h>
 
-#include "PlatformApplicationImpl.h"
-#include "PlatformWindowImpl.h"
+#include "WindowsApplication.h"
+#include "WindowsWindow.h"
 
 namespace ow
 {
 
-static PlatformApplicationImpl* s_pApplication = nullptr;
+static WindowsApplication* s_pApplication = nullptr;
 static HINSTANCE s_pProcessInstance = nullptr;
 
-LRESULT CALLBACK PlatformApplicationImpl::WindowProcessFunc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowsApplication::WindowProcessFunc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
 {
 	return s_pApplication->WindowProcessFuncImpl(hwnd, msg, wParam, lParam);
 }
 
-void PlatformApplicationImpl::Init(void* pInstance, void* pIcon)
+void WindowsApplication::Init(void* pInstance, void* pIcon)
 {
 	assert(!s_pApplication);
 	s_pApplication = this;
@@ -23,33 +23,39 @@ void PlatformApplicationImpl::Init(void* pInstance, void* pIcon)
 	RegisterWindowClass(s_pProcessInstance, (HICON)pIcon);
 }
 
-HINSTANCE PlatformApplicationImpl::GetProcessInstance() const
+void* WindowsApplication::GetProcessInstance() const
 {
 	return s_pProcessInstance;
 }
 
-double PlatformApplicationImpl::GetDeltaTime() const
+double WindowsApplication::GetDeltaTime() const
 {
 	return m_currentTime - m_lastTime;
 }
 
-void PlatformApplicationImpl::Tick()
+void WindowsApplication::Tick()
 {
 	m_lastTime = m_currentTime;
 	m_currentTime = PlatformTime::Seconds();
 
+	bool quit = false;
 	MSG msg {};
-	while (msg.message != WM_QUIT)
+	while (!quit)
 	{
 		while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
+
+			if (WM_QUIT == msg.message)
+			{
+				quit = true;
+			}
 		}
 	}
 }
 
-LRESULT PlatformApplicationImpl::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
+LRESULT WindowsApplication::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -64,16 +70,16 @@ LRESULT PlatformApplicationImpl::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WP
 	return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-void PlatformApplicationImpl::RegisterWindowClass(HINSTANCE instance, HICON icon)
+void WindowsApplication::RegisterWindowClass(HINSTANCE instance, HICON icon)
 {
 	WNDCLASSEX wc;
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = PlatformApplicationImpl::WindowProcessFunc;
+	wc.lpfnWndProc = WindowsApplication::WindowProcessFunc;
 	wc.hInstance = instance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszClassName = PlatformWindowImpl::WindowClassName;
+	wc.lpszClassName = WindowsWindow::WindowClassName;
 	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
 	assert(::RegisterClassEx(&wc));
 }
