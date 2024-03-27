@@ -33,12 +33,4 @@ private:
 	IPlatformModule* m_pImpl = nullptr;
 };
 
-// Helper macro to load apis dynamically with assert
-#define LOAD_MODULE_API(Module, API)                          \
-        do                                                    \
-        {                                                     \
-            API = (API##Func)Module.GetFunctionAddress(#API); \
-			assert(API);									  \
-        } while (false)
-
 }

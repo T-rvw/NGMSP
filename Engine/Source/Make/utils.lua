@@ -52,6 +52,7 @@ Project.LinkVulkan = function()
 		return
 	end
 
+	Log.Info("Find VULKAN_SDK : "..vulkanSDKPath)
     links { "$(VULKAN_SDK)/lib/vulkan-1.lib" }
     includedirs { "$(VULKAN_SDK)/include" }
 end
