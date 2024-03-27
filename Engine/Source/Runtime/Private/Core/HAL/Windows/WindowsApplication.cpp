@@ -1,7 +1,8 @@
-#include <Core/HAL/PlatformTime.h>
-
 #include "WindowsApplication.h"
+
 #include "WindowsWindow.h"
+
+#include <Core/HAL/PlatformTime.h>
 
 namespace ow
 {

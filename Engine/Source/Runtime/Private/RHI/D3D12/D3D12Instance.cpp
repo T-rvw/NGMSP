@@ -1,6 +1,6 @@
-#include <RHI/RHITypes.h>
-
 #include "D3D12Instance.h"
+
+#include <RHI/RHITypes.h>
 
 namespace ow
 {

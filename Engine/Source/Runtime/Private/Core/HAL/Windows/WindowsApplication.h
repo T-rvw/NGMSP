@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WindowsInclude.hpp"
+#include "WindowsHeader.hpp"
 #include "../IPlatformApplication.h"
 
 namespace ow
