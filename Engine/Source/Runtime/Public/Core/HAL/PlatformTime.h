@@ -6,13 +6,12 @@ namespace ow
 {
 
 /// <summary>
-/// Window means a GUI proxy which combines user inputs and graphics backend or other modules.
-/// Output rendering image to window client or do something based on user inputs.
+/// Timer helps to calculate engine loop frame delta time or query current time stamp.
 /// </summary>
 class ENGINE_API PlatformTime
 {
 public:
-	static double Init();
+	static void Init();
 	static double Seconds();
 	static double GetSecondsPerCycle();
 

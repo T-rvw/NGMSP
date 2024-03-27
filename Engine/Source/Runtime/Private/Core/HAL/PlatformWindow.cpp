@@ -1,6 +1,6 @@
 #include <Core/HAL/PlatformWindow.h>
 
-#include "PlatformImpl.h"
+#include "PlatformImplTypes.h"
 
 namespace ow
 {

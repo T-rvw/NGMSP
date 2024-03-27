@@ -1,4 +1,4 @@
-#include <Core/HAL/WindowCreateInfo.h>
+#include <Core/HAL/PlatformTypes.h>
 
 #include "WindowsWindow.h"
 

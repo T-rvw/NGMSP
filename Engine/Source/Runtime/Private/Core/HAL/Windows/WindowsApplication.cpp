@@ -14,13 +14,13 @@ LRESULT CALLBACK WindowsApplication::WindowProcessFunc(HWND hwnd, uint32 msg, WP
 	return s_pApplication->WindowProcessFuncImpl(hwnd, msg, wParam, lParam);
 }
 
-void WindowsApplication::Init(void* pInstance, void* pIcon)
+void WindowsApplication::Init()
 {
 	assert(!s_pApplication);
 	s_pApplication = this;
-	s_pProcessInstance = (HINSTANCE)pInstance;
+	s_pProcessInstance = ::GetModuleHandle(NULL);
 	PlatformTime::Init();
-	RegisterWindowClass(s_pProcessInstance, (HICON)pIcon);
+	RegisterWindowClass(s_pProcessInstance, NULL);
 }
 
 void* WindowsApplication::GetProcessInstance() const

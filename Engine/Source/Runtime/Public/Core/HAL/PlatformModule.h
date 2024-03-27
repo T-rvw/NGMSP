@@ -17,8 +17,8 @@ public:
 	PlatformModule();
 	PlatformModule(const PlatformModule&) = delete;
 	PlatformModule& operator=(const PlatformModule&) = delete;
-	PlatformModule(PlatformModule&& other);
-	PlatformModule& operator=(PlatformModule&& other);
+	PlatformModule(PlatformModule&& other) noexcept;
+	PlatformModule& operator=(PlatformModule&& other) noexcept;
 	~PlatformModule();
 
 	bool IsValid() const;

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Core/HAL/Platform/Windows/WindowsPlatform.hpp>
-
+#include "WindowsInclude.hpp"
 #include "../IPlatformWindow.h"
 
 namespace ow

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Core/HAL/Platform/Windows/WindowsPlatform.hpp>
-
+#include "WindowsInclude.hpp"
 #include "../IPlatformApplication.h"
 
 namespace ow
@@ -20,7 +19,7 @@ public:
 	WindowsApplication& operator=(WindowsApplication&&) = default;
 	~WindowsApplication() = default;
 
-	virtual void Init(void* pInstance, void* pIcon) override;
+	virtual void Init() override;
 	virtual void* GetProcessInstance() const override;
 	virtual void Tick() override;
 
