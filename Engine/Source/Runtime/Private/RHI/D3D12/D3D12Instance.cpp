@@ -29,11 +29,15 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 {
 	std::vector<std::unique_ptr<RHIAdapter>> adapters;
 
-	IDXGIAdapter1* adapter;
-	for (uint32 adapterIndex = 0; D3D12_SUCCEED(m_factory->EnumAdapters1(adapterIndex, &adapter)); ++adapterIndex)
+	auto CreateRHIAdapter = [&adapters](IDXGIAdapter1* adapter, bool skipSoftwareAdapter = false)
 	{
 		DXGI_ADAPTER_DESC1 adapterDesc;
 		adapter->GetDesc1(&adapterDesc);
+
+		if (skipSoftwareAdapter && (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE))
+		{
+			return;
+		}
 
 		char adapterName[256];
 		sprintf_s(adapterName, "%ws", adapterDesc.Description);
@@ -43,10 +47,20 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 		d3d12Adapter->SetType(adapterDesc.Flags);
 		d3d12Adapter->SetVendor(adapterDesc.VendorId);
 		d3d12Adapter->SetVRAMSize(adapterDesc.DedicatedVideoMemory);
-		
+
 		auto& pAdapter = adapters.emplace_back(std::make_unique<RHIAdapter>());
 		pAdapter->Init(MoveTemp(d3d12Adapter));
+	};
+
+	IDXGIAdapter1* adapter;
+	for (uint32 adapterIndex = 0; D3D12_SUCCEED(m_factory->EnumAdapters1(adapterIndex, &adapter)); ++adapterIndex)
+	{
+		const bool skipSoftwareAdapter = true;
+		CreateRHIAdapter(adapter, skipSoftwareAdapter);
 	}
+
+	m_factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter));
+	CreateRHIAdapter(adapter);
 
 	return adapters;
 }
