@@ -73,21 +73,53 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters()
 		VkPhysicalDeviceMemoryProperties memoryProperties {};
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
-		uint64 memorySize = 0;
+		uint64 videoMemorySize = 0;
+		uint64 systemMemorySize = 0;
+		uint64 sharedMemorySize = 0;
+
+		std::vector<std::vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
+		for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
+		{
+			const VkMemoryType& memoryType = memoryProperties.memoryTypes[memoryTypeIndex];
+			assert(memoryType.heapIndex < memoryProperties.memoryHeapCount);
+			memoryHeapTypes[memoryType.heapIndex].push_back(&memoryType);
+		}
+
 		for (uint32 memoryHeapIndex = 0; memoryHeapIndex < memoryProperties.memoryHeapCount; ++memoryHeapIndex)
 		{
-			memoryProperties.memoryTypeCount;
-			memorySize += static_cast<uint64>(memoryProperties.memoryHeaps[memoryHeapIndex].size);
+			const VkMemoryHeap& memoryHeap = memoryProperties.memoryHeaps[memoryHeapIndex];
+			bool isHeapInLocalDevice = (memoryHeap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) > 0;
 
-			// TODO : adapter local memory, host visible memory, ...
-			break;
+			bool isTypeHostVisible = false;
+			for (const auto* memoryType : memoryHeapTypes[memoryHeapIndex])
+			{
+				isTypeHostVisible |= (memoryType->propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) > 0;
+			}
+
+			if (isHeapInLocalDevice)
+			{
+				if (isTypeHostVisible)
+				{
+					sharedMemorySize += memoryHeap.size;
+				}
+				else
+				{
+					videoMemorySize += memoryHeap.size;
+				}
+			}
+			else
+			{
+				systemMemorySize += memoryHeap.size;
+			}
 		}
 
 		auto vkAdapter = std::make_unique<VulkanAdapter>(physicalDevice);
 		vkAdapter->SetName(properties.deviceName);
 		vkAdapter->SetType(properties.deviceType);
 		vkAdapter->SetVendor(properties.vendorID);
-		vkAdapter->SetVRAMSize(memorySize);
+		vkAdapter->SetVideoMemorySize(videoMemorySize);
+		vkAdapter->SetSystemMemorySize(systemMemorySize);
+		vkAdapter->SetSharedMemorySize(sharedMemorySize);
 
 		auto& pAdapter = adapters.emplace_back(std::make_unique<RHIAdapter>());
 		pAdapter->Init(MoveTemp(vkAdapter));

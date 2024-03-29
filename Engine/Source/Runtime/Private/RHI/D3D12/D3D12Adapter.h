@@ -20,7 +20,7 @@ public:
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return nullptr; }
 
-	void SetType(uint32 flags);
+	void SetType(const DXGI_ADAPTER_DESC1& desc);
 
 private:
 	IDXGIAdapter1* m_adapter = nullptr;

@@ -8,7 +8,7 @@ int main()
 	
 	{
 		RHIInstanceCreateInfo rhiCI;
-		rhiCI.Backend = RHIBackend::D3D12;
+		rhiCI.Backend = RHIBackend::Vulkan;
 
 		RHIInstance rhiInstance;
 		rhiInstance.Init(rhiCI);
