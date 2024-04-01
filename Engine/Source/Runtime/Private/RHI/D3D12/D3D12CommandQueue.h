@@ -18,6 +18,9 @@ public:
 	virtual ~D3D12CommandQueue() = default;
 
 	void Init();
+
+private:
+	ComPtr<ID3D12CommandQueue> m_commandQueue;
 };
 
 }

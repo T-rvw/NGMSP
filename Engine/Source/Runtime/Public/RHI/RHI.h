@@ -2,6 +2,8 @@
 
 #include <RHI/RHIAdapter.h>
 #include <RHI/RHIBuffer.h>
+#include <RHI/RHICommandBuffer.h>
+#include <RHI/RHICommandList.h>
 #include <RHI/RHICommandPool.h>
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIDevice.h>

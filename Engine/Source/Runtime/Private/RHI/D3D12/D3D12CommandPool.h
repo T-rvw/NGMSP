@@ -18,6 +18,9 @@ public:
 	virtual ~D3D12CommandPool() = default;
 
 	void Init();
+
+private:
+	ComPtr<ID3D12CommandAllocator> m_commandPool;
 };
 
 }
