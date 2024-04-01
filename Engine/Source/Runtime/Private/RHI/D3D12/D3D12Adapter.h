@@ -7,10 +7,13 @@
 namespace ow
 {
 
+class RHIDevice;
+
 class D3D12Adapter : public IRHIAdapter
 {
 public:
 	D3D12Adapter() = default;
+	explicit D3D12Adapter(IDXGIAdapter1* pAdapter);
 	D3D12Adapter(const D3D12Adapter&) = delete;
 	D3D12Adapter& operator=(const D3D12Adapter&) = delete;
 	D3D12Adapter(D3D12Adapter&&) = default;
@@ -18,12 +21,14 @@ public:
 	virtual ~D3D12Adapter() = default;
 
 	virtual void Init() override;
-	virtual void* GetHandle() const override { return nullptr; }
+	virtual void* GetHandle() const override { return m_adapter.Get(); }
 
 	void SetType(const DXGI_ADAPTER_DESC1& desc);
 
+	std::unique_ptr<RHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
+
 private:
-	IDXGIAdapter1* m_adapter = nullptr;
+	ComPtr<IDXGIAdapter1> m_adapter;
 };
 
 }

@@ -18,13 +18,14 @@ class RHI_API RHIDevice
 {
 public:
 	RHIDevice();
+	explicit RHIDevice(std::unique_ptr<IRHIDevice> impl);
 	RHIDevice(const RHIDevice&) = delete;
 	RHIDevice& operator=(const RHIDevice&) = delete;
 	RHIDevice(RHIDevice&& other) noexcept;
 	RHIDevice& operator=(RHIDevice&& other) noexcept;
 	~RHIDevice();
 
-	void Init();
+	void Init(std::unique_ptr<IRHIDevice> impl);
 	void* GetHandle() const;
 
 private:

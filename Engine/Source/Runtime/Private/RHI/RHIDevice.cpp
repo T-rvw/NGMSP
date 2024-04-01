@@ -8,6 +8,11 @@ namespace ow
 
 RHIDevice::RHIDevice() = default;
 
+RHIDevice::RHIDevice(std::unique_ptr<IRHIDevice> impl)
+{
+	Init(MoveTemp(impl));
+}
+
 RHIDevice::RHIDevice(RHIDevice&& other) noexcept
 {
 	*this = MoveTemp(other);
@@ -28,8 +33,11 @@ RHIDevice::~RHIDevice()
 	}
 }
 
-void RHIDevice::Init()
+void RHIDevice::Init(std::unique_ptr<IRHIDevice> impl)
 {
+	assert(impl.get());
+	assert(!m_pImpl);
+	m_pImpl = impl.release();
 }
 
 void* RHIDevice::GetHandle() const

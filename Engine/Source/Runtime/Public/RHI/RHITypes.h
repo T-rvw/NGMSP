@@ -99,11 +99,15 @@ enum class RHIBackend
 
 enum class RHIFeature : int64
 {
+    FP16,
+    Barycentrics,
     MeshShaders,
     RayTracing,
     VariableRateShading,
     WorkGraphs
 };
+
+using RHIFeatrueFlags = BitFlags<RHIFeature>;
 
 struct RHIAdapterInfo
 {
@@ -125,6 +129,15 @@ struct RHIAdapterInfo
     std::string Name;
 };
 
+struct RHI_API RHIDeviceCreateInfo
+{
+    RHIDeviceCreateInfo()
+    {
+    }
+
+    RHIFeatrueFlags Features;
+};
+
 struct RHI_API RHIInstanceCreateInfo
 {
     RHIInstanceCreateInfo()
@@ -137,7 +150,7 @@ struct RHI_API RHIInstanceCreateInfo
 
     RHIBackend Backend;
     GPUVendor PreferVender;
-    BitFlags<RHIFeature> Features;
+    RHIFeatrueFlags Features;
     bool EnableDebugLayer : 1;
     bool EnableGPUValidator : 1;
 };

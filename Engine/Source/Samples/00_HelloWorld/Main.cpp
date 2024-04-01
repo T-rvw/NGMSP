@@ -1,23 +1,30 @@
 #include <Engine.h>
 
-#include <iostream>
-
 int main()
 {
 	using namespace ow;
 	
 	{
-		RHIInstanceCreateInfo rhiCI;
-		rhiCI.Backend = RHIBackend::Vulkan;
+		RHIInstanceCreateInfo instanceCI;
+		instanceCI.Backend = RHIBackend::Vulkan;
 
 		RHIInstance rhiInstance;
-		rhiInstance.Init(rhiCI);
+		rhiInstance.Init(instanceCI);
+		rhiInstance.Dump();
 
+		RHIAdapter* pSelectAdapter = nullptr;
 		auto rhiAdapters = rhiInstance.EnumAdapters();
 		for (const auto& rhiAdapter : rhiAdapters)
 		{
 			rhiAdapter->Dump();
 		}
+
+		RHIAdapter* pBestAdapter = FindBestRHIAdapter(rhiAdapters);
+		assert(pBestAdapter);
+		printf("\nSelect adapter : %s\n", pBestAdapter->GetName());
+
+		RHIDeviceCreateInfo deviceCI;
+		auto rhiDevice = pBestAdapter->CreateDevice(deviceCI);
 	}
 
 	{

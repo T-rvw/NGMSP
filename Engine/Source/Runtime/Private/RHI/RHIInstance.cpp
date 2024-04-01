@@ -50,12 +50,23 @@ void RHIInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	m_pImpl->Init(createInfo);
 }
 
+void RHIInstance::Dump()
+{
+	printf("[RHIInstance] Handle = %llu\n", reinterpret_cast<uint64>(GetHandle()));
+	printf("\tBackend = %s\n", EnumName(GetBackend()).data());
+}
+
+RHIBackend RHIInstance::GetBackend() const
+{
+	return m_pImpl->GetBackend();
+}
+
 void* RHIInstance::GetHandle() const
 {
 	return m_pImpl->GetHandle();
 }
 
-std::vector<std::unique_ptr<RHIAdapter>> RHIInstance::EnumAdapters()
+std::vector<std::unique_ptr<RHIAdapter>> RHIInstance::EnumAdapters() const
 {
 	return m_pImpl->EnumAdapters();
 }

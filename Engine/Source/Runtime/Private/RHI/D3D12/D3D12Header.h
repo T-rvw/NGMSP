@@ -3,7 +3,13 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 
-#include <atlbase.h>
+#include <D3D12MemoryAllocator/D3D12MemAlloc.h>
+
+#include <wrl.h>
+
+template<typename T>
+using ComPtr = Microsoft::WRL::ComPtr<T>;
+
 #include <cassert>
 
 #define D3D12_SUCCEED(result) (HRESULT)result >= 0

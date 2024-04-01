@@ -7,6 +7,8 @@
 namespace ow
 {
 
+class RHIDevice;
+
 class VulkanAdapter : public IRHIAdapter
 {
 public:
@@ -21,7 +23,10 @@ public:
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_physcialDevice; }
 
+	GPUAdapterType GetType() const;
 	void SetType(VkPhysicalDeviceType deviceType);
+
+	std::unique_ptr<RHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
 
 private:
 	VkPhysicalDevice m_physcialDevice = VK_NULL_HANDLE;

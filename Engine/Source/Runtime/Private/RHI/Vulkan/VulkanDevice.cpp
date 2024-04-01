@@ -1,9 +1,14 @@
 #include "VulkanDevice.h"
 
-#include <RHI/RHITypes.h>
+#include <RHI/RHIDevice.h>
 
 namespace ow
 {
+
+VulkanDevice::VulkanDevice(VkDevice device) :
+	m_device(device)
+{
+}
 
 VulkanDevice::~VulkanDevice()
 {
@@ -16,6 +21,11 @@ VulkanDevice::~VulkanDevice()
 
 void VulkanDevice::Init()
 {
+}
+
+bool VulkanDevice::CheckFeatrue(RHIFeatrueFlags flags) const
+{
+	return false;
 }
 
 }

@@ -10,3 +10,4 @@
 #include <RHI/RHISwapChain.h>
 #include <RHI/RHITexture.h>
 #include <RHI/RHITypes.h>
+#include <RHI/RHIUtils.h>

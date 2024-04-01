@@ -2,12 +2,12 @@
 
 #include "VulkanHeader.h"
 
-#include <RHI/Interfaces/IRHIAdapter.h>
 #include <RHI/Interfaces/IRHIInstance.h>
 
 namespace ow
 {
 
+enum class RHIBackend;
 struct RHIInstanceCreateInfo;
 
 class VulkanInstance : public IRHIInstance
@@ -21,8 +21,11 @@ public:
 	virtual ~VulkanInstance();
 
 	virtual void Init(const RHIInstanceCreateInfo& createInfo) override;
+
+	virtual RHIBackend GetBackend() const override;
 	virtual void* GetHandle() const override { return m_instance; }
-	virtual std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() override;
+
+	virtual std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() const override;
 
 private:
 	VkInstance m_instance = VK_NULL_HANDLE;

@@ -7,6 +7,7 @@
 namespace ow
 {
 
+enum class RHIBackend;
 struct RHIInstanceCreateInfo;
 
 class D3D12Instance : public IRHIInstance
@@ -20,11 +21,14 @@ public:
 	virtual ~D3D12Instance() = default;
 
 	virtual void Init(const RHIInstanceCreateInfo& createInfo) override;
-	virtual void* GetHandle() const override { return nullptr; }
-	virtual std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() override;
+
+	virtual RHIBackend GetBackend() const override;
+	virtual void* GetHandle() const override { return m_factory.Get(); }
+
+	virtual std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() const override;
 
 private:
-	CComPtr<IDXGIFactory4> m_factory;
+	ComPtr<IDXGIFactory4> m_factory;
 };
 
 }

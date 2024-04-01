@@ -42,7 +42,14 @@ project("Engine")
 	}
 	
 	files {
-		path.join(RootPath, "Engine/Source/Runtime/**.*")
+		path.join(RootPath, "Engine/Source/Runtime/**.*"),
+		path.join(ThirdPartySourcePath, "nameof/nameof.hpp"),
+	}
+
+	vpaths {
+		["Public/*"] = path.join(RootPath, "Engine/Source/Runtime/Public/**.*"),
+		["Private/*"] = path.join(RootPath, "Engine/Source/Runtime/Private/**.*"),
+		["ThirdParty/*"] = path.join(ThirdPartySourcePath, "**.*"),
 	}
 
 	Project.LinkD3D12()

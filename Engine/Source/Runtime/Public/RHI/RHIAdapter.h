@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/HAL/Platform.h>
+#include <RHI/RHIDevice.h>
 #include <RHI/RHITypes.h>
 
 namespace ow
@@ -18,13 +19,14 @@ class RHI_API RHIAdapter
 {
 public:
 	RHIAdapter();
+	explicit RHIAdapter(std::unique_ptr<IRHIAdapter> impl);
 	RHIAdapter(const RHIAdapter&) = delete;
 	RHIAdapter& operator=(const RHIAdapter&) = delete;
 	RHIAdapter(RHIAdapter&& other) noexcept;
 	RHIAdapter& operator=(RHIAdapter&& other) noexcept;
 	~RHIAdapter();
 
-	void Init(std::unique_ptr<IRHIAdapter> pImpl);
+	void Init(std::unique_ptr<IRHIAdapter> impl);
 	void Dump();
 
 	GPUAdapterType GetType() const;
@@ -33,6 +35,8 @@ public:
 	uint64 GetSystemMemorySize() const;
 	uint64 GetSharedMemorySize() const;
 	const char* GetName() const;
+
+	std::unique_ptr<RHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
 
 private:
 	IRHIAdapter* m_pImpl = nullptr;

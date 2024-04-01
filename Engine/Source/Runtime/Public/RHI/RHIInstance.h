@@ -29,9 +29,12 @@ public:
 	~RHIInstance();
 
 	void Init(const RHIInstanceCreateInfo& createInfo);
+	void Dump();
+
+	RHIBackend GetBackend() const;
 	void* GetHandle() const;
 
-	std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters();
+	std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() const;
 
 private:
 	IRHIInstance* m_pImpl = nullptr;

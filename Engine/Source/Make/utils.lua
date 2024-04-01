@@ -46,6 +46,11 @@ Project.Location = function(outputPath)
 end
 
 Project.LinkD3D12 = function()
+	files {
+		path.join(ThirdPartySourcePath, "D3D12MemoryAllocator/D3D12MemAlloc.h"),
+		path.join(ThirdPartySourcePath, "D3D12MemoryAllocator/D3D12MemAlloc.cpp"),
+	}
+
 	links { "d3d12.lib", "dxgi.lib", "d3dcompiler.lib" }
 end
 
@@ -55,6 +60,10 @@ Project.LinkVulkan = function()
 		Log.Warning("Environment variable VULKAN_SDK not defined.")
 		return
 	end
+
+	files {
+		path.join(ThirdPartySourcePath, "VulkanMemoryAllocator/vk_mem_alloc.h")
+	}
 
 	Log.Info("Find VULKAN_SDK : "..vulkanSDKPath)
     links { "$(VULKAN_SDK)/lib/vulkan-1.lib" }

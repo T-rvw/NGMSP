@@ -11,6 +11,7 @@ class VulkanDevice : public IRHIDevice
 {
 public:
 	VulkanDevice() = default;
+	explicit VulkanDevice(VkDevice device);
 	VulkanDevice(const VulkanDevice&) = delete;
 	VulkanDevice& operator=(const VulkanDevice&) = delete;
 	VulkanDevice(VulkanDevice&&) = default;
@@ -19,6 +20,7 @@ public:
 
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_device; }
+	virtual bool CheckFeatrue(RHIFeatrueFlags flags) const override;
 
 private:
 	VkDevice m_device = VK_NULL_HANDLE;

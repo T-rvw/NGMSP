@@ -25,14 +25,19 @@ void D3D12Instance::Init(const RHIInstanceCreateInfo& createInfo)
 	assert(m_factory);
 }
 
-std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
+RHIBackend D3D12Instance::GetBackend() const
 {
-	std::vector<std::unique_ptr<RHIAdapter>> adapters;
+	return RHIBackend::D3D12;
+}
 
-	auto CreateRHIAdapter = [&adapters](IDXGIAdapter1* adapter, bool skipSoftwareAdapter = false)
+std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters() const
+{
+	std::vector<std::unique_ptr<RHIAdapter>> rhiAdapters;
+
+	auto CreateRHIAdapter = [&rhiAdapters](IDXGIAdapter1* pAdapter, bool skipSoftwareAdapter = false)
 	{
 		DXGI_ADAPTER_DESC1 adapterDesc;
-		adapter->GetDesc1(&adapterDesc);
+		pAdapter->GetDesc1(&adapterDesc);
 
 		if (skipSoftwareAdapter && (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE))
 		{
@@ -42,7 +47,7 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 		char adapterName[256];
 		sprintf_s(adapterName, "%ws", adapterDesc.Description);
 
-		auto d3d12Adapter = std::make_unique<D3D12Adapter>();
+		auto d3d12Adapter = std::make_unique<D3D12Adapter>(pAdapter);
 		d3d12Adapter->SetName(adapterName);
 		d3d12Adapter->SetType(adapterDesc);
 		d3d12Adapter->SetVendor(adapterDesc.VendorId);
@@ -50,8 +55,8 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 		d3d12Adapter->SetSystemMemorySize(adapterDesc.DedicatedSystemMemory);
 		d3d12Adapter->SetSharedMemorySize(adapterDesc.SharedSystemMemory);
 
-		auto& pAdapter = adapters.emplace_back(std::make_unique<RHIAdapter>());
-		pAdapter->Init(MoveTemp(d3d12Adapter));
+		auto& pRHIAdapter = rhiAdapters.emplace_back(std::make_unique<RHIAdapter>());
+		pRHIAdapter->Init(MoveTemp(d3d12Adapter));
 	};
 
 	IDXGIAdapter1* adapter;
@@ -63,7 +68,7 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 	m_factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter));
 	CreateRHIAdapter(adapter);
 
-	return adapters;
+	return rhiAdapters;
 }
 
 }

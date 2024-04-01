@@ -11,6 +11,7 @@ class D3D12Device : public IRHIDevice
 {
 public:
 	D3D12Device() = default;
+	explicit D3D12Device(ID3D12Device* pDevice);
 	D3D12Device(const D3D12Device&) = delete;
 	D3D12Device& operator=(const D3D12Device&) = delete;
 	D3D12Device(D3D12Device&&) = default;
@@ -18,7 +19,11 @@ public:
 	virtual ~D3D12Device() = default;
 
 	virtual void Init() override;
-	virtual void* GetHandle() const override { return nullptr; }
+	virtual void* GetHandle() const override { return m_device.Get(); }
+	virtual bool CheckFeatrue(RHIFeatrueFlags flags) const;
+
+private:
+	ComPtr<ID3D12Device> m_device;
 };
 
 }

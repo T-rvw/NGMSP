@@ -17,6 +17,11 @@ VulkanInstance::~VulkanInstance()
 	}
 }
 
+RHIBackend VulkanInstance::GetBackend() const
+{
+	return RHIBackend::Vulkan;
+}
+
 void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 {
 	assert(VK_NULL_HANDLE == m_instance);
@@ -41,8 +46,8 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	applicationInfo.apiVersion = VK_API_VERSION_1_0;
 	applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	applicationInfo.pApplicationName = "AMD Vulkan Sample application";
-	applicationInfo.pEngineName = "AMD Vulkan Sample Engine";
+	applicationInfo.pApplicationName = "Vulkan Sample application";
+	applicationInfo.pEngineName = "Vulkan Sample Engine";
 
 	VkInstanceCreateInfo instanceCreateInfo {};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -56,7 +61,7 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	assert(m_instance != VK_NULL_HANDLE);
 }
 
-std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters()
+std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
 {
 	uint32 physicalDeviceCount = 0;
 	VK_VERITY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
@@ -64,7 +69,7 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters()
 	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
 	VK_VERITY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
 
-	std::vector<std::unique_ptr<RHIAdapter>> adapters;
+	std::vector<std::unique_ptr<RHIAdapter>> rhiAdapters;
 	for (const auto physicalDevice : physicalDevices)
 	{
 		VkPhysicalDeviceProperties properties {};
@@ -73,10 +78,15 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters()
 		VkPhysicalDeviceMemoryProperties memoryProperties {};
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
+		auto vkAdapter = std::make_unique<VulkanAdapter>(physicalDevice);
+		vkAdapter->SetName(properties.deviceName);
+		vkAdapter->SetType(properties.deviceType);
+		vkAdapter->SetVendor(properties.vendorID);
+
+		const bool isIntegratedGPU = GPUAdapterType::Integrated == vkAdapter->GetType();
 		uint64 videoMemorySize = 0;
 		uint64 systemMemorySize = 0;
 		uint64 sharedMemorySize = 0;
-
 		std::vector<std::vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
 		for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
 		{
@@ -90,100 +100,25 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters()
 			const VkMemoryHeap& memoryHeap = memoryProperties.memoryHeaps[memoryHeapIndex];
 			bool isHeapInLocalDevice = (memoryHeap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) > 0;
 
-			bool isTypeHostVisible = false;
-			for (const auto* memoryType : memoryHeapTypes[memoryHeapIndex])
-			{
-				isTypeHostVisible |= (memoryType->propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) > 0;
-			}
-
 			if (isHeapInLocalDevice)
 			{
-				if (isTypeHostVisible)
-				{
-					sharedMemorySize += memoryHeap.size;
-				}
-				else
-				{
-					videoMemorySize += memoryHeap.size;
-				}
+				videoMemorySize += memoryHeap.size;
 			}
 			else
 			{
-				systemMemorySize += memoryHeap.size;
+				sharedMemorySize += memoryHeap.size;
 			}
 		}
 
-		auto vkAdapter = std::make_unique<VulkanAdapter>(physicalDevice);
-		vkAdapter->SetName(properties.deviceName);
-		vkAdapter->SetType(properties.deviceType);
-		vkAdapter->SetVendor(properties.vendorID);
 		vkAdapter->SetVideoMemorySize(videoMemorySize);
 		vkAdapter->SetSystemMemorySize(systemMemorySize);
 		vkAdapter->SetSharedMemorySize(sharedMemorySize);
 
-		auto& pAdapter = adapters.emplace_back(std::make_unique<RHIAdapter>());
-		pAdapter->Init(MoveTemp(vkAdapter));
+		auto& rhiAdapter = rhiAdapters.emplace_back(std::make_unique<RHIAdapter>());
+		rhiAdapter->Init(MoveTemp(vkAdapter));
 	}
 
-	return adapters;
+	return rhiAdapters;
 }
-
-//void VulkanInstance::InitDevices(const RHIInstanceCreateInfo& createInfo)
-//{
-//	uint32 physicalDeviceCount = 0;
-//	vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr);
-//
-//	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
-//	vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data());
-//
-//	VkPhysicalDevice selectPhysicalDevice = VK_NULL_HANDLE;
-//	int32 graphicsQueueIndex = -1;
-//	for (auto physicalDevice : physicalDevices)
-//	{
-//		uint32 queueFamilyPropertyCount = 0;
-//		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropertyCount, nullptr);
-//
-//		std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyPropertyCount);
-//		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropertyCount, queueFamilyProperties.data());
-//
-//		for (int32 propertyIndex = 0; propertyIndex < queueFamilyProperties.size(); ++propertyIndex)
-//		{
-//			const auto& queueFamilyProperty = queueFamilyProperties[propertyIndex];
-//			if (queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-//			{
-//				selectPhysicalDevice = physicalDevice;
-//				graphicsQueueIndex = propertyIndex;
-//				break;
-//			}
-//		}
-//	}
-//
-//	VkDeviceQueueCreateInfo deviceQueueCreateInfo {};
-//	deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-//	deviceQueueCreateInfo.queueCount = 1;
-//	deviceQueueCreateInfo.queueFamilyIndex = graphicsQueueIndex;
-//
-//	std::vector<const char*> deviceLayers =
-//	{
-//		//"VK_LAYER_LUNARG_standard_validation"
-//	};
-//
-//	VkPhysicalDeviceFeatures enabledFeatures = {};
-//	enabledFeatures.shaderClipDistance = true;
-//
-//	VkDeviceCreateInfo deviceCreateInfo = {};
-//	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-//	deviceCreateInfo.queueCreateInfoCount = 1;
-//	deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
-//	deviceCreateInfo.ppEnabledLayerNames = deviceLayers.data();
-//	deviceCreateInfo.enabledLayerCount = static_cast<uint32>(deviceLayers.size());
-//
-//	VkDevice device;
-//	vkCreateDevice(selectPhysicalDevice, &deviceCreateInfo, nullptr, &device);
-//	assert(device != VK_NULL_HANDLE);
-//	
-//	VkQueue queue;
-//	vkGetDeviceQueue(device, graphicsQueueIndex, 0, &queue);
-//}
 
 }
