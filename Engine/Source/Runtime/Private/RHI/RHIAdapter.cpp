@@ -40,7 +40,9 @@ void RHIAdapter::Dump()
 	printf("[RHIAdapter] Name = %s\n", GetName());
 	printf("\tType = %s\n", EnumName(GetType()).data());
 	printf("\tVendor = %s\n", EnumName(GetVendor()).data());
-	printf("\tMemory = %llu MB\n", GetVRAMSize() / (1024 * 1024));
+	printf("\tVideo Memory = %llu MB\n", GetVideoMemorySize() / (1024 * 1024));
+	printf("\tSystem Memory = %llu MB\n", GetSystemMemorySize() / (1024 * 1024));
+	printf("\tShared Memory = %llu MB\n", GetSharedMemorySize() / (1024 * 1024));
 }
 
 GPUAdapterType RHIAdapter::GetType() const
@@ -53,9 +55,19 @@ GPUVendor RHIAdapter::GetVendor() const
 	return m_pImpl->GetInfo().Vendor;
 }
 
-uint64 RHIAdapter::GetVRAMSize() const
+uint64 RHIAdapter::GetVideoMemorySize() const
 {
-	return m_pImpl->GetInfo().VRAMSize;
+	return m_pImpl->GetInfo().VideoMemorySize;
+}
+
+uint64 RHIAdapter::GetSystemMemorySize() const
+{
+	return m_pImpl->GetInfo().SystemMemorySize;
+}
+
+uint64 RHIAdapter::GetSharedMemorySize() const
+{
+	return m_pImpl->GetInfo().SharedMemorySize;
 }
 
 const char* RHIAdapter::GetName() const

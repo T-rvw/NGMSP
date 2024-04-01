@@ -44,9 +44,11 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 
 		auto d3d12Adapter = std::make_unique<D3D12Adapter>();
 		d3d12Adapter->SetName(adapterName);
-		d3d12Adapter->SetType(adapterDesc.Flags);
+		d3d12Adapter->SetType(adapterDesc);
 		d3d12Adapter->SetVendor(adapterDesc.VendorId);
-		d3d12Adapter->SetVRAMSize(adapterDesc.DedicatedVideoMemory);
+		d3d12Adapter->SetVideoMemorySize(adapterDesc.DedicatedVideoMemory);
+		d3d12Adapter->SetSystemMemorySize(adapterDesc.DedicatedSystemMemory);
+		d3d12Adapter->SetSharedMemorySize(adapterDesc.SharedSystemMemory);
 
 		auto& pAdapter = adapters.emplace_back(std::make_unique<RHIAdapter>());
 		pAdapter->Init(MoveTemp(d3d12Adapter));
@@ -55,8 +57,7 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters()
 	IDXGIAdapter1* adapter;
 	for (uint32 adapterIndex = 0; D3D12_SUCCEED(m_factory->EnumAdapters1(adapterIndex, &adapter)); ++adapterIndex)
 	{
-		const bool skipSoftwareAdapter = true;
-		CreateRHIAdapter(adapter, skipSoftwareAdapter);
+		CreateRHIAdapter(adapter);
 	}
 
 	m_factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter));

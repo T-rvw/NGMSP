@@ -29,7 +29,9 @@ public:
 
 	GPUAdapterType GetType() const;
 	GPUVendor GetVendor() const;
-	uint64 GetVRAMSize() const;
+	uint64 GetVideoMemorySize() const;
+	uint64 GetSystemMemorySize() const;
+	uint64 GetSharedMemorySize() const;
 	const char* GetName() const;
 
 private:

@@ -27,7 +27,6 @@ public:
 private:
 	LRESULT WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam);
 	void RegisterWindowClass(HINSTANCE instance, HICON icon);
-	void PumpMessages();
 	double GetDeltaTime() const;
 
 private:

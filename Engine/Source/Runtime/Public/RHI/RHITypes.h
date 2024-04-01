@@ -111,13 +111,17 @@ struct RHIAdapterInfo
     {
         Type = GPUAdapterType::Unknown;
         Vendor = GPUVendor::Unknown;
-        VRAMSize = 0;
+        VideoMemorySize = 0;
+        SystemMemorySize = 0;
+        SharedMemorySize = 0;
         Name = "Unknown";
     }
 
     GPUAdapterType Type;
     GPUVendor Vendor;
-    uint64 VRAMSize;
+    uint64 VideoMemorySize;
+    uint64 SystemMemorySize;
+    uint64 SharedMemorySize;
     std::string Name;
 };
 

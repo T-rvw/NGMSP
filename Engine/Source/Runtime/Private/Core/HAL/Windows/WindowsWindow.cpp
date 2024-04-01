@@ -14,15 +14,20 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 	uint32 windowStyle = WS_OVERLAPPEDWINDOW;
 
 	RECT windowRect = { 0, 0, windowWidth, windowHeight };
-	::AdjustWindowRect(&windowRect, windowStyle, FALSE);
+	::AdjustWindowRectEx(&windowRect, windowStyle, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+
+	int32 windowLeft = (::GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
+	int32 windowTop = (::GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
 
 	std::vector<TCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
 	m_handle = ::CreateWindowEx(NULL, WindowsWindow::WindowClassName, title.data(), windowStyle,
-		CW_USEDEFAULT, CW_USEDEFAULT,
+		windowLeft, windowTop,
 		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		(HWND)createInfo.ParentWindow, NULL, (HINSTANCE)pInstance, NULL);
 	assert(m_handle);
-	ShowWindow(m_handle, SW_SHOW);
+
+	::ShowWindow(m_handle, SW_SHOW);
+	::SetFocus(m_handle);
 }
 
 }
