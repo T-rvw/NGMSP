@@ -20,7 +20,6 @@ public:
 
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_device.Get(); }
-	virtual bool CheckFeatrue(RHIFeatrueFlags flags) const;
 
 private:
 	ComPtr<ID3D12Device> m_device;

@@ -97,17 +97,16 @@ enum class RHIBackend
     Vulkan
 };
 
-enum class RHIFeature : int64
+struct RHI_API RHIFeatures
 {
-    FP16,
-    Barycentrics,
-    MeshShaders,
-    RayTracing,
-    VariableRateShading,
-    WorkGraphs
+    bool Barycentrics : 1;
+    bool ShaderFloat16 : 1;
+    bool Headless : 1;
+    bool MeshShaders : 1;
+    bool RayTracing : 1;
+    bool VariableRateShading : 1;
+    bool WorkGraphs : 1;
 };
-
-using RHIFeatrueFlags = BitFlags<RHIFeature>;
 
 struct RHIAdapterInfo
 {
@@ -135,7 +134,7 @@ struct RHI_API RHIDeviceCreateInfo
     {
     }
 
-    RHIFeatrueFlags Features;
+    RHIFeatures Features;
 };
 
 struct RHI_API RHIInstanceCreateInfo
@@ -143,14 +142,11 @@ struct RHI_API RHIInstanceCreateInfo
     RHIInstanceCreateInfo()
     {
         Backend = RHIBackend::Unknown;
-        PreferVender = GPUVendor::Unknown;
         EnableDebugLayer = true;
         EnableGPUValidator = true;
     }
 
     RHIBackend Backend;
-    GPUVendor PreferVender;
-    RHIFeatrueFlags Features;
     bool EnableDebugLayer : 1;
     bool EnableGPUValidator : 1;
 };

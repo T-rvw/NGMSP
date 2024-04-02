@@ -42,7 +42,7 @@ std::unique_ptr<RHIDevice> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo&
 	auto d3d12Device = std::make_unique<D3D12Device>(pDevice);
 
 	auto device = std::make_unique<RHIDevice>();
-	device->Init(MoveTemp(d3d12Device));
+	device->Reset(MoveTemp(d3d12Device));
 	return device;
 }
 

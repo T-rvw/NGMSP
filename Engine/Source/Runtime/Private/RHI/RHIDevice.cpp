@@ -10,7 +10,7 @@ RHIDevice::RHIDevice() = default;
 
 RHIDevice::RHIDevice(std::unique_ptr<IRHIDevice> impl)
 {
-	Init(MoveTemp(impl));
+	Reset(MoveTemp(impl));
 }
 
 RHIDevice::RHIDevice(RHIDevice&& other) noexcept
@@ -33,10 +33,13 @@ RHIDevice::~RHIDevice()
 	}
 }
 
-void RHIDevice::Init(std::unique_ptr<IRHIDevice> impl)
+void RHIDevice::Init()
 {
-	assert(impl.get());
-	assert(!m_pImpl);
+	m_pImpl->Init();
+}
+
+void RHIDevice::Reset(std::unique_ptr<IRHIDevice> impl)
+{
 	m_pImpl = impl.release();
 }
 

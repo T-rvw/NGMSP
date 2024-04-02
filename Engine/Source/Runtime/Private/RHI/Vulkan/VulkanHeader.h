@@ -5,4 +5,4 @@
 
 #include <cassert>
 
-#define VK_VERITY(result) assert(VK_SUCCESS == result)
+#define VK_VERIFY(result) assert(VK_SUCCESS == result)

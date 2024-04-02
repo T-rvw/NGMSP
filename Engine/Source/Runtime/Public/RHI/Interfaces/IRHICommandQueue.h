@@ -7,6 +7,7 @@ class IRHICommandQueue
 {
 public:
 	virtual void Init() = 0;
+	virtual ~IRHICommandQueue() {}
 };
 
 }

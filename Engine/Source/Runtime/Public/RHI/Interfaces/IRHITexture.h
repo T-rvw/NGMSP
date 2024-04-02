@@ -7,6 +7,7 @@ class IRHITexture
 {
 public:
 	virtual void Init() = 0;
+	virtual ~IRHITexture() {}
 };
 
 }

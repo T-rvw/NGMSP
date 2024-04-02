@@ -21,6 +21,9 @@ class RHIAdapter;
 class RHI_API RHIInstance
 {
 public:
+	static RHIInstance Create(const RHIInstanceCreateInfo& createInfo);
+
+public:
 	RHIInstance();
 	RHIInstance(const RHIInstance&) = delete;
 	RHIInstance& operator=(const RHIInstance&) = delete;
@@ -28,7 +31,7 @@ public:
 	RHIInstance& operator=(RHIInstance&& other) noexcept;
 	~RHIInstance();
 
-	void Init(const RHIInstanceCreateInfo& createInfo);
+	void Init();
 	void Dump();
 
 	RHIBackend GetBackend() const;

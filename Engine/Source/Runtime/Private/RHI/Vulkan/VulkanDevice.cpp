@@ -12,20 +12,11 @@ VulkanDevice::VulkanDevice(VkDevice device) :
 
 VulkanDevice::~VulkanDevice()
 {
-	if (m_device != VK_NULL_HANDLE)
-	{
-		vkDestroyDevice(m_device, nullptr);
-		m_device = VK_NULL_HANDLE;
-	}
+	vkDestroyDevice(m_device, nullptr);
 }
 
 void VulkanDevice::Init()
 {
-}
-
-bool VulkanDevice::CheckFeatrue(RHIFeatrueFlags flags) const
-{
-	return false;
 }
 
 }

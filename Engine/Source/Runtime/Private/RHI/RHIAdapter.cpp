@@ -10,7 +10,7 @@ RHIAdapter::RHIAdapter() = default;
 
 RHIAdapter::RHIAdapter(std::unique_ptr<IRHIAdapter> impl)
 {
-	Init(MoveTemp(impl));
+	Reset(MoveTemp(impl));
 }
 
 RHIAdapter::RHIAdapter(RHIAdapter&& other) noexcept
@@ -33,10 +33,13 @@ RHIAdapter::~RHIAdapter()
 	}
 }
 
-void RHIAdapter::Init(std::unique_ptr<IRHIAdapter> impl)
+void RHIAdapter::Init()
 {
-	assert(impl.get());
-	assert(!m_pImpl);
+	m_pImpl->Init();
+}
+
+void RHIAdapter::Reset(std::unique_ptr<IRHIAdapter> impl)
+{
 	m_pImpl = impl.release();
 }
 

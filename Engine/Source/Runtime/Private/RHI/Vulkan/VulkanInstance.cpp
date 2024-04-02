@@ -10,11 +10,7 @@ namespace ow
 
 VulkanInstance::~VulkanInstance()
 {
-	if (m_instance != VK_NULL_HANDLE)
-	{
-		vkDestroyInstance(m_instance, nullptr);
-		m_instance = VK_NULL_HANDLE;
-	}
+	vkDestroyInstance(m_instance, nullptr);
 }
 
 RHIBackend VulkanInstance::GetBackend() const
@@ -57,17 +53,17 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	instanceCreateInfo.enabledLayerCount = static_cast<uint32_t> (instanceLayers.size());
 	instanceCreateInfo.pApplicationInfo = &applicationInfo;
 
-	VK_VERITY(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
+	VK_VERIFY(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
 	assert(m_instance != VK_NULL_HANDLE);
 }
 
 std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
 {
 	uint32 physicalDeviceCount = 0;
-	VK_VERITY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
+	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
 
 	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
-	VK_VERITY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
+	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
 
 	std::vector<std::unique_ptr<RHIAdapter>> rhiAdapters;
 	for (const auto physicalDevice : physicalDevices)
@@ -115,7 +111,7 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
 		vkAdapter->SetSharedMemorySize(sharedMemorySize);
 
 		auto& rhiAdapter = rhiAdapters.emplace_back(std::make_unique<RHIAdapter>());
-		rhiAdapter->Init(MoveTemp(vkAdapter));
+		rhiAdapter->Reset(MoveTemp(vkAdapter));
 	}
 
 	return rhiAdapters;

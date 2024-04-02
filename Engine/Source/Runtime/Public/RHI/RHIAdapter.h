@@ -26,7 +26,8 @@ public:
 	RHIAdapter& operator=(RHIAdapter&& other) noexcept;
 	~RHIAdapter();
 
-	void Init(std::unique_ptr<IRHIAdapter> impl);
+	void Init();
+	void Reset(std::unique_ptr<IRHIAdapter> impl);
 	void Dump();
 
 	GPUAdapterType GetType() const;

@@ -25,7 +25,8 @@ public:
 	RHIDevice& operator=(RHIDevice&& other) noexcept;
 	~RHIDevice();
 
-	void Init(std::unique_ptr<IRHIDevice> impl);
+	void Init();
+	void Reset(std::unique_ptr<IRHIDevice> impl);
 	void* GetHandle() const;
 
 private:

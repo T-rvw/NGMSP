@@ -12,7 +12,7 @@ namespace ow
 /// </summary>
 /// <typeparam name="T">Type of enum class</typeparam>
 template<typename T>
-class ENGINE_API BitFlags
+class BitFlags
 {
 private:
 	static_assert(std::is_enum<T>::value);
@@ -20,7 +20,7 @@ private:
 
 	static constexpr UT GetFlag(T v)
 	{
-		return 1 << static_cast<UT>(v);
+		return static_cast<UT>(1) << static_cast<UT>(v);
 	}
 
 public:
@@ -34,12 +34,23 @@ public:
 	{
 	}
 
-	constexpr BitFlags operator|(T v) const
+	constexpr BitFlags(UT v) :
+		m_flags(v)
 	{
-		return BitFlags(m_flags | GetFlag(v));
 	}
 
-	constexpr BitFlags& operator|=(T v)
+	constexpr BitFlags<T> operator|(T v) const
+	{
+		return BitFlags<T>(m_flags | GetFlag(v));
+	}
+
+	constexpr BitFlags<T>& operator|=(T v)
+	{
+		m_flags |= GetFlag(v);
+		return *this;
+	}
+
+	constexpr BitFlags<T>& Enable(T v)
 	{
 		m_flags |= GetFlag(v);
 		return *this;
@@ -50,14 +61,13 @@ public:
 		return m_flags & GetFlag(v);
 	}
 
+	constexpr bool IsEnabled(T v) const
+	{
+		return m_flags & GetFlag(v);
+	}
+
 private:
 	UT m_flags;
 };
-
-template<typename T>
-constexpr BitFlags<T> operator|(T lhs, T rhs)
-{
-	return BitFlags<T>(lhs) | rhs;
-}
 
 }

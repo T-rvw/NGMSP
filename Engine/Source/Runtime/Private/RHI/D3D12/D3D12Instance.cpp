@@ -56,7 +56,7 @@ std::vector<std::unique_ptr<RHIAdapter>> D3D12Instance::EnumAdapters() const
 		d3d12Adapter->SetSharedMemorySize(adapterDesc.SharedSystemMemory);
 
 		auto& pRHIAdapter = rhiAdapters.emplace_back(std::make_unique<RHIAdapter>());
-		pRHIAdapter->Init(MoveTemp(d3d12Adapter));
+		pRHIAdapter->Reset(MoveTemp(d3d12Adapter));
 	};
 
 	IDXGIAdapter1* adapter;

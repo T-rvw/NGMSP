@@ -9,6 +9,27 @@
 namespace ow
 {
 
+RHIInstance RHIInstance::Create(const RHIInstanceCreateInfo& createInfo)
+{
+	RHIInstance instance;
+	switch (createInfo.Backend)
+	{
+	case RHIBackend::D3D12:
+	{
+		instance.m_pImpl = new D3D12Instance();
+		break;
+	}
+	case RHIBackend::Vulkan:
+	{
+		instance.m_pImpl = new VulkanInstance();
+		break;
+	}
+	}
+
+	instance.m_pImpl->Init(createInfo);
+	return instance;
+}
+
 RHIInstance::RHIInstance() = default;
 
 RHIInstance::RHIInstance(RHIInstance&& other) noexcept
@@ -31,23 +52,8 @@ RHIInstance::~RHIInstance()
 	}
 }
 
-void RHIInstance::Init(const RHIInstanceCreateInfo& createInfo)
+void RHIInstance::Init()
 {
-	switch (createInfo.Backend)
-	{
-	case RHIBackend::D3D12:
-	{
-		m_pImpl = new D3D12Instance();
-		break;
-	}
-	case RHIBackend::Vulkan:
-	{
-		m_pImpl = new VulkanInstance();
-		break;
-	}
-	}
-
-	m_pImpl->Init(createInfo);
 }
 
 void RHIInstance::Dump()

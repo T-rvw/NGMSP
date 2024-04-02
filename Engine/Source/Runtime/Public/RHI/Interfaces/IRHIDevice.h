@@ -9,10 +9,9 @@ class IRHIDevice
 {
 public:
 	virtual void Init() = 0;
+	virtual ~IRHIDevice() {}
 
 	virtual void* GetHandle() const = 0;
-
-	virtual bool CheckFeatrue(RHIFeatrueFlags flags) const = 0;
 };
 
 }

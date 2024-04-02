@@ -12,9 +12,4 @@ void D3D12Device::Init()
 {
 }
 
-bool D3D12Device::CheckFeatrue(RHIFeatrueFlags flags) const
-{
-	return false;
-}
-
 }
