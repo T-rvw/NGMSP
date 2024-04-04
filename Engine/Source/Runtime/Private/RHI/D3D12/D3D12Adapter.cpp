@@ -33,16 +33,16 @@ void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
 	}
 }
 
-std::unique_ptr<RHIDevice> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
+RHIDevice D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
 {
 	ID3D12Device* pDevice;
-	D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice));
+	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
 	assert(pDevice);
 
 	auto d3d12Device = std::make_unique<D3D12Device>(pDevice);
 
-	auto device = std::make_unique<RHIDevice>();
-	device->Reset(MoveTemp(d3d12Device));
+	RHIDevice device;
+	device.Reset(MoveTemp(d3d12Device));
 	return device;
 }
 

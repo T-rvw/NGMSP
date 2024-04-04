@@ -195,7 +195,7 @@ bool VulkanAdapter::EnableExtensionsSafely(std::vector<const char*>& extensions,
 	return true;
 }
 
-std::unique_ptr<RHIDevice> VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
+RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
 {
 	// Enable extra extensions/features/properties by requirement.
 	std::vector<const char*> enabledExtensions;
@@ -206,10 +206,7 @@ std::unique_ptr<RHIDevice> VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo
 		const RHIFeatures& requiredFeatrues = createInfo.Features;
 		if (!requiredFeatrues.Headless)
 		{
-			if (!EnableExtensionSafely(enabledExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME))
-			{
-				return nullptr;
-			}
+			assert(EnableExtensionSafely(enabledExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
 		}
 
 		VulkanAdapterRayTracing rayTracing;
@@ -267,12 +264,13 @@ std::unique_ptr<RHIDevice> VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo
 	VkDevice vkDevice;
 	VK_VERIFY(vkCreateDevice(m_physcialDevice, &deviceCreateInfo, nullptr, &vkDevice));
 	assert(vkDevice != VK_NULL_HANDLE);
+	volkLoadDevice(vkDevice);
 
 	auto vulkanDevice = std::make_unique<VulkanDevice>(vkDevice);
 	vulkanDevice->Init();
 
-	auto device = std::make_unique<RHIDevice>();
-	device->Reset(MoveTemp(vulkanDevice));
+	RHIDevice device;
+	device.Reset(MoveTemp(vulkanDevice));
 	return device;
 }
 

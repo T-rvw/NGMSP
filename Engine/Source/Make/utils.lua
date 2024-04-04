@@ -62,6 +62,8 @@ Project.LinkVulkan = function()
 	end
 
 	files {
+		path.join(ThirdPartySourcePath, "volk/volk.h"),
+		path.join(ThirdPartySourcePath, "volk/volk.c"),
 		path.join(ThirdPartySourcePath, "VulkanMemoryAllocator/vk_mem_alloc.h")
 	}
 

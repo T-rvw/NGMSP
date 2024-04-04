@@ -114,6 +114,8 @@ struct RHIAdapterInfo
     {
         Type = GPUAdapterType::Unknown;
         Vendor = GPUVendor::Unknown;
+        VendorID = 0;
+        DeviceID = 0;
         VideoMemorySize = 0;
         SystemMemorySize = 0;
         SharedMemorySize = 0;
@@ -122,6 +124,8 @@ struct RHIAdapterInfo
 
     GPUAdapterType Type;
     GPUVendor Vendor;
+    uint32 VendorID;
+    uint32 DeviceID;
     uint64 VideoMemorySize;
     uint64 SystemMemorySize;
     uint64 SharedMemorySize;
@@ -137,18 +141,31 @@ struct RHI_API RHIDeviceCreateInfo
     RHIFeatures Features;
 };
 
+enum class DebugMode
+{
+    Normal,
+    Disabled
+};
+
+enum class ValidationMode
+{
+    CPUOnly,
+    GPU,
+    Disabled
+};
+
 struct RHI_API RHIInstanceCreateInfo
 {
     RHIInstanceCreateInfo()
     {
         Backend = RHIBackend::Unknown;
-        EnableDebugLayer = true;
-        EnableGPUValidator = true;
+        Debug = DebugMode::Disabled;
+        Validation = ValidationMode::Disabled;
     }
 
     RHIBackend Backend;
-    bool EnableDebugLayer : 1;
-    bool EnableGPUValidator : 1;
+    DebugMode Debug;
+    ValidationMode Validation;
 };
 
 }

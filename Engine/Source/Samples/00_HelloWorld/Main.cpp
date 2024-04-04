@@ -7,6 +7,8 @@ int main()
 	// Graphics
 	RHIInstanceCreateInfo instanceCI;
 	instanceCI.Backend = RHIBackend::Vulkan;
+	instanceCI.Debug = DebugMode::Normal;
+	instanceCI.Validation = ValidationMode::GPU;
 
 	auto rhiInstance = RHIInstance::Create(instanceCI);
 	rhiInstance.Init();
@@ -15,7 +17,7 @@ int main()
 	auto rhiAdapters = rhiInstance.EnumAdapters();
 	for (const auto& rhiAdapter : rhiAdapters)
 	{
-		rhiAdapter->Dump();
+		rhiAdapter.Dump();
 	}
 
 	RHIAdapter* pBestAdapter = FindBestRHIAdapter(rhiAdapters);
@@ -24,9 +26,12 @@ int main()
 	pBestAdapter->Init();
 
 	RHIDeviceCreateInfo deviceCI;
+	deviceCI.Features.Headless = false;
 	deviceCI.Features.RayTracing = true;
 	deviceCI.Features.MeshShaders = true;
 	auto rhiDevice = pBestAdapter->CreateDevice(deviceCI);
+	rhiDevice.Init();
+	rhiDevice.Dump();
 
 	// Application
 	PlatformApplication app;

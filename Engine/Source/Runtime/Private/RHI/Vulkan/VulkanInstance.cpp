@@ -5,6 +5,34 @@
 #include <RHI/RHIAdapter.h>
 #include <RHI/RHITypes.h>
 
+#include <optional>
+
+namespace
+{
+
+VKAPI_ATTR VkBool32 VKAPI_CALL DebugUtilsMessengerCallback(
+	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+	VkDebugUtilsMessageTypeFlagsEXT messageType,
+	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+	void* pUserData)
+{
+	UNUSED(messageType);
+	UNUSED(pUserData);
+
+	if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+	{
+		printf("[Vulkan Warning] : %s \n", pCallbackData->pMessage);
+	}
+	else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+	{
+		printf("[Vulkan Error] : %s \n", pCallbackData->pMessage);
+	}
+
+	return VK_FALSE;
+}
+
+}
+
 namespace ow
 {
 
@@ -22,28 +50,116 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 {
 	assert(VK_NULL_HANDLE == m_instance);
 
-	std::vector<const char*> instanceExtensions =
-	{
-		"VK_KHR_surface", "VK_KHR_win32_surface",
-	};
-	if (createInfo.EnableDebugLayer)
-	{
-		instanceExtensions.push_back("VK_EXT_debug_report");
-	}
+	// Load vulkan api entry points from module dynamically.
+	VK_VERIFY(volkInitialize());
+
+	// Enable instance layers.
+	uint32 instanceLayerCount;
+	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr));
+	std::vector<VkLayerProperties> availableInstanceLayers(instanceLayerCount);
+	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, availableInstanceLayers.data()));
 
 	std::vector<const char*> instanceLayers;
-	if (createInfo.EnableGPUValidator)
+	for (const auto& availableInstanceLayer : availableInstanceLayers)
 	{
-		//instanceLayers.push_back("VK_LAYER_LUNARG_standard_validation");
+		if (createInfo.Validation != ValidationMode::Disabled)
+		{
+			if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_KHRONOS_validation"))
+			{
+				instanceLayers.push_back("VK_LAYER_KHRONOS_validation");
+				break;
+			}
+			else if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_LUNARG_standard_validation"))
+			{
+				instanceLayers.push_back("VK_LAYER_LUNARG_standard_validation");
+				break;
+			}
+			else if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_LUNARG_core_validation"))
+			{
+				instanceLayers.push_back("VK_LAYER_LUNARG_core_validation");
+				break;
+			}
+		}
 	}
 
-	VkApplicationInfo applicationInfo = {};
+	// Debug utils.
+	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
+	
+	// Enable instance extensions.
+	uint32_t extensionCount;
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
+	std::vector<VkExtensionProperties> availableInstanceExtensions(extensionCount);
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableInstanceExtensions.data()));
+
+	std::vector<const char*> instanceExtensions;
+	for (const auto& availableExtension : availableInstanceExtensions)
+	{
+		if (createInfo.Debug != DebugMode::Disabled)
+		{
+			if (0 == strcmp(availableExtension.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
+			{
+				instanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+				VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo {};
+				debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+				debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
+				debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+				debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+				debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
+				debugUtilsCreateInfo.pfnUserCallback = DebugUtilsMessengerCallback;
+				optDebugUtilsCreateInfo = debugUtilsCreateInfo;
+			}
+			else if (0 == strcmp(availableExtension.extensionName, VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
+			{
+				instanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+			}
+		}
+
+		if (0 == strcmp(availableExtension.extensionName, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
+		{
+			instanceExtensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+		}
+		else if (0 == strcmp(availableExtension.extensionName, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME))
+		{
+			instanceExtensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+		}
+		else if (0 == strcmp(availableExtension.extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
+		{
+			instanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+		}
+#ifdef PLATFORM_WINDOWS
+		else if (0 == strcmp(availableExtension.extensionName, VK_KHR_WIN32_SURFACE_EXTENSION_NAME))
+		{
+			instanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+		}
+#endif
+	}
+
+	// Dump
+	{
+		printf("[VulkanInstance]\n");
+		printf("\t[Layers]\n");
+		for (const auto& instanceLayer : instanceLayers)
+		{
+			printf("\t\t%s\n", instanceLayer);
+		}
+
+		printf("\t[Extensions]\n");
+		for (const auto& instanceExtension : instanceExtensions)
+		{
+			printf("\t\t%s\n", instanceExtension);
+		}
+		printf("\n");
+	}
+
+	// Create instance.
+	VkApplicationInfo applicationInfo{};
 	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	applicationInfo.apiVersion = VK_API_VERSION_1_0;
+	applicationInfo.apiVersion = VK_API_VERSION_1_3;
 	applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	applicationInfo.pApplicationName = "Hamster Graphics";
 	applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	applicationInfo.pApplicationName = "Vulkan Sample application";
-	applicationInfo.pEngineName = "Vulkan Sample Engine";
+	applicationInfo.pEngineName = "Hamster Engine";
 
 	VkInstanceCreateInfo instanceCreateInfo {};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -52,12 +168,24 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	instanceCreateInfo.ppEnabledLayerNames = instanceLayers.data();
 	instanceCreateInfo.enabledLayerCount = static_cast<uint32_t> (instanceLayers.size());
 	instanceCreateInfo.pApplicationInfo = &applicationInfo;
+	if (optDebugUtilsCreateInfo.has_value())
+	{
+		instanceCreateInfo.pNext = &optDebugUtilsCreateInfo.value();
+	}
 
 	VK_VERIFY(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
 	assert(m_instance != VK_NULL_HANDLE);
+	volkLoadInstanceOnly(m_instance);
+
+	if (optDebugUtilsCreateInfo.has_value())
+	{
+		VkDebugUtilsMessengerEXT debugUtilsMessenger = VK_NULL_HANDLE;
+		vkCreateDebugUtilsMessengerEXT(m_instance, &optDebugUtilsCreateInfo.value(), nullptr, &debugUtilsMessenger);
+		assert(debugUtilsMessenger != VK_NULL_HANDLE);
+	}
 }
 
-std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
+std::vector<RHIAdapter> VulkanInstance::EnumAdapters() const
 {
 	uint32 physicalDeviceCount = 0;
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
@@ -65,7 +193,7 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
 	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
 
-	std::vector<std::unique_ptr<RHIAdapter>> rhiAdapters;
+	std::vector<RHIAdapter> rhiAdapters;
 	for (const auto physicalDevice : physicalDevices)
 	{
 		VkPhysicalDeviceProperties properties {};
@@ -78,6 +206,7 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
 		vkAdapter->SetName(properties.deviceName);
 		vkAdapter->SetType(properties.deviceType);
 		vkAdapter->SetVendor(properties.vendorID);
+		vkAdapter->SetDeviceID(properties.deviceID);
 
 		const bool isIntegratedGPU = GPUAdapterType::Integrated == vkAdapter->GetType();
 		uint64 videoMemorySize = 0;
@@ -110,8 +239,8 @@ std::vector<std::unique_ptr<RHIAdapter>> VulkanInstance::EnumAdapters() const
 		vkAdapter->SetSystemMemorySize(systemMemorySize);
 		vkAdapter->SetSharedMemorySize(sharedMemorySize);
 
-		auto& rhiAdapter = rhiAdapters.emplace_back(std::make_unique<RHIAdapter>());
-		rhiAdapter->Reset(MoveTemp(vkAdapter));
+		auto& rhiAdapter = rhiAdapters.emplace_back();
+		rhiAdapter.Reset(MoveTemp(vkAdapter));
 	}
 
 	return rhiAdapters;

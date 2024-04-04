@@ -25,7 +25,7 @@ public:
 
 	void SetType(const DXGI_ADAPTER_DESC1& desc);
 
-	std::unique_ptr<RHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
+	RHIDevice CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
 
 private:
 	ComPtr<IDXGIAdapter1> m_adapter;

@@ -26,6 +26,7 @@ public:
 	~RHIDevice();
 
 	void Init();
+	void Dump() const;
 	void Reset(std::unique_ptr<IRHIDevice> impl);
 	void* GetHandle() const;
 

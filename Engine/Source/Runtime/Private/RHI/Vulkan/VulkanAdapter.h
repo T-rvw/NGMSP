@@ -74,7 +74,7 @@ public:
 	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
 	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
 
-	std::unique_ptr<RHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
+	RHIDevice CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
 
 private:
 	VkPhysicalDevice m_physcialDevice = VK_NULL_HANDLE;

@@ -8,6 +8,6 @@ namespace ow
 
 class RHIAdapter;
 
-extern ENGINE_API RHIAdapter* FindBestRHIAdapter(const std::vector<std::unique_ptr<RHIAdapter>>& adapters);
+extern ENGINE_API RHIAdapter* FindBestRHIAdapter(std::vector<RHIAdapter>& adapters);
 
 }

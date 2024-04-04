@@ -25,7 +25,7 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void* GetHandle() const override { return m_factory.Get(); }
 
-	virtual std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() const override;
+	virtual std::vector<RHIAdapter> EnumAdapters() const override;
 
 private:
 	ComPtr<IDXGIFactory4> m_factory;

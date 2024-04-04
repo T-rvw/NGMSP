@@ -28,16 +28,18 @@ public:
 
 	void Init();
 	void Reset(std::unique_ptr<IRHIAdapter> impl);
-	void Dump();
+	void Dump() const;
 
 	GPUAdapterType GetType() const;
 	GPUVendor GetVendor() const;
+	uint32 GetVendorID() const;
+	uint32 GetDeviceID() const;
 	uint64 GetVideoMemorySize() const;
 	uint64 GetSystemMemorySize() const;
 	uint64 GetSharedMemorySize() const;
 	const char* GetName() const;
 
-	std::unique_ptr<RHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
+	RHIDevice CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
 
 private:
 	IRHIAdapter* m_pImpl = nullptr;

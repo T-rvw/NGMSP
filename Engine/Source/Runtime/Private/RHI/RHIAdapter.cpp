@@ -43,11 +43,13 @@ void RHIAdapter::Reset(std::unique_ptr<IRHIAdapter> impl)
 	m_pImpl = impl.release();
 }
 
-void RHIAdapter::Dump()
+void RHIAdapter::Dump() const
 {
 	printf("[RHIAdapter] Name = %s\n", GetName());
 	printf("\tType = %s\n", EnumName(GetType()).data());
 	printf("\tVendor = %s\n", EnumName(GetVendor()).data());
+	printf("\tVendorID = %#x\n", GetVendorID());
+	printf("\tDeviceID = %#x\n", GetDeviceID());
 	printf("\tVideo Memory = %llu MB\n", GetVideoMemorySize() >> 20);
 	printf("\tSystem Memory = %llu MB\n", GetSystemMemorySize() >> 20);
 	printf("\tShared Memory = %llu MB\n", GetSharedMemorySize() >> 20);
@@ -61,6 +63,16 @@ GPUAdapterType RHIAdapter::GetType() const
 GPUVendor RHIAdapter::GetVendor() const
 {
 	return m_pImpl->GetInfo().Vendor;
+}
+
+uint32 RHIAdapter::GetVendorID() const
+{
+	return m_pImpl->GetInfo().VendorID;
+}
+
+uint32 RHIAdapter::GetDeviceID() const
+{
+	return m_pImpl->GetInfo().DeviceID;
 }
 
 uint64 RHIAdapter::GetVideoMemorySize() const
@@ -83,7 +95,7 @@ const char* RHIAdapter::GetName() const
 	return m_pImpl->GetInfo().Name.c_str();
 }
 
-std::unique_ptr<RHIDevice> RHIAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
+RHIDevice RHIAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
 {
 	return m_pImpl->CreateDevice(createInfo);
 }

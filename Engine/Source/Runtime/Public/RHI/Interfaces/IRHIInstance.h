@@ -20,7 +20,7 @@ public:
 	virtual RHIBackend GetBackend() const = 0;
 	virtual void* GetHandle() const = 0;
 
-	virtual std::vector<std::unique_ptr<RHIAdapter>> EnumAdapters() const = 0;
+	virtual std::vector<RHIAdapter> EnumAdapters() const = 0;
 };
 
 }
