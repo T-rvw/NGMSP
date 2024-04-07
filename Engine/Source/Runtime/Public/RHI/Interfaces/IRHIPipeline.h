@@ -6,8 +6,9 @@ namespace ow
 class IRHIPipeline
 {
 public:
-	virtual void Init() = 0;
 	virtual ~IRHIPipeline() {}
+
+	virtual void Init() = 0;
 };
 
 }

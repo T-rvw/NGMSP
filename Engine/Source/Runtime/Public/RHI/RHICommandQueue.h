@@ -9,7 +9,7 @@ namespace ow
 class IRHICommandQueue;
 
 /// <summary>
-/// RHICommandQueue allows to enqueue commands for GPU to execute.
+/// RHICommandQueue enqueues commands to execute on GPU.
 /// Vulkan : VkQueue
 /// D3D12 : ID3D12CommandQueue
 /// Metal : MTLCommandQueue
@@ -25,6 +25,12 @@ public:
 	~RHICommandQueue();
 
 	void Init();
+	void Reset(std::unique_ptr<IRHICommandQueue> impl);
+	void Dump() const;
+	void* GetHandle() const;
+
+	void SetType(RHICommandQueueType commandQueueType);
+	RHICommandQueueType GetType() const;
 
 private:
 	IRHICommandQueue* m_pImpl = nullptr;

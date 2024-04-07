@@ -2,6 +2,7 @@
 
 #include <Core/HAL/Platform.h>
 #include <RHI/Interfaces/IRHIDevice.h>
+#include <RHI/RHICommandQueue.h>
 
 namespace ow
 {
@@ -38,19 +39,24 @@ void RHIDevice::Init()
 	m_pImpl->Init();
 }
 
-void RHIDevice::Dump() const
-{
-	printf("[RHIDevice] Handle = %llu\n", reinterpret_cast<uint64>(GetHandle()));
-}
-
 void RHIDevice::Reset(std::unique_ptr<IRHIDevice> impl)
 {
 	m_pImpl = impl.release();
 }
 
+void RHIDevice::Dump() const
+{
+	printf("[RHIDevice] Handle = %llu\n", reinterpret_cast<uint64>(GetHandle()));
+}
+
 void* RHIDevice::GetHandle() const
 {
 	return m_pImpl->GetHandle();
+}
+
+RHICommandQueue RHIDevice::CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const
+{
+	return m_pImpl->CreateCommandQueue(commandQueueCI);
 }
 
 }

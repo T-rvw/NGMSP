@@ -72,9 +72,9 @@ void* RHIInstance::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-std::vector<RHIAdapter> RHIInstance::EnumAdapters() const
+std::vector<RHIAdapter> RHIInstance::EnumerateAdapters() const
 {
-	return m_pImpl->EnumAdapters();
+	return m_pImpl->EnumerateAdapters();
 }
 
 }

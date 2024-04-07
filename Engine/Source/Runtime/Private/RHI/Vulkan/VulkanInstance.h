@@ -25,7 +25,7 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void* GetHandle() const override { return m_instance; }
 
-	virtual std::vector<RHIAdapter> EnumAdapters() const override;
+	virtual std::vector<RHIAdapter> EnumerateAdapters() const override;
 
 private:
 	VkInstance m_instance = VK_NULL_HANDLE;

@@ -37,7 +37,7 @@ public:
 	RHIBackend GetBackend() const;
 	void* GetHandle() const;
 
-	std::vector<RHIAdapter> EnumAdapters() const;
+	std::vector<RHIAdapter> EnumerateAdapters() const;
 
 private:
 	IRHIInstance* m_pImpl = nullptr;

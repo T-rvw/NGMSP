@@ -5,6 +5,11 @@
 namespace ow
 {
 
+D3D12CommandQueue::D3D12CommandQueue(ID3D12CommandQueue* pCommandQueue) :
+	m_commandQueue(pCommandQueue)
+{
+}
+
 void D3D12CommandQueue::Init()
 {
 }

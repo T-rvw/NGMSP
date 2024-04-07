@@ -6,8 +6,9 @@ namespace ow
 class IRHITexture
 {
 public:
-	virtual void Init() = 0;
 	virtual ~IRHITexture() {}
+
+	virtual void Init() = 0;
 };
 
 }

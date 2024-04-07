@@ -1,29 +1,15 @@
 #pragma once
 
 #include <Core/HAL/Platform.h>
+#include <RHI/RHIEnums.h>
 
 namespace ow
 {
 
-enum class GPUVendor
-{
-    Unknown,
-    AMD,
-    ARM,
-    ImaginationTechnologies,
-    Intel,
-    NVIDIA,
-    Qualcomm
-};
-
 template<GPUVendor T>
 constexpr uint32 GetGPUVendorID()
 {
-    if constexpr (GPUVendor::Unknown == T)
-    {
-        return -1;
-    }
-    else if constexpr (GPUVendor::AMD == T)
+    if constexpr (GPUVendor::AMD == T)
     {
         return 0x1002;
     }
@@ -77,25 +63,9 @@ static GPUVendor GetGPUVendor(uint32 vendorID)
     }
     else
     {
-        return GPUVendor::Unknown;
+        return GPUVendor::AMD;
     }
 }
-
-enum class GPUAdapterType
-{
-    Unknown,
-    Discrete,
-    Integrated,
-    Virtual,
-    CPU
-};
-
-enum class RHIBackend
-{
-    Unknown,
-    D3D12,
-    Vulkan
-};
 
 struct RHI_API RHIFeatures
 {
@@ -110,62 +80,42 @@ struct RHI_API RHIFeatures
 
 struct RHIAdapterInfo
 {
-    RHIAdapterInfo()
-    {
-        Type = GPUAdapterType::Unknown;
-        Vendor = GPUVendor::Unknown;
-        VendorID = 0;
-        DeviceID = 0;
-        VideoMemorySize = 0;
-        SystemMemorySize = 0;
-        SharedMemorySize = 0;
-        Name = "Unknown";
-    }
-
-    GPUAdapterType Type;
-    GPUVendor Vendor;
-    uint32 VendorID;
-    uint32 DeviceID;
-    uint64 VideoMemorySize;
-    uint64 SystemMemorySize;
-    uint64 SharedMemorySize;
-    std::string Name;
+    GPUAdapterType Type = GPUAdapterType::CPU;
+    GPUVendor Vendor = GPUVendor::AMD;
+    uint32 VendorID = 0;
+    uint32 DeviceID = 0;
+    uint64 VideoMemorySize = 0;
+    uint64 SystemMemorySize = 0;
+    uint64 SharedMemorySize = 0;
+    std::string Name = "Unknown";
 };
 
 struct RHI_API RHIDeviceCreateInfo
 {
-    RHIDeviceCreateInfo()
-    {
-    }
-
     RHIFeatures Features;
-};
-
-enum class DebugMode
-{
-    Normal,
-    Disabled
-};
-
-enum class ValidationMode
-{
-    CPUOnly,
-    GPU,
-    Disabled
 };
 
 struct RHI_API RHIInstanceCreateInfo
 {
-    RHIInstanceCreateInfo()
-    {
-        Backend = RHIBackend::Unknown;
-        Debug = DebugMode::Disabled;
-        Validation = ValidationMode::Disabled;
-    }
+    RHIBackend Backend = RHIBackend::Vulkan;
+    RHIDebugMode Debug = RHIDebugMode::Disabled;
+    RHIValidationMode Validation = RHIValidationMode::Disabled;
+};
 
-    RHIBackend Backend;
-    DebugMode Debug;
-    ValidationMode Validation;
+struct RHI_API RHICommandQueueCreateInfo
+{
+    RHICommandQueueType Type = RHICommandQueueType::Graphics;
+    uint32 ID = 0;
+    int32 Priority = 0;
+    bool IsDedicated = false;
+
+    void Dump() const
+    {
+        printf("[RHICommandQueueCreateInfo] ID = %u\n", ID);
+        printf("\tType = %s\n", EnumName(Type).data());
+        printf("\tIsDedicated = %d\n", IsDedicated);
+        printf("\tPriority = %u\n", Priority);
+    }
 };
 
 }

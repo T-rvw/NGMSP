@@ -32,4 +32,29 @@ void RHICommandQueue::Init()
 {
 }
 
+void RHICommandQueue::Reset(std::unique_ptr<IRHICommandQueue> impl)
+{
+	m_pImpl = impl.release();
+}
+
+void RHICommandQueue::Dump() const
+{
+	printf("[RHICommandQueue] Handle = %llu\n", reinterpret_cast<uint64>(GetHandle()));
+}
+
+void* RHICommandQueue::GetHandle() const
+{
+	return m_pImpl->GetHandle();
+}
+
+void RHICommandQueue::SetType(RHICommandQueueType commandQueueType)
+{
+	m_pImpl->SetType(commandQueueType);
+}
+
+RHICommandQueueType RHICommandQueue::GetType() const
+{
+	return m_pImpl->GetType();
+}
+
 }

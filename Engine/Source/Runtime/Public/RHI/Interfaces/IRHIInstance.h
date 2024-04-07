@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 
 namespace ow
@@ -14,13 +13,12 @@ class RHIAdapter;
 class IRHIInstance
 {
 public:
-	virtual void Init(const RHIInstanceCreateInfo& createInfo) = 0;
 	virtual ~IRHIInstance() {}
-
+	
+	virtual void Init(const RHIInstanceCreateInfo& createInfo) = 0;
 	virtual RHIBackend GetBackend() const = 0;
 	virtual void* GetHandle() const = 0;
-
-	virtual std::vector<RHIAdapter> EnumAdapters() const = 0;
+	virtual std::vector<RHIAdapter> EnumerateAdapters() const = 0;
 };
 
 }

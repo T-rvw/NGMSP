@@ -33,7 +33,38 @@ void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
 	}
 }
 
-RHIDevice D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
+std::vector<RHICommandQueueCreateInfo> D3D12Adapter::QueryCommandQueueCreateInfos()
+{
+	std::vector<RHICommandQueueCreateInfo> createInfos;
+
+	{
+		auto& commandQueue = createInfos.emplace_back();
+		commandQueue.Type = RHICommandQueueType::Graphics;
+		commandQueue.ID = 0;
+		commandQueue.IsDedicated = false;
+		commandQueue.Priority = 100;
+	}
+
+	{
+		auto& commandQueue = createInfos.emplace_back();
+		commandQueue.Type = RHICommandQueueType::Compute;
+		commandQueue.ID = 0;
+		commandQueue.IsDedicated = false;
+		commandQueue.Priority = 100;
+	}
+
+	{
+		auto& commandQueue = createInfos.emplace_back();
+		commandQueue.Type = RHICommandQueueType::Copy;
+		commandQueue.ID = 0;
+		commandQueue.IsDedicated = false;
+		commandQueue.Priority = 100;
+	}
+
+	return createInfos;
+}
+
+RHIDevice D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
 {
 	ID3D12Device* pDevice;
 	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));

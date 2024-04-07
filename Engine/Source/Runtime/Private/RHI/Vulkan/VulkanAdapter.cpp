@@ -114,6 +114,133 @@ void VulkanAdapter::Init()
 	vkGetPhysicalDeviceQueueFamilyProperties2(m_physcialDevice, &queueFamilyCount, m_adapterQueueFamilies.data());
 }
 
+std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInfos()
+{
+	std::vector<RHICommandQueueCreateInfo> rhiQueueCreateInfos;
+	uint32 queueFamilyCount = static_cast<uint32>(m_adapterQueueFamilies.size());
+	for (uint32 queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; ++queueFamilyIndex)
+	{
+		const auto& queueFamily = m_adapterQueueFamilies[queueFamilyIndex];
+		const auto& queueFamilyProperties = queueFamily.queueFamilyProperties;
+		if (0 == queueFamilyProperties.queueCount)
+		{
+			continue;
+		}
+
+		uint32 rhiQueueStartIndex = static_cast<uint32>(rhiQueueCreateInfos.size());
+		uint32 rhiQueueEndIndex = rhiQueueStartIndex;
+		bool supportGraphics = queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT;
+		bool supportCompute = queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT;
+		bool supportTransfer = queueFamilyProperties.queueFlags & VK_QUEUE_TRANSFER_BIT;
+		if (supportGraphics)
+		{
+			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
+			commandQueue.Type = RHICommandQueueType::Graphics;
+			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority = 100;
+			commandQueue.Priority += supportCompute ? 10 : 0;
+			commandQueue.Priority += supportTransfer ? 10 : 0;
+			++rhiQueueEndIndex;
+		}
+
+		if (supportCompute)
+		{
+			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
+			commandQueue.Type = RHICommandQueueType::Compute;
+			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority = 100;
+			commandQueue.Priority += supportGraphics ? -10 : 10;
+			commandQueue.Priority += supportTransfer ? -10 : 10;
+			++rhiQueueEndIndex;
+		}
+
+		if (supportTransfer)
+		{
+			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
+			commandQueue.Type = RHICommandQueueType::Copy;
+			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority = 100;
+			commandQueue.Priority += supportCompute ? -10 : 10;
+			commandQueue.Priority += supportTransfer ? -10 : 10;
+			++rhiQueueEndIndex;
+		}
+
+		uint32 rhiQueueCount = rhiQueueEndIndex - rhiQueueStartIndex;
+		for (uint32 queueIndex = rhiQueueStartIndex; queueIndex < rhiQueueEndIndex; ++queueIndex)
+		{
+			rhiQueueCreateInfos[queueIndex].IsDedicated = rhiQueueCount == 1;
+		}
+	}
+
+	return rhiQueueCreateInfos;
+}
+
+RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
+{
+	// Enable extra extensions/features/properties by requirement.
+	std::vector<const char*> enabledExtensions;
+	{
+		void** pFeaturesNextChain = &m_adapterFeatures->pNextChain;
+		void** pPropertiesNextChain = &m_adapterProperties->pNextChain;
+
+		const RHIFeatures& requiredFeatrues = deviceCI.Features;
+		if (!requiredFeatrues.Headless)
+		{
+			assert(EnableExtensionSafely(enabledExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
+		}
+
+		VulkanAdapterRayTracing rayTracing;
+		if (requiredFeatrues.RayTracing &&
+			EnableExtensionsSafely(enabledExtensions, rayTracing.ExtensionNames))
+		{
+			rayTracing.AppendFeatures(pFeaturesNextChain);
+			rayTracing.AppendProperties(pPropertiesNextChain);
+		}
+
+		VulkanAdapterMeshShader meshShader;
+		if (requiredFeatrues.MeshShaders &&
+			EnableExtensionsSafely(enabledExtensions, meshShader.ExtensionNames))
+		{
+			meshShader.AppendFeatures(pFeaturesNextChain);
+			meshShader.AppendProperties(pPropertiesNextChain);
+		}
+
+		vkGetPhysicalDeviceFeatures2(m_physcialDevice, &m_adapterFeatures->Features);
+		vkGetPhysicalDeviceProperties2(m_physcialDevice, &m_adapterProperties->Properties);
+	}
+
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+	for (const auto& commandQueueCI : commandQueueCIs)
+	{
+		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = commandQueueCI.ID;
+		queueCreateInfo.queueCount = 1;
+		queueCreateInfo.pQueuePriorities = reinterpret_cast<const float*>(&commandQueueCI.Priority);
+	}
+
+	VkDeviceCreateInfo deviceCreateInfo {};
+	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	deviceCreateInfo.queueCreateInfoCount = static_cast<uint32>(queueCreateInfos.size());
+	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+	deviceCreateInfo.pEnabledFeatures = nullptr;
+	deviceCreateInfo.pNext = &m_adapterFeatures->Features;
+	deviceCreateInfo.enabledExtensionCount = static_cast<uint32>(enabledExtensions.size());
+	deviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
+
+	VkDevice vkDevice;
+	VK_VERIFY(vkCreateDevice(m_physcialDevice, &deviceCreateInfo, nullptr, &vkDevice));
+	assert(vkDevice != VK_NULL_HANDLE);
+	volkLoadDevice(vkDevice);
+
+	auto vulkanDevice = std::make_unique<VulkanDevice>(vkDevice);
+	vulkanDevice->Init();
+
+	RHIDevice device;
+	device.Reset(MoveTemp(vulkanDevice));
+	return device;
+}
+
 GPUAdapterType VulkanAdapter::GetType() const
 {
 	return GetInfo().Type;
@@ -147,7 +274,7 @@ void VulkanAdapter::SetType(VkPhysicalDeviceType deviceType)
 	}
 	default:
 	{
-		info.Type = GPUAdapterType::Unknown;
+		info.Type = GPUAdapterType::CPU;
 		break;
 	}
 	}
@@ -193,85 +320,6 @@ bool VulkanAdapter::EnableExtensionsSafely(std::vector<const char*>& extensions,
 	}
 
 	return true;
-}
-
-RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
-{
-	// Enable extra extensions/features/properties by requirement.
-	std::vector<const char*> enabledExtensions;
-	{
-		void** pFeaturesNextChain = &m_adapterFeatures->pNextChain;
-		void** pPropertiesNextChain = &m_adapterProperties->pNextChain;
-
-		const RHIFeatures& requiredFeatrues = createInfo.Features;
-		if (!requiredFeatrues.Headless)
-		{
-			assert(EnableExtensionSafely(enabledExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
-		}
-
-		VulkanAdapterRayTracing rayTracing;
-		if (requiredFeatrues.RayTracing &&
-			EnableExtensionsSafely(enabledExtensions, rayTracing.ExtensionNames))
-		{
-			rayTracing.AppendFeatures(pFeaturesNextChain);
-			rayTracing.AppendProperties(pPropertiesNextChain);
-		}
-
-		VulkanAdapterMeshShader meshShader;
-		if (requiredFeatrues.MeshShaders &&
-			EnableExtensionsSafely(enabledExtensions, meshShader.ExtensionNames))
-		{
-			meshShader.AppendFeatures(pFeaturesNextChain);
-			meshShader.AppendProperties(pPropertiesNextChain);
-		}
-
-		vkGetPhysicalDeviceFeatures2(m_physcialDevice, &m_adapterFeatures->Features);
-		vkGetPhysicalDeviceProperties2(m_physcialDevice, &m_adapterProperties->Properties);
-	}
-
-	std::vector<uint32> queueFamilies;
-	uint32 queueFamilyCount = static_cast<uint32>(m_adapterQueueFamilies.size());
-	for (uint32 queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; ++queueFamilyIndex)
-	{
-		const auto& queueFamily = m_adapterQueueFamilies[queueFamilyIndex];
-		if (queueFamily.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-		{
-			queueFamilies.push_back(queueFamilyIndex);
-			break;
-		}
-	}
-
-	float queuePriority = 1.0f;
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	for (uint32 queueFamily : queueFamilies)
-	{
-		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = queueFamily;
-		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
-	}
-
-	VkDeviceCreateInfo deviceCreateInfo { };
-	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceCreateInfo.queueCreateInfoCount = static_cast<uint32>(queueCreateInfos.size());
-	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-	deviceCreateInfo.pEnabledFeatures = nullptr;
-	deviceCreateInfo.pNext = &m_adapterFeatures->Features;
-	deviceCreateInfo.enabledExtensionCount = static_cast<uint32>(enabledExtensions.size());
-	deviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
-
-	VkDevice vkDevice;
-	VK_VERIFY(vkCreateDevice(m_physcialDevice, &deviceCreateInfo, nullptr, &vkDevice));
-	assert(vkDevice != VK_NULL_HANDLE);
-	volkLoadDevice(vkDevice);
-
-	auto vulkanDevice = std::make_unique<VulkanDevice>(vkDevice);
-	vulkanDevice->Init();
-
-	RHIDevice device;
-	device.Reset(MoveTemp(vulkanDevice));
-	return device;
 }
 
 }

@@ -95,9 +95,14 @@ const char* RHIAdapter::GetName() const
 	return m_pImpl->GetInfo().Name.c_str();
 }
 
-RHIDevice RHIAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo) const
+std::vector<RHICommandQueueCreateInfo> RHIAdapter::QueryCommandQueueCreateInfos()
 {
-	return m_pImpl->CreateDevice(createInfo);
+	return m_pImpl->QueryCommandQueueCreateInfos();
+}
+
+RHIDevice RHIAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
+{
+	return m_pImpl->CreateDevice(deviceCI, commandQueueCIs);
 }
 
 }

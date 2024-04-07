@@ -7,6 +7,7 @@ namespace ow
 {
 
 class IRHIDevice;
+class RHICommandQueue;
 
 /// <summary>
 /// RHIDevice is a logical device which helps to create graphics resources, submit draw/compute/.. commands.
@@ -26,9 +27,10 @@ public:
 	~RHIDevice();
 
 	void Init();
-	void Dump() const;
 	void Reset(std::unique_ptr<IRHIDevice> impl);
+	void Dump() const;
 	void* GetHandle() const;
+	RHICommandQueue CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const;
 
 private:
 	IRHIDevice* m_pImpl = nullptr;

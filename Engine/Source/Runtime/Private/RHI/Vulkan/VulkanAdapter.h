@@ -66,6 +66,8 @@ public:
 
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_physcialDevice; }
+	virtual std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos() override;
+	virtual RHIDevice CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const override;
 
 	GPUAdapterType GetType() const;
 	void SetType(VkPhysicalDeviceType deviceType);
@@ -73,8 +75,6 @@ public:
 	bool CheckExtensionSupport(const char* pExtensionName) const;
 	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
 	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
-
-	RHIDevice CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
 
 private:
 	VkPhysicalDevice m_physcialDevice = VK_NULL_HANDLE;

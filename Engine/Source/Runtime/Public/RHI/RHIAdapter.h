@@ -39,7 +39,8 @@ public:
 	uint64 GetSharedMemorySize() const;
 	const char* GetName() const;
 
-	RHIDevice CreateDevice(const RHIDeviceCreateInfo& createInfo) const;
+	std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos();
+	RHIDevice CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const;
 
 private:
 	IRHIAdapter* m_pImpl = nullptr;

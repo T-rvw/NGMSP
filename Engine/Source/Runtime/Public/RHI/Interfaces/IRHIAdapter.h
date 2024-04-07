@@ -10,9 +10,12 @@ class RHIDevice;
 class IRHIAdapter
 {
 public:
+	virtual ~IRHIAdapter() {}
+
 	virtual void Init() = 0;
 	virtual void* GetHandle() const = 0;
-	virtual ~IRHIAdapter() {}
+	virtual std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos() = 0;
+	virtual RHIDevice CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const = 0;
 
 	RHIAdapterInfo& GetInfo() { return m_info; }
 	const RHIAdapterInfo& GetInfo() const { return m_info; }
@@ -22,8 +25,6 @@ public:
 	void SetVideoMemorySize(uint64 memory) { m_info.VideoMemorySize = memory; }
 	void SetSystemMemorySize(uint64 memory) { m_info.SystemMemorySize = memory; }
 	void SetSharedMemorySize(uint64 memory) { m_info.SharedMemorySize = memory; }
-
-	virtual RHIDevice CreateDevice(const RHIDeviceCreateInfo& createInfo) const = 0;
 
 private:
 	RHIAdapterInfo m_info;

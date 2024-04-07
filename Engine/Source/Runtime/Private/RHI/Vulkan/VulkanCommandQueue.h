@@ -11,6 +11,7 @@ class VulkanCommandQueue : public IRHICommandQueue
 {
 public:
 	VulkanCommandQueue() = default;
+	explicit VulkanCommandQueue(VkQueue queue);
 	VulkanCommandQueue(const VulkanCommandQueue&) = delete;
 	VulkanCommandQueue& operator=(const VulkanCommandQueue&) = delete;
 	VulkanCommandQueue(VulkanCommandQueue&&) = default;
@@ -18,6 +19,10 @@ public:
 	virtual ~VulkanCommandQueue();
 
 	virtual void Init() override;
+	virtual void* GetHandle() const override { return m_queue; }
+
+private:
+	VkQueue m_queue = VK_NULL_HANDLE;
 };
 
 }

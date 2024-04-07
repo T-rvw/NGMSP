@@ -5,6 +5,11 @@
 namespace ow
 {
 
+VulkanCommandQueue::VulkanCommandQueue(VkQueue queue) :
+	m_queue(queue)
+{
+}
+
 VulkanCommandQueue::~VulkanCommandQueue()
 {
 }

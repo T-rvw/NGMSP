@@ -62,7 +62,7 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	std::vector<const char*> instanceLayers;
 	for (const auto& availableInstanceLayer : availableInstanceLayers)
 	{
-		if (createInfo.Validation != ValidationMode::Disabled)
+		if (createInfo.Validation != RHIValidationMode::Disabled)
 		{
 			if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_KHRONOS_validation"))
 			{
@@ -94,7 +94,7 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	std::vector<const char*> instanceExtensions;
 	for (const auto& availableExtension : availableInstanceExtensions)
 	{
-		if (createInfo.Debug != DebugMode::Disabled)
+		if (createInfo.Debug != RHIDebugMode::Disabled)
 		{
 			if (0 == strcmp(availableExtension.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
 			{
@@ -185,7 +185,7 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	}
 }
 
-std::vector<RHIAdapter> VulkanInstance::EnumAdapters() const
+std::vector<RHIAdapter> VulkanInstance::EnumerateAdapters() const
 {
 	uint32 physicalDeviceCount = 0;
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
