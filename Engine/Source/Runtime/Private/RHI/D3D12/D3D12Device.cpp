@@ -2,9 +2,11 @@
 
 #include "D3D12CommandQueue.h"
 #include "D3D12Fence.h"
+#include "D3D12Semaphore.h"
 
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIFence.h>
+#include <RHI/RHISemaphore.h>
 
 namespace ow
 {
@@ -68,6 +70,12 @@ RHIFence D3D12Device::CreateFence() const
 	RHIFence fence;
 	fence.Reset(MoveTemp(d3d12Fence));
 	return fence;
+}
+
+RHISemaphore D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& semaphoreCI) const
+{
+	RHISemaphore semaphore;
+	return semaphore;
 }
 
 }

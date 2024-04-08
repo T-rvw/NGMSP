@@ -49,17 +49,15 @@ int main()
 	rhiDevice.Init();
 	rhiDevice.Dump();
 
-	std::optional<RHICommandQueue> commandQueues[EnumCount<RHICommandQueueType>()];
+	std::vector<RHICommandQueue> commandQueues;
+	std::vector<RHIFence> commandQueueFences;
 	for (const auto& bestQueueCI : bestQueueCIs)
 	{
 		auto rhiCommandQueue = rhiDevice.CreateCommandQueue(bestQueueCI);
-		int32 typeIndex = static_cast<int32>(rhiCommandQueue.GetType());
-		assert(!commandQueues[typeIndex].has_value());
-		commandQueues[typeIndex] = MoveTemp(rhiCommandQueue);
-		commandQueues[typeIndex]->Dump();
+		rhiCommandQueue.Dump();
+		commandQueues.emplace_back(MoveTemp(rhiCommandQueue));
+		commandQueueFences.push_back(rhiDevice.CreateFence());
 	}
-	
-	auto rhiFence = rhiDevice.CreateFence();
 
 	// Application
 	PlatformApplication app;

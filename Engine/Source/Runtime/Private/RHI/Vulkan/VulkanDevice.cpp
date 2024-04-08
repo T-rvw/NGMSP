@@ -2,9 +2,11 @@
 
 #include "VulkanCommandQueue.h"
 #include "VulkanFence.h"
+#include "VulkanSemaphore.h"
 
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIFence.h>
+#include <RHI/RHISemaphore.h>
 
 namespace ow
 {
@@ -51,6 +53,12 @@ RHIFence VulkanDevice::CreateFence() const
 	RHIFence fence;
 	fence.Reset(MoveTemp(vulkanFence));
 	return fence;
+}
+
+RHISemaphore VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& semaphoreCI) const
+{
+	RHISemaphore semaphore;
+	return semaphore;
 }
 
 }

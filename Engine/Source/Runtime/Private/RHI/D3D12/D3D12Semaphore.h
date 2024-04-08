@@ -2,6 +2,7 @@
 
 #include "D3D12Header.h"
 
+#include <Core/HAL/PlatformSemaphore.h>
 #include <RHI/Interfaces/IRHISemaphore.h>
 
 namespace ow
@@ -18,6 +19,9 @@ public:
 	virtual ~D3D12Semaphore();
 
 	void Init();
+
+private:
+	PlatformSemaphore m_semaphore;
 };
 
 }

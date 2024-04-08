@@ -22,6 +22,7 @@ public:
 	virtual void* GetHandle() const override { return m_device; }
 	virtual RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const override;
 	virtual RHIFence CreateFence() const override;
+	virtual RHISemaphore CreateSemaphore(const RHISemaphoreCreateInfo& semaphoreCI) const override;
 
 private:
 	VkDevice m_device = VK_NULL_HANDLE;

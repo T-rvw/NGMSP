@@ -118,4 +118,9 @@ struct RHI_API RHICommandQueueCreateInfo
     }
 };
 
+struct RHI_API RHISemaphoreCreateInfo
+{
+
+};
+
 }

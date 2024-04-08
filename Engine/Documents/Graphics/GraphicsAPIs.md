@@ -18,6 +18,10 @@
 
 	* [GDC 2018 - Memory Management in Vulkan and DX12](https://ubm-twvideo01.s3.amazonaws.com/o1/vault/gdc2018/presentations/Sawicki_Adam_Memory%20management%20in%20Vulkan.pdf)
 
+* Multi-GPU
+
+	* [First Investigation into multi-GPU techniques for realtime rendering](https://andrewcjp.wordpress.com/2020/07/27/first-investigation-into-multi-gpu-techniques-for-realtime-rendering/)
+
 * RHI
 
 	* [Compare API differences](https://alain.xyz/blog/comparison-of-modern-graphics-apis)

@@ -5,6 +5,7 @@
 #include "Windows/WindowsModule.h"
 #include "Windows/WindowsProcess.h"
 #include "Windows/WindowsWindow.h"
+#include "Windows/WindowsSemaphore.h"
 #include "Windows/WindowsTime.h"
 #endif
 
@@ -15,6 +16,7 @@ namespace ow
 using PlatformApplicationImpl = WindowsApplication;
 using PlatformModuleImpl = WindowsModule;
 using PlatformProcessImpl = WindowsProcess;
+using PlatformSemaphoreImpl = WindowsSemaphore;
 using PlatformWindowImpl = WindowsWindow;
 #endif
 
