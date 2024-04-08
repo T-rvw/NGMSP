@@ -23,3 +23,7 @@
 	* [Compare API differences](https://alain.xyz/blog/comparison-of-modern-graphics-apis)
 
 	* [GDC 2016 - D3D12 and Vulkan: Lessons learned](https://gpuopen.com/wp-content/uploads/2016/03/d3d12_vulkan_lessons_learned.pdf)
+
+* Synchronization
+
+	* [Explaining Vulkan Synchronization](https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/)
