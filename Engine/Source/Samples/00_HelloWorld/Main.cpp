@@ -46,7 +46,6 @@ int main()
 	deviceCI.Features.RayTracing = true;
 	deviceCI.Features.MeshShaders = true;
 	auto rhiDevice = bestAdapter.CreateDevice(deviceCI, bestQueueCIs);
-	rhiDevice.Init();
 	rhiDevice.Dump();
 
 	std::vector<RHICommandQueue> commandQueues;

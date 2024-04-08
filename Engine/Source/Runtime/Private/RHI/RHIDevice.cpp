@@ -35,11 +35,6 @@ RHIDevice::~RHIDevice()
 	}
 }
 
-void RHIDevice::Init()
-{
-	m_pImpl->Init();
-}
-
 void RHIDevice::Reset(std::unique_ptr<IRHIDevice> impl)
 {
 	m_pImpl = impl.release();

@@ -16,10 +16,6 @@ D3D12Device::D3D12Device(ID3D12Device* pDevice) :
 {
 }
 
-void D3D12Device::Init()
-{
-}
-
 RHICommandQueue D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	ID3D12CommandQueue* pCommandQueue;
@@ -64,8 +60,7 @@ RHIFence D3D12Device::CreateFence() const
 	ID3D12Fence* pFence;
 	D3D12_VERIFY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence)));
 
-	auto d3d12Fence = std::make_unique<D3D12Fence>(pFence);
-	d3d12Fence->Init();
+	auto d3d12Fence = std::make_unique<D3D12Fence>(m_device.Get(), pFence);
 
 	RHIFence fence;
 	fence.Reset(MoveTemp(d3d12Fence));

@@ -18,7 +18,6 @@ public:
 	D3D12Device& operator=(D3D12Device&&) = default;
 	virtual ~D3D12Device() = default;
 
-	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_device.Get(); }
 	virtual RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const override;
 	virtual RHIFence CreateFence() const override;

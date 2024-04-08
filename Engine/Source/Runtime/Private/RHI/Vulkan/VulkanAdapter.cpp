@@ -234,7 +234,6 @@ RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const
 	volkLoadDevice(vkDevice);
 
 	auto vulkanDevice = std::make_unique<VulkanDevice>(vkDevice);
-	vulkanDevice->Init();
 
 	RHIDevice device;
 	device.Reset(MoveTemp(vulkanDevice));

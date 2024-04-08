@@ -62,7 +62,7 @@ LRESULT WindowsApplication::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM 
 	{
 		case WM_DESTROY:
 		{
-			PostQuitMessage(0);
+			::PostQuitMessage(0);
 			return 0;
 		}
 		break;

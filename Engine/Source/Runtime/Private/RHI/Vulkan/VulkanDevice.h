@@ -18,7 +18,6 @@ public:
 	VulkanDevice& operator=(VulkanDevice&&) = default;
 	virtual ~VulkanDevice();
 
-	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_device; }
 	virtual RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const override;
 	virtual RHIFence CreateFence() const override;

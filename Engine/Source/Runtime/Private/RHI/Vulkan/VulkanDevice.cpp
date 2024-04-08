@@ -21,10 +21,6 @@ VulkanDevice::~VulkanDevice()
 	vkDestroyDevice(m_device, nullptr);
 }
 
-void VulkanDevice::Init()
-{
-}
-
 RHICommandQueue VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	VkQueue vkCommandQueue;
@@ -47,8 +43,7 @@ RHIFence VulkanDevice::CreateFence() const
 	VkFence vkFence;
 	VK_VERIFY(vkCreateFence(m_device, &fenceCI, nullptr, &vkFence));
 
-	auto vulkanFence = std::make_unique<VulkanFence>(vkFence);
-	vulkanFence->Init();
+	auto vulkanFence = std::make_unique<VulkanFence>(m_device, vkFence);
 
 	RHIFence fence;
 	fence.Reset(MoveTemp(vulkanFence));
