@@ -7,7 +7,7 @@ project("Documents")
 	}
 
 	vpaths {
-		["Graphics/*"] = { 
-			path.join(RootPath, "Engine/Documents/Graphics/**.*"),
+		["*/*"] = { 
+			path.join(RootPath, "Engine/Documents/*/**.*"),
 		}
 	}
