@@ -59,6 +59,8 @@ int main()
 		commandQueues[typeIndex]->Dump();
 	}
 	
+	auto rhiFence = rhiDevice.CreateFence();
+
 	// Application
 	PlatformApplication app;
 	app.Init();

@@ -1,9 +1,10 @@
 #include "VulkanDevice.h"
 
 #include "VulkanCommandQueue.h"
+#include "VulkanFence.h"
 
 #include <RHI/RHICommandQueue.h>
-#include <RHI/RHIDevice.h>
+#include <RHI/RHIFence.h>
 
 namespace ow
 {
@@ -22,7 +23,7 @@ void VulkanDevice::Init()
 {
 }
 
-RHICommandQueue VulkanDevice::CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const
+RHICommandQueue VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	VkQueue vkCommandQueue;
 	vkGetDeviceQueue(m_device, commandQueueCI.ID, 0, &vkCommandQueue);
@@ -34,6 +35,22 @@ RHICommandQueue VulkanDevice::CreateCommandQueue(RHICommandQueueCreateInfo comma
 	RHICommandQueue commandQueue;
 	commandQueue.Reset(MoveTemp(vulkanCommandQueue));
 	return commandQueue;
+}
+
+RHIFence VulkanDevice::CreateFence() const
+{
+	VkFenceCreateInfo fenceCI {};
+	fenceCI.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+
+	VkFence vkFence;
+	VK_VERIFY(vkCreateFence(m_device, &fenceCI, nullptr, &vkFence));
+
+	auto vulkanFence = std::make_unique<VulkanFence>(vkFence);
+	vulkanFence->Init();
+
+	RHIFence fence;
+	fence.Reset(MoveTemp(vulkanFence));
+	return fence;
 }
 
 }

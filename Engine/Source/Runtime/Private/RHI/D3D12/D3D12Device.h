@@ -20,7 +20,8 @@ public:
 
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_device.Get(); }
-	virtual RHICommandQueue CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const override;
+	virtual RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const override;
+	virtual RHIFence CreateFence() const override;
 
 private:
 	ComPtr<ID3D12Device> m_device;

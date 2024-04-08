@@ -3,6 +3,7 @@
 #include <Core/HAL/Platform.h>
 #include <RHI/Interfaces/IRHIDevice.h>
 #include <RHI/RHICommandQueue.h>
+#include <RHI/RHIFence.h>
 
 namespace ow
 {
@@ -54,9 +55,14 @@ void* RHIDevice::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-RHICommandQueue RHIDevice::CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const
+RHICommandQueue RHIDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	return m_pImpl->CreateCommandQueue(commandQueueCI);
+}
+
+RHIFence RHIDevice::CreateFence() const
+{
+	return m_pImpl->CreateFence();
 }
 
 }
