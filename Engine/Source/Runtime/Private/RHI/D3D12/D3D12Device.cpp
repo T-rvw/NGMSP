@@ -1,8 +1,10 @@
 #include "D3D12Device.h"
 
 #include "D3D12CommandQueue.h"
+#include "D3D12Fence.h"
 
 #include <RHI/RHICommandQueue.h>
+#include <RHI/RHIFence.h>
 
 namespace ow
 {
@@ -44,7 +46,7 @@ RHICommandQueue D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo&
 	}
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	queueDesc.Priority = static_cast<int32>(commandQueueCI.Priority);
-	m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue));
+	D3D12_VERIFY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue)));
 
 	auto d3d12CommandQueue = std::make_unique<D3D12CommandQueue>(pCommandQueue);
 	d3d12CommandQueue->SetType(commandQueueCI.Type);
@@ -53,6 +55,19 @@ RHICommandQueue D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo&
 	RHICommandQueue commandQueue;
 	commandQueue.Reset(MoveTemp(d3d12CommandQueue));
 	return commandQueue;
+}
+
+RHIFence D3D12Device::CreateFence() const
+{
+	ID3D12Fence* pFence;
+	D3D12_VERIFY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence)));
+
+	auto d3d12Fence = std::make_unique<D3D12Fence>(pFence);
+	d3d12Fence->Init();
+
+	RHIFence fence;
+	fence.Reset(MoveTemp(d3d12Fence));
+	return fence;
 }
 
 }

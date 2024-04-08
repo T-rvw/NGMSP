@@ -8,6 +8,7 @@ namespace ow
 
 class IRHIDevice;
 class RHICommandQueue;
+class RHIFence;
 
 /// <summary>
 /// RHIDevice is a logical device which helps to create graphics resources, submit draw/compute/.. commands.
@@ -31,6 +32,7 @@ public:
 	void Dump() const;
 	void* GetHandle() const;
 	RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const;
+	RHIFence CreateFence() const;
 
 private:
 	IRHIDevice* m_pImpl = nullptr;

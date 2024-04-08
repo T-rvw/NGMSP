@@ -7,6 +7,7 @@
 #include <RHI/RHICommandPool.h>
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIDevice.h>
+#include <RHI/RHIFence.h>
 #include <RHI/RHIInstance.h>
 #include <RHI/RHIPipeline.h>
 #include <RHI/RHISwapChain.h>
