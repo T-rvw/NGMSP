@@ -54,7 +54,7 @@ void* RHIDevice::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-RHICommandQueue RHIDevice::CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const
+RHICommandQueue RHIDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	return m_pImpl->CreateCommandQueue(commandQueueCI);
 }

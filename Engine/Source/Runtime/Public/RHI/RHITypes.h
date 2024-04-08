@@ -106,7 +106,7 @@ struct RHI_API RHICommandQueueCreateInfo
 {
     RHICommandQueueType Type = RHICommandQueueType::Graphics;
     uint32 ID = 0;
-    int32 Priority = 0;
+    float Priority = 1.0f;
     bool IsDedicated = false;
 
     void Dump() const
@@ -114,7 +114,7 @@ struct RHI_API RHICommandQueueCreateInfo
         printf("[RHICommandQueueCreateInfo] ID = %u\n", ID);
         printf("\tType = %s\n", EnumName(Type).data());
         printf("\tIsDedicated = %d\n", IsDedicated);
-        printf("\tPriority = %u\n", Priority);
+        printf("\tPriority = %f\n", Priority);
     }
 };
 

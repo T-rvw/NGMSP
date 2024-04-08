@@ -49,8 +49,7 @@ std::optional<int32> FindBestCommandQueue(RHICommandQueueType commandType, const
 			{
 				score += 1U << 31;
 			}
-			score += createInfo.Priority;
-
+			
 			if (score > bestScore)
 			{
 				bestCIIndex = ciIndex;

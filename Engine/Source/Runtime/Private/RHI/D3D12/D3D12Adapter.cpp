@@ -40,25 +40,25 @@ std::vector<RHICommandQueueCreateInfo> D3D12Adapter::QueryCommandQueueCreateInfo
 	{
 		auto& commandQueue = createInfos.emplace_back();
 		commandQueue.Type = RHICommandQueueType::Graphics;
-		commandQueue.ID = 0;
-		commandQueue.IsDedicated = false;
-		commandQueue.Priority = 100;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 
 	{
 		auto& commandQueue = createInfos.emplace_back();
 		commandQueue.Type = RHICommandQueueType::Compute;
-		commandQueue.ID = 0;
-		commandQueue.IsDedicated = false;
-		commandQueue.Priority = 100;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 
 	{
 		auto& commandQueue = createInfos.emplace_back();
 		commandQueue.Type = RHICommandQueueType::Copy;
-		commandQueue.ID = 0;
-		commandQueue.IsDedicated = false;
-		commandQueue.Priority = 100;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+	}
+
+	{
+		auto& commandQueue = createInfos.emplace_back();
+		commandQueue.Type = RHICommandQueueType::VideoDecode;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 
 	return createInfos;

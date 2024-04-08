@@ -22,7 +22,7 @@ void VulkanDevice::Init()
 {
 }
 
-RHICommandQueue VulkanDevice::CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const
+RHICommandQueue VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	VkQueue vkCommandQueue;
 	vkGetDeviceQueue(m_device, commandQueueCI.ID, 0, &vkCommandQueue);

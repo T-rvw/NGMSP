@@ -132,14 +132,12 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 		bool supportGraphics = queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT;
 		bool supportCompute = queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT;
 		bool supportTransfer = queueFamilyProperties.queueFlags & VK_QUEUE_TRANSFER_BIT;
+		bool supportVideoDecode = queueFamilyProperties.queueFlags & VK_QUEUE_VIDEO_DECODE_BIT_KHR;
 		if (supportGraphics)
 		{
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::Graphics;
 			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority = 100;
-			commandQueue.Priority += supportCompute ? 10 : 0;
-			commandQueue.Priority += supportTransfer ? 10 : 0;
 			++rhiQueueEndIndex;
 		}
 
@@ -148,9 +146,6 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::Compute;
 			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority = 100;
-			commandQueue.Priority += supportGraphics ? -10 : 10;
-			commandQueue.Priority += supportTransfer ? -10 : 10;
 			++rhiQueueEndIndex;
 		}
 
@@ -159,9 +154,14 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::Copy;
 			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority = 100;
-			commandQueue.Priority += supportCompute ? -10 : 10;
-			commandQueue.Priority += supportTransfer ? -10 : 10;
+			++rhiQueueEndIndex;
+		}
+
+		if (supportVideoDecode)
+		{
+			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
+			commandQueue.Type = RHICommandQueueType::VideoDecode;
+			commandQueue.ID = queueFamilyIndex;
 			++rhiQueueEndIndex;
 		}
 
@@ -216,7 +216,7 @@ RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		queueCreateInfo.queueFamilyIndex = commandQueueCI.ID;
 		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = reinterpret_cast<const float*>(&commandQueueCI.Priority);
+		queueCreateInfo.pQueuePriorities = &commandQueueCI.Priority;
 	}
 
 	VkDeviceCreateInfo deviceCreateInfo {};

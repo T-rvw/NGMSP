@@ -30,7 +30,7 @@ public:
 	void Reset(std::unique_ptr<IRHIDevice> impl);
 	void Dump() const;
 	void* GetHandle() const;
-	RHICommandQueue CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const;
+	RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const;
 
 private:
 	IRHIDevice* m_pImpl = nullptr;

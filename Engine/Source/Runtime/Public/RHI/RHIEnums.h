@@ -32,7 +32,6 @@ enum class RHICommandQueueType
     Graphics,
     Compute,
     Copy,
-    VideoEncode,
     VideoDecode
 };
 

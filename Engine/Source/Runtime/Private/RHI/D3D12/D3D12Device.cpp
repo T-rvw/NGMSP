@@ -16,7 +16,7 @@ void D3D12Device::Init()
 {
 }
 
-RHICommandQueue D3D12Device::CreateCommandQueue(RHICommandQueueCreateInfo commandQueueCI) const
+RHICommandQueue D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	ID3D12CommandQueue* pCommandQueue;
 	D3D12_COMMAND_QUEUE_DESC queueDesc{};
@@ -43,6 +43,7 @@ RHICommandQueue D3D12Device::CreateCommandQueue(RHICommandQueueCreateInfo comman
 	}
 	}
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	queueDesc.Priority = static_cast<int32>(commandQueueCI.Priority);
 	m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue));
 
 	auto d3d12CommandQueue = std::make_unique<D3D12CommandQueue>(pCommandQueue);
