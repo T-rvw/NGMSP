@@ -28,7 +28,7 @@ RHIBarrier::~RHIBarrier()
 	}
 }
 
-void RHIBarrier::Reset(std::unique_ptr<IRHIBarrier> impl)
+void RHIBarrier::Reset(std::unique_ptr<IRHIBarrier>&& impl)
 {
 	m_pImpl = impl.release();
 }

@@ -4,6 +4,8 @@
 #include "Vulkan/VulkanInstance.h"
 
 #include <RHI/Interfaces/IRHIDevice.h>
+#include <RHI/RHIAdapter.h>
+#include <RHI/RHISurface.h>
 #include <RHI/RHITypes.h>
 
 namespace ow
@@ -52,10 +54,6 @@ RHIInstance::~RHIInstance()
 	}
 }
 
-void RHIInstance::Init()
-{
-}
-
 void RHIInstance::Dump()
 {
 	printf("[RHIInstance] Handle = %llu\n", reinterpret_cast<uint64>(GetHandle()));
@@ -75,6 +73,11 @@ void* RHIInstance::GetHandle() const
 std::vector<RHIAdapter> RHIInstance::EnumerateAdapters() const
 {
 	return m_pImpl->EnumerateAdapters();
+}
+
+RHISurface RHIInstance::CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const
+{
+	return m_pImpl->CreateSurface(pPlatformWindowHandle, pPlatformInstanceHandle);
 }
 
 }

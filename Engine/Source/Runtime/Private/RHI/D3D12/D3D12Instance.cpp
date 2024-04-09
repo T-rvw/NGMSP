@@ -1,8 +1,10 @@
 #include "D3D12Instance.h"
 
 #include "D3D12Adapter.h"
+#include "D3D12Surface.h"
 
 #include <RHI/RHIAdapter.h>
+#include <RHI/RHISurface.h>
 #include <RHI/RHITypes.h>
 
 namespace ow
@@ -70,6 +72,16 @@ std::vector<RHIAdapter> D3D12Instance::EnumerateAdapters() const
 	CreateRHIAdapter(adapter);
 
 	return rhiAdapters;
+}
+
+
+RHISurface D3D12Instance::CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const
+{
+	auto d3d12Surface = std::make_unique<D3D12Surface>();
+
+	RHISurface rhiSurface;
+	rhiSurface.Reset(MoveTemp(d3d12Surface));
+	return rhiSurface;
 }
 
 }

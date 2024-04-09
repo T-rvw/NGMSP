@@ -7,8 +7,6 @@ class IRHISwapChain
 {
 public:
 	virtual ~IRHISwapChain() {}
-	
-	virtual void Init() = 0;
 };
 
 }

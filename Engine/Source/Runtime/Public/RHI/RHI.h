@@ -12,6 +12,7 @@
 #include <RHI/RHIInstance.h>
 #include <RHI/RHIPipeline.h>
 #include <RHI/RHISemaphore.h>
+#include <RHI/RHISurface.h>
 #include <RHI/RHISwapChain.h>
 #include <RHI/RHITexture.h>
 #include <RHI/RHITypes.h>

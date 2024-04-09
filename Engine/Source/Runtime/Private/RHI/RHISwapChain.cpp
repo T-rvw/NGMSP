@@ -28,8 +28,9 @@ RHISwapChain::~RHISwapChain()
 	}
 }
 
-void RHISwapChain::Init()
+void RHISwapChain::Reset(std::unique_ptr<IRHISwapChain>&& impl)
 {
+	m_pImpl = impl.release();
 }
 
 }

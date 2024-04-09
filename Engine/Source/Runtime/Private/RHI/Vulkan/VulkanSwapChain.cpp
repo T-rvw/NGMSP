@@ -5,11 +5,12 @@
 namespace ow
 {
 
-VulkanSwapChain::~VulkanSwapChain()
+VulkanSwapChain::VulkanSwapChain(VkSwapchainKHR swapChain) :
+	m_swapChain(swapChain)
 {
 }
 
-void VulkanSwapChain::Init()
+VulkanSwapChain::~VulkanSwapChain()
 {
 }
 

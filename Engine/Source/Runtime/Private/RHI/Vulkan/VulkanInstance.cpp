@@ -1,8 +1,10 @@
 #include "VulkanInstance.h"
 
 #include "VulkanAdapter.h"
+#include "VulkanSurface.h"
 
 #include <RHI/RHIAdapter.h>
+#include <RHI/RHISurface.h>
 #include <RHI/RHITypes.h>
 
 #include <optional>
@@ -244,6 +246,27 @@ std::vector<RHIAdapter> VulkanInstance::EnumerateAdapters() const
 	}
 
 	return rhiAdapters;
+}
+
+RHISurface VulkanInstance::CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const
+{
+	VkSurfaceKHR vkSurface;
+
+#ifdef PLATFORM_WINDOWS
+	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo {};
+	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	surfaceCreateInfo.hwnd = (HWND)pPlatformWindowHandle;
+	surfaceCreateInfo.hinstance = (HINSTANCE)pPlatformInstanceHandle;
+	VK_VERIFY(vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &vkSurface));
+#else
+	static_assert("Unsupported platform to create surface.");
+#endif
+
+	auto vulkanSurface = std::make_unique<VulkanSurface>(m_instance, vkSurface);
+
+	RHISurface rhiSurface;
+	rhiSurface.Reset(MoveTemp(vulkanSurface));
+	return rhiSurface;
 }
 
 }

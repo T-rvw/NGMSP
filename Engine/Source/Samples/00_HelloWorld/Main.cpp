@@ -11,7 +11,6 @@ int main()
 	instanceCI.Validation = RHIValidationMode::GPU;
 
 	auto rhiInstance = RHIInstance::Create(instanceCI);
-	rhiInstance.Init();
 	rhiInstance.Dump();
 
 	auto rhiAdapters = rhiInstance.EnumerateAdapters();
@@ -67,6 +66,16 @@ int main()
 	windowCI.Title = "00_HelloWorld";
 	mainWindow.Init(windowCI, app.GetProcessInstance());
 
+	// Create surface to bind to window
+	auto rhiSurface = rhiInstance.CreateSurface(mainWindow.GetHandle(), app.GetProcessInstance());
+
+	RHISwapChainCreateInfo swapChainCI;
+	swapChainCI.Surface = &rhiSurface;
+	swapChainCI.SurfaceWidth = 1280;
+	swapChainCI.SurfaceHeight = 720;
+	auto rhiSwapChain = rhiDevice.CreateSwapChain(swapChainCI);
+
+	// Run
 	app.Run();
 
 	return 0;

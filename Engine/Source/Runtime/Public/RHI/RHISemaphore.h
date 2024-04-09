@@ -25,7 +25,7 @@ public:
 	RHISemaphore& operator=(RHISemaphore&& other) noexcept;
 	~RHISemaphore();
 
-	void Reset(std::unique_ptr<IRHISemaphore> impl);
+	void Reset(std::unique_ptr<IRHISemaphore>&& impl);
 
 private:
 	IRHISemaphore* m_pImpl = nullptr;

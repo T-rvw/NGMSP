@@ -123,4 +123,13 @@ struct RHI_API RHISemaphoreCreateInfo
 
 };
 
+class RHISurface;
+struct RHI_API RHISwapChainCreateInfo
+{
+    RHISurface* Surface = nullptr;
+    uint32 SurfaceWidth = 1;
+    uint32 SurfaceHeight = 1;
+    uint32 BackBufferCount = 2;
+};
+
 }

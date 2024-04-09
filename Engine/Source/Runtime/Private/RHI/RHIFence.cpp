@@ -28,7 +28,7 @@ RHIFence::~RHIFence()
 	}
 }
 
-void RHIFence::Reset(std::unique_ptr<IRHIFence> impl)
+void RHIFence::Reset(std::unique_ptr<IRHIFence>&& impl)
 {
 	m_pImpl = impl.release();
 }

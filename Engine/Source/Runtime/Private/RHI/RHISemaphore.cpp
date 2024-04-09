@@ -28,7 +28,7 @@ RHISemaphore::~RHISemaphore()
 	}
 }
 
-void RHISemaphore::Reset(std::unique_ptr<IRHISemaphore> impl)
+void RHISemaphore::Reset(std::unique_ptr<IRHISemaphore>&& impl)
 {
 	m_pImpl = impl.release();
 }

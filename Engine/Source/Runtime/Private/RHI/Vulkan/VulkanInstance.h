@@ -26,6 +26,7 @@ public:
 	virtual void* GetHandle() const override { return m_instance; }
 
 	virtual std::vector<RHIAdapter> EnumerateAdapters() const override;
+	virtual RHISurface CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const override;
 
 private:
 	VkInstance m_instance = VK_NULL_HANDLE;

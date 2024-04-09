@@ -16,8 +16,6 @@ public:
 	D3D12SwapChain(D3D12SwapChain&&) = default;
 	D3D12SwapChain& operator=(D3D12SwapChain&&) = default;
 	virtual ~D3D12SwapChain() = default;
-
-	void Init();
 };
 
 }

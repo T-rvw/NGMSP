@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Core/HAL/Platform.h>
-#include <RHI/RHIAdapter.h>
-#include <RHI/RHITypes.h>
+#include <Core/HAL/APIDefinition.h>
+
+#include <vector>
 
 namespace ow
 {
@@ -10,7 +10,10 @@ namespace ow
 class IRHIInstance;
 struct RHIInstanceCreateInfo;
 
+enum class RHIBackend;
+
 class RHIAdapter;
+class RHISurface;
 
 /// <summary>
 /// RHIInstance is an entry point to access core apis, enable debug layers.
@@ -31,13 +34,13 @@ public:
 	RHIInstance& operator=(RHIInstance&& other) noexcept;
 	~RHIInstance();
 
-	void Init();
 	void Dump();
 
 	RHIBackend GetBackend() const;
 	void* GetHandle() const;
 
 	std::vector<RHIAdapter> EnumerateAdapters() const;
+	RHISurface CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const;
 
 private:
 	IRHIInstance* m_pImpl = nullptr;

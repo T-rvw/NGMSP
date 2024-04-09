@@ -9,6 +9,8 @@ namespace ow
 class IRHIDevice;
 class RHICommandQueue;
 class RHIFence;
+class RHISemaphore;
+class RHISwapChain;
 
 /// <summary>
 /// RHIDevice is a logical device which helps to create graphics resources, submit draw/compute/.. commands.
@@ -27,11 +29,13 @@ public:
 	RHIDevice& operator=(RHIDevice&& other) noexcept;
 	~RHIDevice();
 
-	void Reset(std::unique_ptr<IRHIDevice> impl);
+	void Reset(std::unique_ptr<IRHIDevice>&& impl);
 	void Dump() const;
 	void* GetHandle() const;
 	RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const;
 	RHIFence CreateFence() const;
+	RHISemaphore CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const;
+	RHISwapChain CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const;
 
 private:
 	IRHIDevice* m_pImpl = nullptr;

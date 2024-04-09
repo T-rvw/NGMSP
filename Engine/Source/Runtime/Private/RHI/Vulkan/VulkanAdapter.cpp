@@ -138,6 +138,9 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::Graphics;
 			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
+			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
+			commandQueue.Priority += supportVideoDecode ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
@@ -146,6 +149,9 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::Compute;
 			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
+			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
+			commandQueue.Priority += supportVideoDecode ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
@@ -154,6 +160,9 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::Copy;
 			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
+			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
+			commandQueue.Priority += supportVideoDecode ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
@@ -162,6 +171,9 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
 			commandQueue.Type = RHICommandQueueType::VideoDecode;
 			commandQueue.ID = queueFamilyIndex;
+			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
+			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
+			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
@@ -233,11 +245,11 @@ RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const
 	assert(vkDevice != VK_NULL_HANDLE);
 	volkLoadDevice(vkDevice);
 
-	auto vulkanDevice = std::make_unique<VulkanDevice>(vkDevice);
+	auto vulkanDevice = std::make_unique<VulkanDevice>(m_physcialDevice, vkDevice);
 
-	RHIDevice device;
-	device.Reset(MoveTemp(vulkanDevice));
-	return device;
+	RHIDevice rhiDevice;
+	rhiDevice.Reset(MoveTemp(vulkanDevice));
+	return rhiDevice;
 }
 
 GPUAdapterType VulkanAdapter::GetType() const

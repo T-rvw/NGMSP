@@ -4,6 +4,8 @@
 #include <RHI/Interfaces/IRHIDevice.h>
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIFence.h>
+#include <RHI/RHISemaphore.h>
+#include <RHI/RHISwapChain.h>
 
 namespace ow
 {
@@ -35,7 +37,7 @@ RHIDevice::~RHIDevice()
 	}
 }
 
-void RHIDevice::Reset(std::unique_ptr<IRHIDevice> impl)
+void RHIDevice::Reset(std::unique_ptr<IRHIDevice>&& impl)
 {
 	m_pImpl = impl.release();
 }
@@ -58,6 +60,16 @@ RHICommandQueue RHIDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& c
 RHIFence RHIDevice::CreateFence() const
 {
 	return m_pImpl->CreateFence();
+}
+
+RHISemaphore RHIDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const
+{
+	return m_pImpl->CreateSemaphore(createInfo);
+}
+
+RHISwapChain RHIDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
+{
+	return m_pImpl->CreateSwapChain(createInfo);
 }
 
 }

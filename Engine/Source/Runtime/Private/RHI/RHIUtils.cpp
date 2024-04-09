@@ -38,17 +38,18 @@ std::optional<int32> FindBestRHIAdapter(const std::vector<RHIAdapter>& adapters)
 std::optional<int32> FindBestCommandQueue(RHICommandQueueType commandType, const std::vector<RHICommandQueueCreateInfo>& createInfos)
 {
 	std::optional<int32> bestCIIndex;
-	uint32 bestScore = 0;
+	float bestScore = 0.0f;
 	for (int32 ciIndex = 0, ciCount = static_cast<int32>(createInfos.size()); ciIndex < ciCount; ++ciIndex)
 	{
 		const auto& createInfo = createInfos[ciIndex];
 		if (commandType == createInfo.Type)
 		{
-			uint32 score = 0;
+			float score = 0.0f;
 			if (createInfo.IsDedicated)
 			{
 				score += 1U << 31;
 			}
+			score += createInfo.Priority;
 			
 			if (score > bestScore)
 			{

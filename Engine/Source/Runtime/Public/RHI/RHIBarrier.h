@@ -24,7 +24,7 @@ public:
 	RHIBarrier& operator=(RHIBarrier&& other) noexcept;
 	~RHIBarrier();
 
-	void Reset(std::unique_ptr<IRHIBarrier> impl);
+	void Reset(std::unique_ptr<IRHIBarrier>&& impl);
 
 private:
 	IRHIBarrier* m_pImpl = nullptr;

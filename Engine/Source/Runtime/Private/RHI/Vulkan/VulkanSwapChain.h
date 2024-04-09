@@ -11,13 +11,15 @@ class VulkanSwapChain : public IRHISwapChain
 {
 public:
 	VulkanSwapChain() = default;
+	explicit VulkanSwapChain(VkSwapchainKHR swapChain);
 	VulkanSwapChain(const VulkanSwapChain&) = delete;
 	VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;
 	VulkanSwapChain(VulkanSwapChain&&) = default;
 	VulkanSwapChain& operator=(VulkanSwapChain&&) = default;
 	virtual ~VulkanSwapChain();
 
-	virtual void Init() override;
+private:
+	VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 };
 
 }

@@ -24,7 +24,7 @@ public:
 	RHISwapChain& operator=(RHISwapChain&& other) noexcept;
 	~RHISwapChain();
 
-	void Init();
+	void Reset(std::unique_ptr<IRHISwapChain>&& impl);
 
 private:
 	IRHISwapChain* m_pImpl = nullptr;

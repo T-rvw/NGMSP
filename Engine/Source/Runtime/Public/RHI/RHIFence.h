@@ -24,7 +24,7 @@ public:
 	RHIFence& operator=(RHIFence&& other) noexcept;
 	~RHIFence();
 
-	void Reset(std::unique_ptr<IRHIFence> impl);
+	void Reset(std::unique_ptr<IRHIFence>&& impl);
 
 private:
 	IRHIFence* m_pImpl = nullptr;

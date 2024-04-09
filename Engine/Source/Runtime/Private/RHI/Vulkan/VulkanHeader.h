@@ -1,10 +1,11 @@
 #pragma once
 
-#define VK_NO_PROTOTYPES
 #ifdef PLATFORM_WINDOWS
 #include "../../Core/HAL/Windows/WindowsUndefines.h"
 #define VK_USE_PLATFORM_WIN32_KHR
 #endif
+
+#define VK_NO_PROTOTYPES
 #include <volk/volk.h>
 #include <vulkan/vulkan.h>
 #include <VulkanMemoryAllocator/vk_mem_alloc.h>

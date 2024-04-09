@@ -3,10 +3,12 @@
 #include "D3D12CommandQueue.h"
 #include "D3D12Fence.h"
 #include "D3D12Semaphore.h"
+#include "D3D12SwapChain.h"
 
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIFence.h>
 #include <RHI/RHISemaphore.h>
+#include <RHI/RHISwapChain.h>
 
 namespace ow
 {
@@ -67,10 +69,16 @@ RHIFence D3D12Device::CreateFence() const
 	return fence;
 }
 
-RHISemaphore D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& semaphoreCI) const
+RHISemaphore D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const
 {
 	RHISemaphore semaphore;
 	return semaphore;
+}
+
+RHISwapChain D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
+{
+	RHISwapChain rhiSwapChain;
+	return rhiSwapChain;
 }
 
 }
