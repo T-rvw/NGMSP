@@ -14,8 +14,4 @@ VulkanCommandQueue::~VulkanCommandQueue()
 {
 }
 
-void VulkanCommandQueue::Init()
-{
-}
-
 }

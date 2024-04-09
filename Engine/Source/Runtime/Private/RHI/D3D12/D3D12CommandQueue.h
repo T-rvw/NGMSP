@@ -18,7 +18,6 @@ public:
 	D3D12CommandQueue& operator=(D3D12CommandQueue&&) = default;
 	virtual ~D3D12CommandQueue() = default;
 
-	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_commandQueue.Get(); }
 
 private:

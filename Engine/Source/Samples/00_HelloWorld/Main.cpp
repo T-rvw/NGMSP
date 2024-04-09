@@ -4,7 +4,7 @@ int main()
 {
 	using namespace ow;
 	
-	// Graphics
+	// Init graphics instance.
 	RHIInstanceCreateInfo instanceCI;
 	instanceCI.Backend = RHIBackend::Vulkan;
 	instanceCI.Debug = RHIDebugMode::Normal;
@@ -13,6 +13,7 @@ int main()
 	auto rhiInstance = RHIInstance::Create(instanceCI);
 	rhiInstance.Dump();
 
+	// Find a proper GPU to create logical device.
 	auto rhiAdapters = rhiInstance.EnumerateAdapters();
 	for (const auto& rhiAdapter : rhiAdapters)
 	{
@@ -27,6 +28,7 @@ int main()
 	printf("Select adapter : %s\n", bestAdapter.GetName());
 	bestAdapter.Init();
 
+	// Create device and command queues.
 	printf("\n");
 	auto queueCIs = bestAdapter.QueryCommandQueueCreateInfos();
 	for (const auto& queueCI : queueCIs)
@@ -34,7 +36,8 @@ int main()
 		queueCI.Dump();
 	}
 
-	std::vector<RHICommandQueueCreateInfo> bestQueueCIs = FindBestCommandQueues({ RHICommandQueueType::Graphics, RHICommandQueueType::Compute, RHICommandQueueType::Copy }, queueCIs);
+	std::vector<RHICommandType> expectQueueTypes { RHICommandType::Graphics, RHICommandType::Compute, RHICommandType::Copy };
+	std::vector<RHICommandQueueCreateInfo> bestQueueCIs = FindBestCommandQueues(expectQueueTypes, queueCIs);
 	for (const auto& bestQueueCI : bestQueueCIs)
 	{
 		printf("Select %s command queue : %u\n", EnumName(bestQueueCI.Type).data(), bestQueueCI.ID);
@@ -57,27 +60,28 @@ int main()
 		commandQueueFences.push_back(rhiDevice.CreateFence());
 	}
 
-	// Application
+	// Create application and main window.
 	PlatformApplication app;
 	app.Init();
 
 	WindowCreateInfo windowCI;
 	PlatformWindow mainWindow;
 	windowCI.Title = "00_HelloWorld";
+	windowCI.Width = 1280;
+	windowCI.Height = 720;
 	mainWindow.Init(windowCI, app.GetProcessInstance());
 
-	// Create Surface/SwapChain/Framebuffer to bind to window
-	auto rhiSurface = rhiInstance.CreateSurface(mainWindow.GetHandle(), app.GetProcessInstance());
-
+	// Create SwapChain to bind to native window.
 	RHISwapChainCreateInfo swapChainCI;
-	swapChainCI.Surface = &rhiSurface;
-	swapChainCI.Width = 1280;
-	swapChainCI.Height = 720;
+	swapChainCI.Instance = &rhiInstance;
+	swapChainCI.NativeWindowHandle = mainWindow.GetHandle();
+	swapChainCI.NativeInstanceHandle = app.GetProcessInstance();
+	swapChainCI.BackBufferWidth = windowCI.Width;
+	swapChainCI.BackBufferHeight = windowCI.Height;
+	swapChainCI.BackBufferCount = 2;
+	swapChainCI.Format = RHIFormat::R8G8B8A8Unorm;
+	swapChainCI.PresentMode = RHIPresentMode::VSync;
 	auto rhiSwapChain = rhiDevice.CreateSwapChain(swapChainCI);
-
-	std::vector<RHITexture> backBufferTextures = rhiSwapChain.GetBackBufferTextures();
-
-
 
 	// Run
 	app.Run();

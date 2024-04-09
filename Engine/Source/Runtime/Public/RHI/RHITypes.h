@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Core/HAL/Platform.h>
+#include <Core/Base/NameOf.h>
+#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/BasicTypes.h>
 #include <RHI/RHIEnums.h>
 
 namespace ow
 {
-
-class RHISurface;
 
 template<GPUVendor T>
 constexpr uint32 GetGPUVendorID()
@@ -106,7 +106,7 @@ struct RHI_API RHIInstanceCreateInfo
 
 struct RHI_API RHICommandQueueCreateInfo
 {
-    RHICommandQueueType Type = RHICommandQueueType::Graphics;
+    RHICommandType Type = RHICommandType::Graphics;
     uint32 ID = 0;
     float Priority = 1.0f;
     bool IsDedicated = false;
@@ -125,11 +125,15 @@ struct RHI_API RHISemaphoreCreateInfo
 
 };
 
+class RHIInstance;
 struct RHI_API RHISwapChainCreateInfo
 {
-    RHISurface* Surface = nullptr;
-    uint32 Width = 1;
-    uint32 Height = 1;
+    RHIInstance* Instance = nullptr;
+    void* NativeWindowHandle = nullptr;
+    void* NativeInstanceHandle = nullptr;
+    RHIFormat Format = RHIFormat::R8G8B8A8Unorm;
+    uint32 BackBufferWidth = 1;
+    uint32 BackBufferHeight = 1;
     uint32 BackBufferCount = 2;
     RHIPresentMode PresentMode = RHIPresentMode::VSync;
 };

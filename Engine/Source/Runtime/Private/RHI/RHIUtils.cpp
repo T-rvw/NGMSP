@@ -35,7 +35,7 @@ std::optional<int32> FindBestRHIAdapter(const std::vector<RHIAdapter>& adapters)
 	return bestAdapterIndex;
 }
 
-std::optional<int32> FindBestCommandQueue(RHICommandQueueType commandType, const std::vector<RHICommandQueueCreateInfo>& createInfos)
+std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo>& createInfos)
 {
 	std::optional<int32> bestCIIndex;
 	float bestScore = 0.0f;
@@ -62,7 +62,7 @@ std::optional<int32> FindBestCommandQueue(RHICommandQueueType commandType, const
 	return bestCIIndex;
 }
 
-std::vector<RHICommandQueueCreateInfo> FindBestCommandQueues(const std::vector<RHICommandQueueType>& commandTypes, const std::vector<RHICommandQueueCreateInfo>& createInfos)
+std::vector<RHICommandQueueCreateInfo> FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo>& createInfos)
 {
 	std::vector<RHICommandQueueCreateInfo> bestCommandQueueCIs;
 

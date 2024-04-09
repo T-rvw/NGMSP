@@ -13,7 +13,6 @@ struct RHIInstanceCreateInfo;
 enum class RHIBackend;
 
 class RHIAdapter;
-class RHISurface;
 
 /// <summary>
 /// RHIInstance is an entry point to access core apis, enable debug layers.
@@ -40,7 +39,6 @@ public:
 	void* GetHandle() const;
 
 	std::vector<RHIAdapter> EnumerateAdapters() const;
-	RHISurface CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const;
 
 private:
 	IRHIInstance* m_pImpl = nullptr;

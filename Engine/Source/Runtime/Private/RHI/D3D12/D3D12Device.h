@@ -25,6 +25,7 @@ public:
 	virtual RHISwapChain CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const override;
 
 private:
+	ComPtr<ID3D12CommandQueue> m_commandQueues[EnumCount<RHICommandType>()];
 	ComPtr<ID3D12Device> m_device;
 };
 

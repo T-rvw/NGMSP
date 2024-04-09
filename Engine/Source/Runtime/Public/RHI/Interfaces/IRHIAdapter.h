@@ -2,6 +2,8 @@
 
 #include <RHI/RHITypes.h>
 
+#include <vector>
+
 namespace ow
 {
 

@@ -10,8 +10,4 @@ D3D12CommandQueue::D3D12CommandQueue(ID3D12CommandQueue* pCommandQueue) :
 {
 }
 
-void D3D12CommandQueue::Init()
-{
-}
-
 }

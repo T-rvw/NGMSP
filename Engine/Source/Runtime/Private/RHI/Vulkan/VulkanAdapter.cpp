@@ -91,27 +91,70 @@ struct VulkanAdapterMeshShader
 namespace ow
 {
 
-VulkanAdapter::VulkanAdapter(VkPhysicalDevice physcialDevice) :
-	m_physcialDevice(physcialDevice)
+VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
+	m_physicalDevice(physicalDevice)
 {
+	VkPhysicalDeviceProperties properties{};
+	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+	SetName(properties.deviceName);
+	SetType(properties.deviceType);
+	SetVendor(properties.vendorID);
+	SetDeviceID(properties.deviceID);
+
+	VkPhysicalDeviceMemoryProperties memoryProperties{};
+	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+
+	const bool isIntegratedGPU = GPUAdapterType::Integrated == GetType();
+	uint64 videoMemorySize = 0;
+	uint64 systemMemorySize = 0;
+	uint64 sharedMemorySize = 0;
+	std::vector<std::vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
+	for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
+	{
+		const VkMemoryType& memoryType = memoryProperties.memoryTypes[memoryTypeIndex];
+		assert(memoryType.heapIndex < memoryProperties.memoryHeapCount);
+		memoryHeapTypes[memoryType.heapIndex].push_back(&memoryType);
+	}
+
+	for (uint32 memoryHeapIndex = 0; memoryHeapIndex < memoryProperties.memoryHeapCount; ++memoryHeapIndex)
+	{
+		const VkMemoryHeap& memoryHeap = memoryProperties.memoryHeaps[memoryHeapIndex];
+		bool isHeapInLocalDevice = (memoryHeap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) > 0;
+
+		if (isHeapInLocalDevice)
+		{
+			videoMemorySize += memoryHeap.size;
+		}
+		else
+		{
+			sharedMemorySize += memoryHeap.size;
+		}
+	}
+
+	SetVideoMemorySize(videoMemorySize);
+	SetSystemMemorySize(systemMemorySize);
+	SetSharedMemorySize(sharedMemorySize);
 }
 
-VulkanAdapter::~VulkanAdapter() = default;
+VulkanAdapter::~VulkanAdapter()
+{
+}
 
 void VulkanAdapter::Init()
 {
 	uint32 extensionCount;
-	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physcialDevice, nullptr, &extensionCount, nullptr));
+	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));
 	m_adapterExtensions.resize(extensionCount);
-	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physcialDevice, nullptr, &extensionCount, m_adapterExtensions.data()));
+	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_adapterExtensions.data()));
 
 	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
 	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
 	
 	uint32 queueFamilyCount;
-	vkGetPhysicalDeviceQueueFamilyProperties2(m_physcialDevice, &queueFamilyCount, nullptr);
+	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, nullptr);
 	m_adapterQueueFamilies.resize(queueFamilyCount, { VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2 });
-	vkGetPhysicalDeviceQueueFamilyProperties2(m_physcialDevice, &queueFamilyCount, m_adapterQueueFamilies.data());
+	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, m_adapterQueueFamilies.data());
 }
 
 std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInfos()
@@ -136,7 +179,7 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 		if (supportGraphics)
 		{
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandQueueType::Graphics;
+			commandQueue.Type = RHICommandType::Graphics;
 			commandQueue.ID = queueFamilyIndex;
 			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
 			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
@@ -147,7 +190,7 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 		if (supportCompute)
 		{
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandQueueType::Compute;
+			commandQueue.Type = RHICommandType::Compute;
 			commandQueue.ID = queueFamilyIndex;
 			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
 			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
@@ -158,7 +201,7 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 		if (supportTransfer)
 		{
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandQueueType::Copy;
+			commandQueue.Type = RHICommandType::Copy;
 			commandQueue.ID = queueFamilyIndex;
 			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
 			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
@@ -169,7 +212,7 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 		if (supportVideoDecode)
 		{
 			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandQueueType::VideoDecode;
+			commandQueue.Type = RHICommandType::VideoDecode;
 			commandQueue.ID = queueFamilyIndex;
 			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
 			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
@@ -217,8 +260,8 @@ RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const
 			meshShader.AppendProperties(pPropertiesNextChain);
 		}
 
-		vkGetPhysicalDeviceFeatures2(m_physcialDevice, &m_adapterFeatures->Features);
-		vkGetPhysicalDeviceProperties2(m_physcialDevice, &m_adapterProperties->Properties);
+		vkGetPhysicalDeviceFeatures2(m_physicalDevice, &m_adapterFeatures->Features);
+		vkGetPhysicalDeviceProperties2(m_physicalDevice, &m_adapterProperties->Properties);
 	}
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -241,11 +284,11 @@ RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const
 	deviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 	VkDevice vkDevice;
-	VK_VERIFY(vkCreateDevice(m_physcialDevice, &deviceCreateInfo, nullptr, &vkDevice));
+	VK_VERIFY(vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &vkDevice));
 	assert(vkDevice != VK_NULL_HANDLE);
 	volkLoadDevice(vkDevice);
 
-	auto vulkanDevice = std::make_unique<VulkanDevice>(m_physcialDevice, vkDevice);
+	auto vulkanDevice = std::make_unique<VulkanDevice>(m_physicalDevice, vkDevice);
 
 	RHIDevice rhiDevice;
 	rhiDevice.Reset(MoveTemp(vulkanDevice));

@@ -10,6 +10,18 @@ namespace ow
 D3D12Adapter::D3D12Adapter(IDXGIAdapter1* pAdapter) :
 	m_adapter(pAdapter)
 {
+	DXGI_ADAPTER_DESC1 adapterDesc;
+	pAdapter->GetDesc1(&adapterDesc);
+
+	char adapterName[256];
+	sprintf_s(adapterName, "%ws", adapterDesc.Description);
+	SetName(adapterName);
+	SetType(adapterDesc);
+	SetVendor(adapterDesc.VendorId);
+	SetDeviceID(adapterDesc.DeviceId);
+	SetVideoMemorySize(adapterDesc.DedicatedVideoMemory);
+	SetSystemMemorySize(adapterDesc.DedicatedSystemMemory);
+	SetSharedMemorySize(adapterDesc.SharedSystemMemory);
 }
 
 void D3D12Adapter::Init()
@@ -39,25 +51,25 @@ std::vector<RHICommandQueueCreateInfo> D3D12Adapter::QueryCommandQueueCreateInfo
 
 	{
 		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandQueueType::Graphics;
+		commandQueue.Type = RHICommandType::Graphics;
 		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 
 	{
 		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandQueueType::Compute;
+		commandQueue.Type = RHICommandType::Compute;
 		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 
 	{
 		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandQueueType::Copy;
+		commandQueue.Type = RHICommandType::Copy;
 		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 
 	{
 		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandQueueType::VideoDecode;
+		commandQueue.Type = RHICommandType::VideoDecode;
 		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
 	}
 

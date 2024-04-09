@@ -47,12 +47,12 @@ void* RHICommandQueue::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-void RHICommandQueue::SetType(RHICommandQueueType commandQueueType)
+void RHICommandQueue::SetType(RHICommandType commandQueueType)
 {
 	m_pImpl->SetType(commandQueueType);
 }
 
-RHICommandQueueType RHICommandQueue::GetType() const
+RHICommandType RHICommandQueue::GetType() const
 {
 	return m_pImpl->GetType();
 }

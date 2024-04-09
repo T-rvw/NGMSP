@@ -1,10 +1,8 @@
 #include "VulkanInstance.h"
 
 #include "VulkanAdapter.h"
-#include "VulkanSurface.h"
 
 #include <RHI/RHIAdapter.h>
-#include <RHI/RHISurface.h>
 #include <RHI/RHITypes.h>
 
 #include <optional>
@@ -40,6 +38,7 @@ namespace ow
 
 VulkanInstance::~VulkanInstance()
 {
+	vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugUtilsMessenger, nullptr);
 	vkDestroyInstance(m_instance, nullptr);
 }
 
@@ -181,9 +180,8 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 
 	if (optDebugUtilsCreateInfo.has_value())
 	{
-		VkDebugUtilsMessengerEXT debugUtilsMessenger = VK_NULL_HANDLE;
-		vkCreateDebugUtilsMessengerEXT(m_instance, &optDebugUtilsCreateInfo.value(), nullptr, &debugUtilsMessenger);
-		assert(debugUtilsMessenger != VK_NULL_HANDLE);
+		VK_VERIFY(vkCreateDebugUtilsMessengerEXT(m_instance, &optDebugUtilsCreateInfo.value(), nullptr, &m_debugUtilsMessenger));
+		assert(m_debugUtilsMessenger != VK_NULL_HANDLE);
 	}
 }
 
@@ -196,77 +194,13 @@ std::vector<RHIAdapter> VulkanInstance::EnumerateAdapters() const
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
 
 	std::vector<RHIAdapter> rhiAdapters;
-	for (const auto physicalDevice : physicalDevices)
+	for (const auto& physicalDevice : physicalDevices)
 	{
-		VkPhysicalDeviceProperties properties {};
-		vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-		
-		VkPhysicalDeviceMemoryProperties memoryProperties {};
-		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-
-		auto vkAdapter = std::make_unique<VulkanAdapter>(physicalDevice);
-		vkAdapter->SetName(properties.deviceName);
-		vkAdapter->SetType(properties.deviceType);
-		vkAdapter->SetVendor(properties.vendorID);
-		vkAdapter->SetDeviceID(properties.deviceID);
-
-		const bool isIntegratedGPU = GPUAdapterType::Integrated == vkAdapter->GetType();
-		uint64 videoMemorySize = 0;
-		uint64 systemMemorySize = 0;
-		uint64 sharedMemorySize = 0;
-		std::vector<std::vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
-		for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
-		{
-			const VkMemoryType& memoryType = memoryProperties.memoryTypes[memoryTypeIndex];
-			assert(memoryType.heapIndex < memoryProperties.memoryHeapCount);
-			memoryHeapTypes[memoryType.heapIndex].push_back(&memoryType);
-		}
-
-		for (uint32 memoryHeapIndex = 0; memoryHeapIndex < memoryProperties.memoryHeapCount; ++memoryHeapIndex)
-		{
-			const VkMemoryHeap& memoryHeap = memoryProperties.memoryHeaps[memoryHeapIndex];
-			bool isHeapInLocalDevice = (memoryHeap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) > 0;
-
-			if (isHeapInLocalDevice)
-			{
-				videoMemorySize += memoryHeap.size;
-			}
-			else
-			{
-				sharedMemorySize += memoryHeap.size;
-			}
-		}
-
-		vkAdapter->SetVideoMemorySize(videoMemorySize);
-		vkAdapter->SetSystemMemorySize(systemMemorySize);
-		vkAdapter->SetSharedMemorySize(sharedMemorySize);
-
 		auto& rhiAdapter = rhiAdapters.emplace_back();
-		rhiAdapter.Reset(MoveTemp(vkAdapter));
+		rhiAdapter.Reset(std::make_unique<VulkanAdapter>(physicalDevice));
 	}
 
 	return rhiAdapters;
-}
-
-RHISurface VulkanInstance::CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const
-{
-	VkSurfaceKHR vkSurface;
-
-#ifdef PLATFORM_WINDOWS
-	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-	surfaceCreateInfo.hwnd = (HWND)pPlatformWindowHandle;
-	surfaceCreateInfo.hinstance = (HINSTANCE)pPlatformInstanceHandle;
-	VK_VERIFY(vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &vkSurface));
-#else
-	static_assert("Unsupported platform to create surface.");
-#endif
-
-	auto vulkanSurface = std::make_unique<VulkanSurface>(m_instance, vkSurface);
-
-	RHISurface rhiSurface;
-	rhiSurface.Reset(MoveTemp(vulkanSurface));
-	return rhiSurface;
 }
 
 }

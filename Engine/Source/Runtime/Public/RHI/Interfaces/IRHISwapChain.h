@@ -11,8 +11,6 @@ class IRHISwapChain
 {
 public:
 	virtual ~IRHISwapChain() {}
-
-	virtual std::vector<RHITexture> GetBackBufferTextures() const = 0;
 };
 
 }

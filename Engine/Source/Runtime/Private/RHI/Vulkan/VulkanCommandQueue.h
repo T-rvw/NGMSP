@@ -18,7 +18,6 @@ public:
 	VulkanCommandQueue& operator=(VulkanCommandQueue&&) = default;
 	virtual ~VulkanCommandQueue();
 
-	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_queue; }
 
 private:

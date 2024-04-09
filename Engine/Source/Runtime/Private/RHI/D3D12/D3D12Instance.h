@@ -26,7 +26,6 @@ public:
 	virtual void* GetHandle() const override { return m_factory.Get(); }
 
 	virtual std::vector<RHIAdapter> EnumerateAdapters() const override;
-	virtual RHISurface CreateSurface(void* pPlatformWindowHandle, void* pPlatformInstanceHandle) const override;
 
 private:
 	ComPtr<IDXGIFactory4> m_factory;

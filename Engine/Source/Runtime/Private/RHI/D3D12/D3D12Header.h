@@ -2,8 +2,9 @@
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
-
 #include <D3D12MemoryAllocator/D3D12MemAlloc.h>
+
+#include "D3D12Types.h"
 
 #include <wrl.h>
 

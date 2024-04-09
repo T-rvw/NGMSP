@@ -29,8 +29,8 @@ public:
 	void Dump() const;
 	void* GetHandle() const;
 
-	void SetType(RHICommandQueueType commandQueueType);
-	RHICommandQueueType GetType() const;
+	void SetType(RHICommandType commandQueueType);
+	RHICommandType GetType() const;
 
 private:
 	IRHICommandQueue* m_pImpl = nullptr;

@@ -1,17 +1,17 @@
 #include "D3D12SwapChain.h"
 
-#include "D3D12Texture.h"
-
-#include <RHI/RHITexture.h>
 #include <RHI/RHITypes.h>
 
 namespace ow
 {
 
-std::vector<RHITexture> D3D12SwapChain::GetBackBufferTextures() const
+D3D12SwapChain::D3D12SwapChain(IDXGISwapChain1* pSwapChain) :
+	m_swapChain(pSwapChain)
 {
-    std::vector<RHITexture> rhiTextures;
-    return rhiTextures;
+}
+
+D3D12SwapChain::~D3D12SwapChain()
+{
 }
 
 }

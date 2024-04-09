@@ -25,7 +25,7 @@ public:
 	virtual RHISwapChain CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const override;
 
 private:
-	VkPhysicalDevice m_physcialDevice = VK_NULL_HANDLE;
+	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
 	VkDevice m_device = VK_NULL_HANDLE;
 };
 

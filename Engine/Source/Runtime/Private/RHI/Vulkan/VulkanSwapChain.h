@@ -11,21 +11,21 @@ class VulkanSwapChain : public IRHISwapChain
 {
 public:
 	VulkanSwapChain() = default;
-	explicit VulkanSwapChain(VkDevice device, VkSwapchainKHR swapChain);
+	explicit VulkanSwapChain(VkInstance instance, VkDevice device, VkSurfaceKHR surface, VkFormat format, VkSwapchainKHR swapChain);
 	VulkanSwapChain(const VulkanSwapChain&) = delete;
 	VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;
 	VulkanSwapChain(VulkanSwapChain&&) = default;
 	VulkanSwapChain& operator=(VulkanSwapChain&&) = default;
 	virtual ~VulkanSwapChain();
 
-	virtual std::vector<RHITexture> GetBackBufferTextures() const override;
-
-	void SetImageFormat(VkFormat imageFormat) { m_imageFormat = imageFormat; }
-
 private:
+	VkInstance m_instance = VK_NULL_HANDLE;
 	VkDevice m_device = VK_NULL_HANDLE;
+	VkSurfaceKHR m_surface = VK_NULL_HANDLE;
 	VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
-	VkFormat m_imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
+	std::vector<VkImage> m_swapChainImages;
+	std::vector<VkImageView> m_swapChainImageViews;
+	VkFormat m_format = VK_FORMAT_R8G8B8A8_UNORM;
 };
 
 }

@@ -65,7 +65,7 @@ public:
 	virtual ~VulkanAdapter();
 
 	virtual void Init() override;
-	virtual void* GetHandle() const override { return m_physcialDevice; }
+	virtual void* GetHandle() const override { return m_physicalDevice; }
 	virtual std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos() override;
 	virtual RHIDevice CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const override;
 
@@ -77,7 +77,7 @@ public:
 	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
 
 private:
-	VkPhysicalDevice m_physcialDevice = VK_NULL_HANDLE;
+	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
 	std::vector<VkExtensionProperties> m_adapterExtensions;
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
 	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;

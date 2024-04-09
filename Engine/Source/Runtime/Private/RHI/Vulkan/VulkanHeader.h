@@ -10,12 +10,15 @@
 #include <vulkan/vulkan.h>
 #include <VulkanMemoryAllocator/vk_mem_alloc.h>
 
+#include "VulkanTypes.h"
+
 #ifdef PLATFORM_WINDOWS
 // Undef windows macros which will affect RHI interfaces.
 #undef CreateSemaphore
 #endif
 
 #include <cassert>
+#include <memory>
 
 #define VK_VERIFY(result) \
 	do \

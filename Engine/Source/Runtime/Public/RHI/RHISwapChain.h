@@ -27,7 +27,6 @@ public:
 	~RHISwapChain();
 
 	void Reset(std::unique_ptr<IRHISwapChain>&& impl);
-	std::vector<RHITexture> GetBackBufferTextures() const;
 
 private:
 	IRHISwapChain* m_pImpl = nullptr;

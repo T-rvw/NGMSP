@@ -2,21 +2,21 @@
 
 #include "VulkanCommandQueue.h"
 #include "VulkanFence.h"
+#include "VulkanInstance.h"
 #include "VulkanSemaphore.h"
 #include "VulkanSwapChain.h"
-#include "VulkanSurface.h"
 
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIFence.h>
+#include <RHI/RHIInstance.h>
 #include <RHI/RHISemaphore.h>
 #include <RHI/RHISwapChain.h>
-#include <RHI/RHISurface.h>
 
 namespace ow
 {
 
 VulkanDevice::VulkanDevice(VkPhysicalDevice physcialDevice, VkDevice device) :
-	m_physcialDevice(physcialDevice),
+	m_physicalDevice(physcialDevice),
 	m_device(device)
 {
 }
@@ -33,7 +33,6 @@ RHICommandQueue VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo
 
 	auto vulkanCommandQueue = std::make_unique<VulkanCommandQueue>(vkCommandQueue);
 	vulkanCommandQueue->SetType(commandQueueCI.Type);
-	vulkanCommandQueue->Init();
 
 	RHICommandQueue commandQueue;
 	commandQueue.Reset(MoveTemp(vulkanCommandQueue));
@@ -66,20 +65,31 @@ RHISemaphore VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createI
 
 RHISwapChain VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
 {
-	VkSurfaceKHR surface = reinterpret_cast<VkSurfaceKHR>(createInfo.Surface->GetHandle());
+	auto vkInstance = static_cast<VkInstance>(createInfo.Instance->GetHandle());
+
+	VkSurfaceKHR vkSurface;
+#ifdef PLATFORM_WINDOWS
+	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
+	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	surfaceCreateInfo.hwnd = (HWND)createInfo.NativeWindowHandle;
+	surfaceCreateInfo.hinstance = (HINSTANCE)createInfo.NativeInstanceHandle;
+	VK_VERIFY(vkCreateWin32SurfaceKHR(vkInstance, &surfaceCreateInfo, nullptr, &vkSurface));
+#else
+	static_assert("Unsupported platform to create surface.");
+#endif
 
 	VkBool32 presentSupported;
-	VK_VERIFY(vkGetPhysicalDeviceSurfaceSupportKHR(m_physcialDevice, 0, surface, &presentSupported));
+	VK_VERIFY(vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, 0, vkSurface, &presentSupported));
 	assert(presentSupported);
 
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
-	VK_VERIFY(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physcialDevice, surface, &surfaceCapabilities));
+	VK_VERIFY(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, vkSurface, &surfaceCapabilities));
 	assert(createInfo.BackBufferCount >= surfaceCapabilities.minImageCount);
 	assert(0 == surfaceCapabilities.maxImageCount || createInfo.BackBufferCount < surfaceCapabilities.maxImageCount);
 
 	VkExtent2D swapChainSize;
-	swapChainSize.width = createInfo.Width;
-	swapChainSize.height = createInfo.Height;
+	swapChainSize.width = createInfo.BackBufferWidth;
+	swapChainSize.height = createInfo.BackBufferHeight;
 	const bool supportTransformIdentify = surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 	auto surfaceTransformFlags = supportTransformIdentify ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR : surfaceCapabilities.currentTransform;
 
@@ -87,10 +97,10 @@ RHISwapChain VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createI
 	if (createInfo.PresentMode != RHIPresentMode::VSync)
 	{
 		uint32 presentModeCount;
-		VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physcialDevice, surface, &presentModeCount, nullptr));
+		VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, vkSurface, &presentModeCount, nullptr));
 
 		std::vector<VkPresentModeKHR> presentModes(presentModeCount);
-		VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physcialDevice, surface, &presentModeCount, presentModes.data()));
+		VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, vkSurface, &presentModeCount, presentModes.data()));
 
 		if (RHIPresentMode::Intermediate == createInfo.PresentMode)
 		{
@@ -105,35 +115,43 @@ RHISwapChain VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createI
 		}
 	}
 
-	VkFormat surfaceFormat;
+	VkFormat swapChainFormat = ToVK(createInfo.Format);
 	VkColorSpaceKHR swapChainColorSpace;
 	{
 		uint32_t surfaceFormatCount;
-		VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physcialDevice, surface, &surfaceFormatCount, nullptr));
+		VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, vkSurface, &surfaceFormatCount, nullptr));
 
 		std::vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
-		VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physcialDevice, surface, &surfaceFormatCount, surfaceFormats.data()));
+		VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, vkSurface, &surfaceFormatCount, surfaceFormats.data()));
 
-		if (1 == surfaceFormatCount && VK_FORMAT_UNDEFINED == surfaceFormats.front().format)
+		bool findExpectedFormat = false;
+		for (const auto& surfaceFormat : surfaceFormats)
 		{
-			surfaceFormat = VK_FORMAT_R8G8B8A8_UNORM;
-		}
-		else
-		{
-			surfaceFormat = surfaceFormats.front().format;
+			if (swapChainFormat != VK_FORMAT_UNDEFINED &&
+				swapChainFormat == surfaceFormat.format)
+			{
+				findExpectedFormat = true;
+				swapChainColorSpace = surfaceFormat.colorSpace;
+				break;
+			}
 		}
 
-		swapChainColorSpace = surfaceFormats.front().colorSpace;
+		if (!findExpectedFormat)
+		{
+			swapChainFormat = surfaceFormats.front().format;
+			swapChainColorSpace = surfaceFormats.front().colorSpace;
+		}
+		assert(swapChainFormat != VK_FORMAT_UNDEFINED);
 	}
 
 	VkSwapchainCreateInfoKHR swapChainCreateInfo {};
 	swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	swapChainCreateInfo.surface = surface;
+	swapChainCreateInfo.surface = vkSurface;
 	swapChainCreateInfo.minImageCount = createInfo.BackBufferCount;
 	swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	swapChainCreateInfo.preTransform = surfaceTransformFlags;
 	swapChainCreateInfo.imageColorSpace = swapChainColorSpace;
-	swapChainCreateInfo.imageFormat = surfaceFormat;
+	swapChainCreateInfo.imageFormat = swapChainFormat;
 	swapChainCreateInfo.pQueueFamilyIndices = nullptr;
 	swapChainCreateInfo.queueFamilyIndexCount = 0;
 	swapChainCreateInfo.clipped = VK_TRUE;
@@ -146,9 +164,7 @@ RHISwapChain VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createI
 	VkSwapchainKHR swapChain;
 	VK_VERIFY(vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, nullptr, &swapChain));
 
-	auto vulkanSwapChain = std::make_unique<VulkanSwapChain>(m_device, swapChain);
-	vulkanSwapChain->SetImageFormat(surfaceFormat);
-
+	auto vulkanSwapChain = std::make_unique<VulkanSwapChain>(vkInstance, m_device, vkSurface, swapChainFormat, swapChain);
 	RHISwapChain rhiSwapChain;
 	rhiSwapChain.Reset(MoveTemp(vulkanSwapChain));
 	return rhiSwapChain;
