@@ -5,11 +5,13 @@
 namespace ow
 {
 
-VulkanTexture::~VulkanTexture()
+VulkanTexture::VulkanTexture(VkImage image, VkImageView imageView) :
+	m_image(image),
+	m_imageView(imageView)
 {
 }
 
-void VulkanTexture::Init()
+VulkanTexture::~VulkanTexture()
 {
 }
 

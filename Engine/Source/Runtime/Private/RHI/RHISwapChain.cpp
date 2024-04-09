@@ -2,6 +2,7 @@
 
 #include <Core/HAL/Platform.h>
 #include <RHI/Interfaces/IRHISwapChain.h>
+#include <RHI/RHITexture.h>
 
 namespace ow
 {
@@ -31,6 +32,11 @@ RHISwapChain::~RHISwapChain()
 void RHISwapChain::Reset(std::unique_ptr<IRHISwapChain>&& impl)
 {
 	m_pImpl = impl.release();
+}
+
+std::vector<RHITexture> RHISwapChain::GetBackBufferTextures() const
+{
+	return m_pImpl->GetBackBufferTextures();
 }
 
 }

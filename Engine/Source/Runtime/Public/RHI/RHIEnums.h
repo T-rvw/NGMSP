@@ -54,6 +54,12 @@ enum class RHIFillMode
     Solid
 };
 
+enum class RHIPresentMode
+{
+    VSync,
+    Intermediate
+};
+
 enum class RHIPrimitiveType
 {
     PointList,

@@ -6,6 +6,8 @@
 namespace ow
 {
 
+class RHISurface;
+
 template<GPUVendor T>
 constexpr uint32 GetGPUVendorID()
 {
@@ -123,13 +125,13 @@ struct RHI_API RHISemaphoreCreateInfo
 
 };
 
-class RHISurface;
 struct RHI_API RHISwapChainCreateInfo
 {
     RHISurface* Surface = nullptr;
-    uint32 SurfaceWidth = 1;
-    uint32 SurfaceHeight = 1;
+    uint32 Width = 1;
+    uint32 Height = 1;
     uint32 BackBufferCount = 2;
+    RHIPresentMode PresentMode = RHIPresentMode::VSync;
 };
 
 }

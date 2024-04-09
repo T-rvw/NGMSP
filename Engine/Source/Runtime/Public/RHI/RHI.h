@@ -9,6 +9,7 @@
 #include <RHI/RHICommandQueue.h>
 #include <RHI/RHIDevice.h>
 #include <RHI/RHIFence.h>
+#include <RHI/RHIFrameBuffer.h>
 #include <RHI/RHIInstance.h>
 #include <RHI/RHIPipeline.h>
 #include <RHI/RHISemaphore.h>

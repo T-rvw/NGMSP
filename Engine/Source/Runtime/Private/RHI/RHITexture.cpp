@@ -28,8 +28,9 @@ RHITexture::~RHITexture()
 	}
 }
 
-void RHITexture::Init()
+void RHITexture::Reset(std::unique_ptr<IRHITexture>&& pImpl)
 {
+	m_pImpl = pImpl.release();
 }
 
 }

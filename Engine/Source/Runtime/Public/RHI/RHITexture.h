@@ -24,7 +24,7 @@ public:
 	RHITexture& operator=(RHITexture&& other) noexcept;
 	~RHITexture();
 
-	void Init();
+	void Reset(std::unique_ptr<IRHITexture>&& pImpl);
 
 private:
 	IRHITexture* m_pImpl = nullptr;

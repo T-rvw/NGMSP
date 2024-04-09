@@ -78,17 +78,31 @@ RHISwapChain VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createI
 	assert(0 == surfaceCapabilities.maxImageCount || createInfo.BackBufferCount < surfaceCapabilities.maxImageCount);
 
 	VkExtent2D swapChainSize;
-	swapChainSize.width = createInfo.SurfaceWidth;
-	swapChainSize.height = createInfo.SurfaceHeight;
+	swapChainSize.width = createInfo.Width;
+	swapChainSize.height = createInfo.Height;
 	const bool supportTransformIdentify = surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 	auto surfaceTransformFlags = supportTransformIdentify ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR : surfaceCapabilities.currentTransform;
 
+	VkPresentModeKHR swapChainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+	if (createInfo.PresentMode != RHIPresentMode::VSync)
 	{
 		uint32 presentModeCount;
 		VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physcialDevice, surface, &presentModeCount, nullptr));
 
 		std::vector<VkPresentModeKHR> presentModes(presentModeCount);
 		VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physcialDevice, surface, &presentModeCount, presentModes.data()));
+
+		if (RHIPresentMode::Intermediate == createInfo.PresentMode)
+		{
+			for (auto presentMode : presentModes)
+			{
+				if (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+				{
+					swapChainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+					break;
+				}
+			}
+		}
 	}
 
 	VkFormat surfaceFormat;
@@ -127,12 +141,13 @@ RHISwapChain VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createI
 	swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	swapChainCreateInfo.imageExtent = swapChainSize;
 	swapChainCreateInfo.imageArrayLayers = 1;
-	swapChainCreateInfo.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	swapChainCreateInfo.presentMode = swapChainPresentMode;
 
 	VkSwapchainKHR swapChain;
 	VK_VERIFY(vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, nullptr, &swapChain));
 
-	auto vulkanSwapChain = std::make_unique<VulkanSwapChain>(swapChain);
+	auto vulkanSwapChain = std::make_unique<VulkanSwapChain>(m_device, swapChain);
+	vulkanSwapChain->SetImageFormat(surfaceFormat);
 
 	RHISwapChain rhiSwapChain;
 	rhiSwapChain.Reset(MoveTemp(vulkanSwapChain));

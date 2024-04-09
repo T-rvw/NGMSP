@@ -66,14 +66,18 @@ int main()
 	windowCI.Title = "00_HelloWorld";
 	mainWindow.Init(windowCI, app.GetProcessInstance());
 
-	// Create surface to bind to window
+	// Create Surface/SwapChain/Framebuffer to bind to window
 	auto rhiSurface = rhiInstance.CreateSurface(mainWindow.GetHandle(), app.GetProcessInstance());
 
 	RHISwapChainCreateInfo swapChainCI;
 	swapChainCI.Surface = &rhiSurface;
-	swapChainCI.SurfaceWidth = 1280;
-	swapChainCI.SurfaceHeight = 720;
+	swapChainCI.Width = 1280;
+	swapChainCI.Height = 720;
 	auto rhiSwapChain = rhiDevice.CreateSwapChain(swapChainCI);
+
+	std::vector<RHITexture> backBufferTextures = rhiSwapChain.GetBackBufferTextures();
+
+
 
 	// Run
 	app.Run();
