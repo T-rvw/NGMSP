@@ -50,8 +50,6 @@ RHIBackend VulkanInstance::GetBackend() const
 void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 {
 	assert(VK_NULL_HANDLE == m_instance);
-
-	// Load vulkan api entry points from module dynamically.
 	VK_VERIFY(volkInitialize());
 
 	// Enable instance layers.
@@ -183,23 +181,36 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 		VK_VERIFY(vkCreateDebugUtilsMessengerEXT(m_instance, &optDebugUtilsCreateInfo.value(), nullptr, &m_debugUtilsMessenger));
 		assert(m_debugUtilsMessenger != VK_NULL_HANDLE);
 	}
+
+	InitAdapters();
 }
 
-std::vector<IRHIAdapter*> VulkanInstance::EnumerateAdapters() const
+void VulkanInstance::InitAdapters()
 {
-	uint32 physicalDeviceCount = 0;
-	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
+	uint32 adapterCount;
+	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &adapterCount, nullptr));
 
-	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
-	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
+	std::vector<VkPhysicalDevice> physicalDevices(adapterCount);
+	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &adapterCount, physicalDevices.data()));
 
-	std::vector<IRHIAdapter*> rhiAdapters;
-	for (const auto& physicalDevice : physicalDevices)
+	for (uint32 adapterIndex = 0; adapterIndex < adapterCount; ++adapterIndex)
 	{
-		auto& rhiAdapter = rhiAdapters.emplace_back();
+		m_adapters.emplace_back(physicalDevices[adapterIndex]);
+	}
+}
+
+void VulkanInstance::EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters)
+{
+	if (nullptr == pAdapters)
+	{
+		adapterCount = static_cast<uint32>(m_adapters.size());
+		return;
 	}
 
-	return rhiAdapters;
+	for (uint32 adapterIndex = 0; adapterIndex < adapterCount; ++adapterIndex)
+	{
+		pAdapters[adapterIndex] = &m_adapters[adapterIndex];
+	}
 }
 
 }

@@ -17,13 +17,14 @@ D3D12Adapter::D3D12Adapter(IDXGIAdapter1* pAdapter) :
 
 	char adapterName[256];
 	sprintf_s(adapterName, "%ws", adapterDesc.Description);
-	SetName(adapterName);
+
 	SetType(adapterDesc);
-	SetVendor(adapterDesc.VendorId);
-	SetDeviceID(adapterDesc.DeviceId);
-	SetVideoMemorySize(adapterDesc.DedicatedVideoMemory);
-	SetSystemMemorySize(adapterDesc.DedicatedSystemMemory);
-	SetSharedMemorySize(adapterDesc.SharedSystemMemory);
+	m_info.Name = adapterName;
+	m_info.Vendor = GetGPUVendor(adapterDesc.VendorId);
+	m_info.DeviceID = adapterDesc.DeviceId;
+	m_info.VideoMemorySize = adapterDesc.DedicatedVideoMemory;
+	m_info.SystemMemorySize = adapterDesc.DedicatedSystemMemory;
+	m_info.SharedMemorySize = adapterDesc.SharedSystemMemory;
 }
 
 void D3D12Adapter::Init()

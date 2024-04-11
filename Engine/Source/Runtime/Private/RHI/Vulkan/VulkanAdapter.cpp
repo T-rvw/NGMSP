@@ -98,15 +98,15 @@ VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
 	VkPhysicalDeviceProperties properties{};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
-	SetName(properties.deviceName);
 	SetType(properties.deviceType);
-	SetVendor(properties.vendorID);
-	SetDeviceID(properties.deviceID);
+	m_info.Name = properties.deviceName;
+	m_info.Vendor = GetGPUVendor(properties.vendorID);
+	m_info.DeviceID = properties.deviceID;
 
 	VkPhysicalDeviceMemoryProperties memoryProperties{};
 	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
-	const bool isIntegratedGPU = GPUAdapterType::Integrated == GetType();
+	const bool isIntegratedGPU = GPUAdapterType::Integrated == m_info.Type;
 	uint64 videoMemorySize = 0;
 	uint64 systemMemorySize = 0;
 	uint64 sharedMemorySize = 0;
@@ -133,9 +133,9 @@ VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
 		}
 	}
 
-	SetVideoMemorySize(videoMemorySize);
-	SetSystemMemorySize(systemMemorySize);
-	SetSharedMemorySize(sharedMemorySize);
+	m_info.VideoMemorySize = videoMemorySize;
+	m_info.SystemMemorySize = systemMemorySize;
+	m_info.SharedMemorySize = sharedMemorySize;
 }
 
 VulkanAdapter::~VulkanAdapter()
@@ -294,40 +294,33 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, con
 	return nullptr;
 }
 
-GPUAdapterType VulkanAdapter::GetType() const
-{
-	return GetInfo().Type;
-}
-
 void VulkanAdapter::SetType(VkPhysicalDeviceType deviceType)
 {
-	auto& info = GetInfo();
-
 	switch (deviceType)
 	{
 	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
 	{
-		info.Type = GPUAdapterType::Discrete;
+		m_info.Type = GPUAdapterType::Discrete;
 		break;
 	}
 	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
 	{
-		info.Type = GPUAdapterType::Integrated;
+		m_info.Type = GPUAdapterType::Integrated;
 		break;
 	}
 	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
 	{
-		info.Type = GPUAdapterType::Virtual;
+		m_info.Type = GPUAdapterType::Virtual;
 		break;
 	}
 	case VK_PHYSICAL_DEVICE_TYPE_CPU:
 	{
-		info.Type = GPUAdapterType::CPU;
+		m_info.Type = GPUAdapterType::CPU;
 		break;
 	}
 	default:
 	{
-		info.Type = GPUAdapterType::CPU;
+		m_info.Type = GPUAdapterType::CPU;
 		break;
 	}
 	}

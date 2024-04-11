@@ -1,42 +1,72 @@
 #include "RHIUtils.h"
 
 #include <Core/Modules/ModuleManager.h>
-#include <RHI/IRHIAdapter.h>
-#include <RHI/IRHIModule.h>
+#include <RHI/RHI.h>
 
 #include <unordered_set>
 
 namespace ow
 {
 
+IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
+{
+	ModuleData* rhiModule = nullptr;
+	switch (createInfo.Backend)
+	{
+	case RHIBackend::D3D12:
+	{
+		rhiModule = ModuleManager::Get().LoadModule("[RHI][D3D12]", "RHID3D12");
+		break;
+	}
+	case RHIBackend::Vulkan:
+	{
+		rhiModule = ModuleManager::Get().LoadModule("[RHI][Vulkan]", "RHIVulkan");
+		break;
+	}
+	default:
+	{
+		assert("Unknown RHI backend.");
+		break;
+	}
+	}
+
+	assert(rhiModule);
+	auto* pModule = static_cast<IRHIModule*>(rhiModule->InitFunc());
+	auto* pRHIInstance = pModule->CreateRHIInstance();
+	pRHIInstance->Init(createInfo);
+
+	return pRHIInstance;
+}
+
 std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters)
 {
-	//std::optional<int32> bestAdapterIndex;
-	//uint64 bestScore = 0;
-	//for (int32 adapterIndex = 0, adapterCount = static_cast<int32>(adapters.size()); adapterIndex < adapterCount; ++adapterIndex)
-	//{
-	//	const auto& adapter = adapters[adapterIndex];
-	//
-	//	uint64 score = 0;
-	//	if (GPUAdapterType::Discrete == adapter->GetType())
-	//	{
-	//		score += 1ULL << 63;
-	//	}
-	//	else if (GPUAdapterType::Integrated == adapter.GetType())
-	//	{
-	//		score += 1ULL << 62;
-	//	}
-	//
-	//	score += adapter.GetVideoMemorySize() >> 20;
-	//
-	//	if (score > bestScore)
-	//	{
-	//		bestAdapterIndex = adapterIndex;
-	//		bestScore = score;
-	//	}
-	//}
+	std::optional<int32> bestAdapterIndex;
+	uint64 bestScore = 0;
+	for (int32 adapterIndex = 0, adapterCount = static_cast<int32>(adapters.size()); adapterIndex < adapterCount; ++adapterIndex)
+	{
+		const IRHIAdapter* pAdapter = adapters[adapterIndex];
+		const auto& adapterInfo = pAdapter->GetInfo();
 
-	return 0;// bestAdapterIndex;
+		uint64 score = 0;
+		if (GPUAdapterType::Discrete == adapterInfo.Type)
+		{
+			score += 1ULL << 63;
+		}
+		else if (GPUAdapterType::Integrated == adapterInfo.Type)
+		{
+			score += 1ULL << 62;
+		}
+	
+		score += adapterInfo.VideoMemorySize >> 20;
+	
+		if (score > bestScore)
+		{
+			bestAdapterIndex = adapterIndex;
+			bestScore = score;
+		}
+	}
+
+	return bestAdapterIndex;
 }
 
 std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo>& createInfos)
@@ -85,6 +115,14 @@ std::vector<RHICommandQueueCreateInfo> FindBestCommandQueues(const std::vector<R
 	}
 
 	return bestCommandQueueCIs;
+}
+
+void Dump(const IRHIInstance* pRHIInstance)
+{
+}
+
+void Dump(const IRHIAdapter* pRHIAdapter)
+{
 }
 
 }

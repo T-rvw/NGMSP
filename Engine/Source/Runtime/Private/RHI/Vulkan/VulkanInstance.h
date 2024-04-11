@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VulkanHeader.h"
+#include "VulkanAdapter.h"
 
 #include <RHI//IRHIInstance.h>
 
@@ -24,13 +24,16 @@ public:
 	virtual void Init(const RHIInstanceCreateInfo& createInfo) override;
 
 	virtual RHIBackend GetBackend() const override;
-	virtual void* GetHandle() const override { return m_instance; }
+	virtual void EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters) override;
 
-	virtual std::vector<IRHIAdapter*> EnumerateAdapters() const override;
+private:
+	void InitAdapters();
 
 private:
 	VkDebugUtilsMessengerEXT m_debugUtilsMessenger = VK_NULL_HANDLE;
 	VkInstance m_instance = VK_NULL_HANDLE;
+
+	std::vector<VulkanAdapter> m_adapters;
 };
 
 }

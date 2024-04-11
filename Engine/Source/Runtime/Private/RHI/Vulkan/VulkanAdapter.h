@@ -69,7 +69,6 @@ public:
 	virtual std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos() override;
 	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const override;
 
-	GPUAdapterType GetType() const;
 	void SetType(VkPhysicalDeviceType deviceType);
 
 	bool CheckExtensionSupport(const char* pExtensionName) const;

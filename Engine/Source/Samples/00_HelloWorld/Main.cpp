@@ -1,70 +1,40 @@
 #include <Engine.h>
 
-using namespace ow;
-
-IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
-{
-	//ModuleManager::Module* rhiModule = nullptr;
-	//switch (createInfo.Backend)
-	//{
-	//case RHIBackend::D3D12:
-	//{
-	//	rhiModule = ModuleManager::Get().LoadModule("[RHI][D3D12]", "RHID3D12");
-	//	break;
-	//}
-	//case RHIBackend::Vulkan:
-	//{
-	//	rhiModule = ModuleManager::Get().LoadModule("[RHI][Vulkan]", "RHIVulkan");
-	//	break;
-	//}
-	//default:
-	//{
-	//	assert("Unknown RHI backend.");
-	//	break;
-	//}
-	//}
-	//
-	//assert(rhiModule);
-	//auto* pModule = static_cast<IRHIModule*>(rhiModule->InitFunc());
-	//return pModule->CreateRHIInstance();
-
-	return nullptr;
-}
+#include "RHIUtils.h"
 
 int main()
 {
+	using namespace ow;
+
 	// Init RHI instance.
 	RHIInstanceCreateInfo instanceCI;
 	instanceCI.Backend = RHIBackend::Vulkan;
 	instanceCI.Debug = RHIDebugMode::Normal;
 	instanceCI.Validation = RHIValidationMode::GPU;
 	IRHIInstance* pRHIInstance = CreateRHIInstance(instanceCI);
-	
-	//PlatformModule rhiModule;
-	//rhiModule.Lo("RHIVulkan");
-	//auto intializeModuleFunc = (InitializeModuleFunc)rhiModule.GetFunctionAddress("InitializeModule");
-	//auto* pRHIModule = static_cast<IRHIModule*>(intializeModuleFunc());
-	//pRHIModule->Initialize();
-	//rhiModule.Free();
+	Dump(pRHIInstance);
 
-	//auto rhiInstance = RHIInstance::Create(instanceCI);
-	//rhiInstance.Dump();
-	//
-	//// Find a proper GPU to create logical device.
-	//auto rhiAdapters = rhiInstance.EnumerateAdapters();
-	//for (const auto& rhiAdapter : rhiAdapters)
-	//{
-	//	rhiAdapter.Dump();
-	//}
-	//
-	//auto optAdapterIndex = FindBestRHIAdapter(rhiAdapters);
-	//assert(optAdapterIndex.has_value());
-	//int32 adapterIndex = optAdapterIndex.value();
-	//
-	//auto& bestAdapter = rhiAdapters[adapterIndex];
-	//printf("Select adapter : %s\n", bestAdapter.GetName());
-	//bestAdapter.Init();
-	//
+	// Query all RHI adapters.
+	uint32 adapterCount;
+	pRHIInstance->EnumerateAdapters(adapterCount, nullptr);
+
+	std::vector<IRHIAdapter*> rhiAdapters(adapterCount);
+	pRHIInstance->EnumerateAdapters(adapterCount, rhiAdapters.data());
+
+	for (const auto* pRHIAdapter : rhiAdapters)
+	{
+		Dump(pRHIAdapter);
+	}
+
+	// Find a proper GPU to create logical device.
+	auto optAdapterIndex = FindBestRHIAdapter(rhiAdapters);
+	assert(optAdapterIndex.has_value());
+	int32 adapterIndex = optAdapterIndex.value();
+
+	auto& pBestAdapter = rhiAdapters[adapterIndex];
+	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
+	pBestAdapter->Init();
+	
 	//// Create device and command queues.
 	//printf("\n");
 	//auto queueCIs = bestAdapter.QueryCommandQueueCreateInfos();
