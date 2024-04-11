@@ -69,7 +69,7 @@ static GPUVendor GetGPUVendor(uint32 vendorID)
     }
 }
 
-struct RHI_API RHIFeatures
+struct RHIFeatures
 {
     bool Barycentrics : 1;
     bool ShaderFloat16 : 1;
@@ -92,19 +92,19 @@ struct RHIAdapterInfo
     std::string Name = "Unknown";
 };
 
-struct RHI_API RHIDeviceCreateInfo
+struct RHIDeviceCreateInfo
 {
     RHIFeatures Features;
 };
 
-struct RHI_API RHIInstanceCreateInfo
+struct RHIInstanceCreateInfo
 {
     RHIBackend Backend = RHIBackend::Vulkan;
     RHIDebugMode Debug = RHIDebugMode::Disabled;
     RHIValidationMode Validation = RHIValidationMode::Disabled;
 };
 
-struct RHI_API RHICommandQueueCreateInfo
+struct RHICommandQueueCreateInfo
 {
     RHICommandType Type = RHICommandType::Graphics;
     uint32 ID = 0;
@@ -120,15 +120,15 @@ struct RHI_API RHICommandQueueCreateInfo
     }
 };
 
-struct RHI_API RHISemaphoreCreateInfo
+struct RHISemaphoreCreateInfo
 {
 
 };
 
-class RHIInstance;
-struct RHI_API RHISwapChainCreateInfo
+class IRHIInstance;
+struct RHISwapChainCreateInfo
 {
-    RHIInstance* Instance = nullptr;
+    IRHIInstance* Instance = nullptr;
     void* NativeWindowHandle = nullptr;
     void* NativeInstanceHandle = nullptr;
     RHIFormat Format = RHIFormat::R8G8B8A8Unorm;

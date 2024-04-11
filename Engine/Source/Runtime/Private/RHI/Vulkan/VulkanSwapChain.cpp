@@ -2,8 +2,7 @@
 
 #include "VulkanTexture.h"
 
-#include <RHI/RHITexture.h>
-#include <RHI/RHITypes.h>
+#include <RHI/IRHITexture.h>
 
 namespace ow
 {

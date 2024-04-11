@@ -2,11 +2,12 @@
 
 #include "VulkanHeader.h"
 
-#include <RHI/Interfaces/IRHIInstance.h>
+#include <RHI//IRHIInstance.h>
 
 namespace ow
 {
 
+class IRHIAdapter;
 enum class RHIBackend;
 struct RHIInstanceCreateInfo;
 
@@ -25,7 +26,7 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void* GetHandle() const override { return m_instance; }
 
-	virtual std::vector<RHIAdapter> EnumerateAdapters() const override;
+	virtual std::vector<IRHIAdapter*> EnumerateAdapters() const override;
 
 private:
 	VkDebugUtilsMessengerEXT m_debugUtilsMessenger = VK_NULL_HANDLE;

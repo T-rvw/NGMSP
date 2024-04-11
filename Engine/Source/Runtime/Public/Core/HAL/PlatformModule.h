@@ -11,21 +11,28 @@ class IPlatformModule;
 /// Module means a dynamicly loading library, such as .dll in Windows.
 /// It is useful to decouple subsystems in different types or implement features such as PluginsManager.
 /// </summary>
-class ENGINE_API PlatformModule
+class CORE_API PlatformModule
 {
 public:
 	PlatformModule();
+	explicit PlatformModule(const char* pModuleName, const char* pModulePath);
 	PlatformModule(const PlatformModule&) = delete;
 	PlatformModule& operator=(const PlatformModule&) = delete;
 	PlatformModule(PlatformModule&& other) noexcept;
 	PlatformModule& operator=(PlatformModule&& other) noexcept;
 	~PlatformModule();
 
-	bool IsValid() const;
+	const char* GetModuleName() const;
+	void SetModuleName(const char* pModuleName);
+
+	const char* GetModulePath() const;
+	void SetModulePath(const char* pModulePath);
+
+	bool IsLoaded() const;
 	void* GetHandle() const;
 
-	bool Init(const char* pFilePath);
-	void Free();
+	bool Load();
+	void Unload();
 
 	void* GetFunctionAddress(const char* pFuncName);
 

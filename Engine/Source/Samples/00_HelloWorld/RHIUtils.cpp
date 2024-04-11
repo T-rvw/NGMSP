@@ -1,38 +1,42 @@
-#include <RHI/RHIUtils.h>
+#include "RHIUtils.h"
 
-#include <RHI/RHIAdapter.h>
+#include <Core/Modules/ModuleManager.h>
+#include <RHI/IRHIAdapter.h>
+#include <RHI/IRHIModule.h>
+
+#include <unordered_set>
 
 namespace ow
 {
 
-std::optional<int32> FindBestRHIAdapter(const std::vector<RHIAdapter>& adapters)
+std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters)
 {
-	std::optional<int32> bestAdapterIndex;
-	uint64 bestScore = 0;
-	for (int32 adapterIndex = 0, adapterCount = static_cast<int32>(adapters.size()); adapterIndex < adapterCount; ++adapterIndex)
-	{
-		const auto& adapter = adapters[adapterIndex];
+	//std::optional<int32> bestAdapterIndex;
+	//uint64 bestScore = 0;
+	//for (int32 adapterIndex = 0, adapterCount = static_cast<int32>(adapters.size()); adapterIndex < adapterCount; ++adapterIndex)
+	//{
+	//	const auto& adapter = adapters[adapterIndex];
+	//
+	//	uint64 score = 0;
+	//	if (GPUAdapterType::Discrete == adapter->GetType())
+	//	{
+	//		score += 1ULL << 63;
+	//	}
+	//	else if (GPUAdapterType::Integrated == adapter.GetType())
+	//	{
+	//		score += 1ULL << 62;
+	//	}
+	//
+	//	score += adapter.GetVideoMemorySize() >> 20;
+	//
+	//	if (score > bestScore)
+	//	{
+	//		bestAdapterIndex = adapterIndex;
+	//		bestScore = score;
+	//	}
+	//}
 
-		uint64 score = 0;
-		if (GPUAdapterType::Discrete == adapter.GetType())
-		{
-			score += 1ULL << 63;
-		}
-		else if (GPUAdapterType::Integrated == adapter.GetType())
-		{
-			score += 1ULL << 62;
-		}
-
-		score += adapter.GetVideoMemorySize() >> 20;
-
-		if (score > bestScore)
-		{
-			bestAdapterIndex = adapterIndex;
-			bestScore = score;
-		}
-	}
-
-	return bestAdapterIndex;
+	return 0;// bestAdapterIndex;
 }
 
 std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo>& createInfos)

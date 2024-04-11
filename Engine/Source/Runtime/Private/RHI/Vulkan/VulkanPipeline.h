@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include <RHI/Interfaces/IRHIPipeline.h>
+#include <RHI//IRHIPipeline.h>
 
 namespace ow
 {

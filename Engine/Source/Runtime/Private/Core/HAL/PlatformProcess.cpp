@@ -2,6 +2,8 @@
 
 #include "PlatformImplTypes.h"
 
+#include <Core/Base/TypeTraits.h>
+
 namespace ow
 {
 

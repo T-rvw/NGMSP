@@ -3,14 +3,14 @@
 namespace ow
 {
 
-bool WindowsModule::Init(const char* pFilePath)
+bool WindowsModule::Load()
 {
 	assert(!m_module);
-	m_module = ::LoadLibraryA(pFilePath);
+	m_module = ::LoadLibraryA(m_modulePath.c_str());
 	return m_module != nullptr;
 }
 
-void WindowsModule::Free()
+void WindowsModule::Unload()
 {
 	if (m_module != nullptr)
 	{

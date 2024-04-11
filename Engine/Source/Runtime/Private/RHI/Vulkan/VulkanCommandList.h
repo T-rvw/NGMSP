@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include <RHI/Interfaces/IRHICommandList.h>
+#include <RHI//IRHICommandList.h>
 
 namespace ow
 {

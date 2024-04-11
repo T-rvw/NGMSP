@@ -1,7 +1,5 @@
 #include "D3D12Texture.h"
 
-#include <RHI/RHITypes.h>
-
 namespace ow
 {
 

@@ -2,7 +2,7 @@
 
 #include "VulkanAdapter.h"
 
-#include <RHI/RHIAdapter.h>
+#include <RHI/IRHIAdapter.h>
 #include <RHI/RHITypes.h>
 
 #include <optional>
@@ -185,7 +185,7 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	}
 }
 
-std::vector<RHIAdapter> VulkanInstance::EnumerateAdapters() const
+std::vector<IRHIAdapter*> VulkanInstance::EnumerateAdapters() const
 {
 	uint32 physicalDeviceCount = 0;
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
@@ -193,11 +193,10 @@ std::vector<RHIAdapter> VulkanInstance::EnumerateAdapters() const
 	std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.data()));
 
-	std::vector<RHIAdapter> rhiAdapters;
+	std::vector<IRHIAdapter*> rhiAdapters;
 	for (const auto& physicalDevice : physicalDevices)
 	{
 		auto& rhiAdapter = rhiAdapters.emplace_back();
-		rhiAdapter.Reset(std::make_unique<VulkanAdapter>(physicalDevice));
 	}
 
 	return rhiAdapters;

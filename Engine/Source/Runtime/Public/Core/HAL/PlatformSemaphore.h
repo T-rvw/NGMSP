@@ -11,7 +11,7 @@ class IPlatformSemaphore;
 /// <summary>
 /// Semaphore is a counter used to synchronization orders of multiple threads/processes. 
 /// </summary>
-class ENGINE_API PlatformSemaphore
+class CORE_API PlatformSemaphore
 {
 public:
 	PlatformSemaphore();

@@ -2,7 +2,7 @@
 
 #include "D3D12Header.h"
 
-#include <RHI/Interfaces/IRHISwapChain.h>
+#include <RHI/IRHISwapChain.h>
 
 namespace ow
 {

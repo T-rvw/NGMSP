@@ -10,7 +10,7 @@ class IPlatformProcess;
 /// <summary>
 /// Process is program's runtime context applied by operating system.
 /// </summary>
-class ENGINE_API PlatformProcess
+class CORE_API PlatformProcess
 {
 public:
 	PlatformProcess();

@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include <RHI/Interfaces/IRHISemaphore.h>
+#include <RHI//IRHISemaphore.h>
 
 namespace ow
 {

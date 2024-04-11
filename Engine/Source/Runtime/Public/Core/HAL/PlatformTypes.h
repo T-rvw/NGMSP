@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Core/HAL/Platform.h>
+#include <Core/HAL/BasicTypes.h>
 
 namespace ow
 {
 
-struct ENGINE_API WindowCreateInfo
+struct WindowCreateInfo
 {
 	WindowCreateInfo()
 	{

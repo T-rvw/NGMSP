@@ -12,7 +12,7 @@ struct WindowCreateInfo;
 /// Window means a GUI proxy which combines user inputs and graphics backend or other modules.
 /// Output rendering image to window client or do something based on user inputs.
 /// </summary>
-class ENGINE_API PlatformWindow
+class CORE_API PlatformWindow
 {
 public:
 	PlatformWindow();

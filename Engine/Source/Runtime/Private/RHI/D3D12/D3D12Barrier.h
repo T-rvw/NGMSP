@@ -2,7 +2,7 @@
 
 #include "D3D12Header.h"
 
-#include <RHI/Interfaces/IRHIBarrier.h>
+#include <RHI/IRHIBarrier.h>
 
 namespace ow
 {

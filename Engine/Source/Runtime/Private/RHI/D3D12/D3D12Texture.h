@@ -2,7 +2,7 @@
 
 #include "D3D12Header.h"
 
-#include <RHI/Interfaces/IRHITexture.h>
+#include <RHI/IRHITexture.h>
 
 namespace ow
 {

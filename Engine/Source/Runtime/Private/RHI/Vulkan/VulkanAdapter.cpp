@@ -2,7 +2,8 @@
 
 #include "VulkanDevice.h"
 
-#include <RHI/RHIDevice.h>
+#include <RHI//IRHIAdapter.h>
+#include <RHI/IRHIDevice.h>
 
 namespace
 {
@@ -230,7 +231,7 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 	return rhiQueueCreateInfos;
 }
 
-RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
+IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
 {
 	// Enable extra extensions/features/properties by requirement.
 	std::vector<const char*> enabledExtensions;
@@ -290,9 +291,7 @@ RHIDevice VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const
 
 	auto vulkanDevice = std::make_unique<VulkanDevice>(m_physicalDevice, vkDevice);
 
-	RHIDevice rhiDevice;
-	rhiDevice.Reset(MoveTemp(vulkanDevice));
-	return rhiDevice;
+	return nullptr;
 }
 
 GPUAdapterType VulkanAdapter::GetType() const

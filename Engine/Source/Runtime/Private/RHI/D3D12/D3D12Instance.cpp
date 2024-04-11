@@ -2,7 +2,6 @@
 
 #include "D3D12Adapter.h"
 
-#include <RHI/RHIAdapter.h>
 #include <RHI/RHITypes.h>
 
 namespace ow
@@ -30,15 +29,14 @@ RHIBackend D3D12Instance::GetBackend() const
 	return RHIBackend::D3D12;
 }
 
-std::vector<RHIAdapter> D3D12Instance::EnumerateAdapters() const
+std::vector<IRHIAdapter*> D3D12Instance::EnumerateAdapters() const
 {
-	std::vector<RHIAdapter> rhiAdapters;
+	std::vector<IRHIAdapter*> rhiAdapters;
 
 	IDXGIAdapter1* pAdapter;
 	for (uint32 adapterIndex = 0; D3D12_SUCCEED(m_factory->EnumAdapters1(adapterIndex, &pAdapter)); ++adapterIndex)
 	{
 		auto& rhiAdapter = rhiAdapters.emplace_back();
-		rhiAdapter.Reset(std::make_unique<D3D12Adapter>(pAdapter));
 	}
 
 	return rhiAdapters;

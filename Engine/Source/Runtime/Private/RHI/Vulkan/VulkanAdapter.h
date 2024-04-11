@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include <RHI/Interfaces/IRHIAdapter.h>
+#include <RHI//IRHIAdapter.h>
 
 namespace ow
 {
@@ -51,7 +51,7 @@ struct VulkanAdapterProperties
 	void* pNextChain;
 };
 
-class RHIDevice;
+class IRHIDevice;
 
 class VulkanAdapter : public IRHIAdapter
 {
@@ -67,7 +67,7 @@ public:
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_physicalDevice; }
 	virtual std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos() override;
-	virtual RHIDevice CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const override;
+	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const override;
 
 	GPUAdapterType GetType() const;
 	void SetType(VkPhysicalDeviceType deviceType);

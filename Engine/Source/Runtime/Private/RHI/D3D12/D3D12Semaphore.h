@@ -3,7 +3,7 @@
 #include "D3D12Header.h"
 
 #include <Core/HAL/PlatformSemaphore.h>
-#include <RHI/Interfaces/IRHISemaphore.h>
+#include <RHI/IRHISemaphore.h>
 
 namespace ow
 {

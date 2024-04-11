@@ -4,6 +4,8 @@
 
 #include <Core/HAL/Interfaces/IPlatformModule.h>
 
+#include <string>
+
 namespace ow
 {
 
@@ -17,14 +19,22 @@ public:
 	WindowsModule& operator=(WindowsModule&&) = default;
 	~WindowsModule() = default;
 
-	virtual bool Init(const char* pFilePath) override;
-	virtual void Free() override;
+	virtual const char* GetModuleName() const override { return m_moduleName.c_str(); }
+	virtual void SetModuleName(const char* pModuleName) override { m_moduleName = pModuleName; }
+
+	virtual const char* GetModulePath() const override { return m_modulePath.c_str(); }
+	virtual void SetModulePath(const char* pModulePath) override { m_modulePath = pModulePath; }
+
+	virtual bool Load() override;
+	virtual void Unload() override;
 
 	virtual void* GetHandle() const override { return m_module; }
 	virtual void* GetFunctionAddress(const char* pFuncName) override;
 
 private:
-	HMODULE m_module;
+	std::string m_moduleName;
+	std::string m_modulePath;
+	HMODULE m_module = nullptr;
 };
 
 }

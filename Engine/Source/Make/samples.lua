@@ -6,12 +6,12 @@ local function MakeSample(projectPath)
 	project(projectName)
 		kind("ConsoleApp")
 
+		dependson {
+			"RHID3D12", "RHIVulkan"
+		}
+
 		Project.CppLanguage()
 		Project.Location(path.join(BuildOutputPath, "Engine"))
-		
-		defines {
-			"PLATFORM_WINDOWS"
-		}
 		
 		files {
 			path.join(projectPath, "**.*")
@@ -23,7 +23,7 @@ local function MakeSample(projectPath)
 		}
 
 		links {
-			"Engine"
+			"Core"
 		}
 end
 

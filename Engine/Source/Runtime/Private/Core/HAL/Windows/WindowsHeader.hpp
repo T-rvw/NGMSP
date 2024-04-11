@@ -1,10 +1,12 @@
 #pragma once
 
-#include <Core/HAL/Platform.h>
-
 #include "WindowsUndefines.h"
 
+#include <Core/HAL/BasicTypes.h>
+
 #include <windows.h>
+
+#include <vector>
 
 namespace ow
 {

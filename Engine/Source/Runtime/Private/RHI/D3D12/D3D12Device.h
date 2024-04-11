@@ -2,10 +2,15 @@
 
 #include "D3D12Header.h"
 
-#include <RHI/Interfaces/IRHIDevice.h>
+#include <RHI/IRHIDevice.h>
 
 namespace ow
 {
+
+class IRHICommandQueue;
+class IRHIFence;
+class IRHISemaphore;
+class IRHISwapChain;
 
 class D3D12Device : public IRHIDevice
 {
@@ -19,10 +24,10 @@ public:
 	virtual ~D3D12Device() = default;
 
 	virtual void* GetHandle() const override { return m_device.Get(); }
-	virtual RHICommandQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const override;
-	virtual RHIFence CreateFence() const override;
-	virtual RHISemaphore CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const override;
-	virtual RHISwapChain CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const override;
+	virtual IRHICommandQueue* CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const override;
+	virtual IRHIFence* CreateFence() const override;
+	virtual IRHISemaphore* CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const override;
+	virtual IRHISwapChain* CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const override;
 
 private:
 	ComPtr<ID3D12CommandQueue> m_commandQueues[EnumCount<RHICommandType>()];

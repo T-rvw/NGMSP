@@ -2,12 +2,21 @@
 
 #include "PlatformImplTypes.h"
 
+#include <Core/Base/TypeTraits.h>
+
 namespace ow
 {
 
 PlatformModule::PlatformModule()
 {
 	m_pImpl = new PlatformModuleImpl();
+}
+
+PlatformModule::PlatformModule(const char* pModuleName, const char* pModulePath)
+{
+	m_pImpl = new PlatformModuleImpl();
+	m_pImpl->SetModuleName(pModuleName);
+	m_pImpl->SetModulePath(pModulePath);
 }
 
 PlatformModule::PlatformModule(PlatformModule&& other) noexcept
@@ -30,7 +39,27 @@ PlatformModule::~PlatformModule()
 	}
 }
 
-bool PlatformModule::IsValid() const
+const char* PlatformModule::GetModuleName() const
+{
+	return m_pImpl->GetModuleName();
+}
+
+void PlatformModule::SetModuleName(const char* pModuleName)
+{
+	m_pImpl->SetModuleName(pModuleName);
+}
+
+const char* PlatformModule::GetModulePath() const
+{
+	return m_pImpl->GetModulePath();
+}
+
+void PlatformModule::SetModulePath(const char* pModulePath)
+{
+	m_pImpl->SetModulePath(pModulePath);
+}
+
+bool PlatformModule::IsLoaded() const
 {
 	return m_pImpl->GetHandle() != nullptr;
 }
@@ -40,14 +69,14 @@ void* PlatformModule::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
-bool PlatformModule::Init(const char* pFilePath)
+bool PlatformModule::Load()
 {
-	return m_pImpl->Init(pFilePath);
+	return m_pImpl->Load();
 }
 
-void PlatformModule::Free()
+void PlatformModule::Unload()
 {
-	m_pImpl->Free();
+	m_pImpl->Unload();
 }
 
 void* PlatformModule::GetFunctionAddress(const char* pFuncName)

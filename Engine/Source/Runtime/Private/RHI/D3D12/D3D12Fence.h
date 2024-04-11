@@ -3,7 +3,7 @@
 #include "D3D12Header.h"
 
 #include <Core/HAL/BasicTypes.h>
-#include <RHI/Interfaces/IRHIFence.h>
+#include <RHI/IRHIFence.h>
 
 namespace ow
 {

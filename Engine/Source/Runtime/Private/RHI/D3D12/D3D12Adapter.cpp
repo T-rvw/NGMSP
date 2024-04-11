@@ -2,7 +2,9 @@
 
 #include "D3D12Device.h"
 
-#include <RHI/RHIDevice.h>
+#include <RHI/IRHIDevice.h>
+
+#include <memory>
 
 namespace ow
 {
@@ -76,17 +78,14 @@ std::vector<RHICommandQueueCreateInfo> D3D12Adapter::QueryCommandQueueCreateInfo
 	return createInfos;
 }
 
-RHIDevice D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
+IRHIDevice* D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
 {
 	ID3D12Device* pDevice;
 	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
 	assert(pDevice);
 
 	auto d3d12Device = std::make_unique<D3D12Device>(pDevice);
-
-	RHIDevice device;
-	device.Reset(MoveTemp(d3d12Device));
-	return device;
+	return d3d12Device.get();
 }
 
 }

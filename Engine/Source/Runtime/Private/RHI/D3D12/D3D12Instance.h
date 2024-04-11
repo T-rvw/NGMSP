@@ -2,7 +2,7 @@
 
 #include "D3D12Header.h"
 
-#include <RHI/Interfaces/IRHIInstance.h>
+#include <RHI/IRHIInstance.h>
 
 namespace ow
 {
@@ -25,7 +25,7 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void* GetHandle() const override { return m_factory.Get(); }
 
-	virtual std::vector<RHIAdapter> EnumerateAdapters() const override;
+	virtual std::vector<IRHIAdapter*> EnumerateAdapters() const override;
 
 private:
 	ComPtr<IDXGIFactory4> m_factory;

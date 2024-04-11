@@ -3,6 +3,8 @@
 #include <Core/Base/BitFlags.h>
 #include <Core/Base/NameOf.h>
 #include <Core/Base/TypeTraits.h>
+#include <Core/Modules/IModule.h>
+#include <Core/Modules/ModuleManager.h>
 #include <Core/HAL/PlatformApplication.h>
 #include <Core/HAL/PlatformModule.h>
 #include <Core/HAL/PlatformProcess.h>
