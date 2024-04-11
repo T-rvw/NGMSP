@@ -66,11 +66,12 @@ public:
 
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_physicalDevice; }
-	virtual std::vector<RHICommandQueueCreateInfo> QueryCommandQueueCreateInfos() override;
-	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const override;
+	virtual void QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
+	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const override;
 
+private:
+	void InitCommandQueueCreateInfos();
 	void SetType(VkPhysicalDeviceType deviceType);
-
 	bool CheckExtensionSupport(const char* pExtensionName) const;
 	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
 	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
@@ -80,7 +81,7 @@ private:
 	std::vector<VkExtensionProperties> m_adapterExtensions;
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
 	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;
-	std::vector<VkQueueFamilyProperties2> m_adapterQueueFamilies;
+	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
 };
 
 }

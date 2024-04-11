@@ -69,21 +69,21 @@ std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapter
 	return bestAdapterIndex;
 }
 
-std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo>& createInfos)
+std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
 {
 	std::optional<int32> bestCIIndex;
 	float bestScore = 0.0f;
 	for (int32 ciIndex = 0, ciCount = static_cast<int32>(createInfos.size()); ciIndex < ciCount; ++ciIndex)
 	{
 		const auto& createInfo = createInfos[ciIndex];
-		if (commandType == createInfo.Type)
+		if (commandType == createInfo->Type)
 		{
 			float score = 0.0f;
-			if (createInfo.IsDedicated)
+			if (createInfo->IsDedicated)
 			{
 				score += 1U << 31;
 			}
-			score += createInfo.Priority;
+			score += createInfo->Priority;
 			
 			if (score > bestScore)
 			{
@@ -96,9 +96,9 @@ std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std:
 	return bestCIIndex;
 }
 
-std::vector<RHICommandQueueCreateInfo> FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo>& createInfos)
+std::vector<RHICommandQueueCreateInfo*> FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
 {
-	std::vector<RHICommandQueueCreateInfo> bestCommandQueueCIs;
+	std::vector<RHICommandQueueCreateInfo*> bestCommandQueueCIs;
 
 	std::unordered_set<int32> queueIndexes;
 	for (auto commandType : commandTypes)
@@ -117,12 +117,17 @@ std::vector<RHICommandQueueCreateInfo> FindBestCommandQueues(const std::vector<R
 	return bestCommandQueueCIs;
 }
 
+void Dump(const IRHIAdapter* pRHIAdapter)
+{
+}
+
+void Dump(const IRHIDevice* pRHIDevice)
+{
+}
+
 void Dump(const IRHIInstance* pRHIInstance)
 {
 }
 
-void Dump(const IRHIAdapter* pRHIAdapter)
-{
-}
 
 }

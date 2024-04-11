@@ -152,26 +152,27 @@ void VulkanAdapter::Init()
 	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
 	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
 	
-	uint32 queueFamilyCount;
-	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, nullptr);
-	m_adapterQueueFamilies.resize(queueFamilyCount, { VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2 });
-	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, m_adapterQueueFamilies.data());
+	InitCommandQueueCreateInfos();
 }
 
-std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInfos()
+void VulkanAdapter::InitCommandQueueCreateInfos()
 {
-	std::vector<RHICommandQueueCreateInfo> rhiQueueCreateInfos;
-	uint32 queueFamilyCount = static_cast<uint32>(m_adapterQueueFamilies.size());
+	uint32 queueFamilyCount;
+	std::vector<VkQueueFamilyProperties2> adapterQueueFamilies;
+	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, nullptr);
+	adapterQueueFamilies.resize(queueFamilyCount, { VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2 });
+	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, adapterQueueFamilies.data());
+
 	for (uint32 queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; ++queueFamilyIndex)
 	{
-		const auto& queueFamily = m_adapterQueueFamilies[queueFamilyIndex];
+		const auto& queueFamily = adapterQueueFamilies[queueFamilyIndex];
 		const auto& queueFamilyProperties = queueFamily.queueFamilyProperties;
 		if (0 == queueFamilyProperties.queueCount)
 		{
 			continue;
 		}
 
-		uint32 rhiQueueStartIndex = static_cast<uint32>(rhiQueueCreateInfos.size());
+		uint32 rhiQueueStartIndex = static_cast<uint32>(m_commandQueueCIs.size());
 		uint32 rhiQueueEndIndex = rhiQueueStartIndex;
 		bool supportGraphics = queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT;
 		bool supportCompute = queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT;
@@ -179,59 +180,71 @@ std::vector<RHICommandQueueCreateInfo> VulkanAdapter::QueryCommandQueueCreateInf
 		bool supportVideoDecode = queueFamilyProperties.queueFlags & VK_QUEUE_VIDEO_DECODE_BIT_KHR;
 		if (supportGraphics)
 		{
-			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandType::Graphics;
-			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
-			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
-			commandQueue.Priority += supportVideoDecode ? -0.1f : 0.0f;
+			auto& createInfo = m_commandQueueCIs.emplace_back();
+			createInfo.Type = RHICommandType::Graphics;
+			createInfo.ID = queueFamilyIndex;
+			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
+			createInfo.Priority += supportTransfer ? -0.1f : 0.0f;
+			createInfo.Priority += supportVideoDecode ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
 		if (supportCompute)
 		{
-			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandType::Compute;
-			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
-			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
-			commandQueue.Priority += supportVideoDecode ? -0.1f : 0.0f;
+			auto& createInfo = m_commandQueueCIs.emplace_back();
+			createInfo.Type = RHICommandType::Compute;
+			createInfo.ID = queueFamilyIndex;
+			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
+			createInfo.Priority += supportTransfer ? -0.1f : 0.0f;
+			createInfo.Priority += supportVideoDecode ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
 		if (supportTransfer)
 		{
-			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandType::Copy;
-			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
-			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
-			commandQueue.Priority += supportVideoDecode ? -0.1f : 0.0f;
+			auto& createInfo = m_commandQueueCIs.emplace_back();
+			createInfo.Type = RHICommandType::Copy;
+			createInfo.ID = queueFamilyIndex;
+			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
+			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
+			createInfo.Priority += supportVideoDecode ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
 		if (supportVideoDecode)
 		{
-			auto& commandQueue = rhiQueueCreateInfos.emplace_back();
-			commandQueue.Type = RHICommandType::VideoDecode;
-			commandQueue.ID = queueFamilyIndex;
-			commandQueue.Priority += supportGraphics ? -0.1f : 0.0f;
-			commandQueue.Priority += supportCompute ? -0.1f : 0.0f;
-			commandQueue.Priority += supportTransfer ? -0.1f : 0.0f;
+			auto& createInfo = m_commandQueueCIs.emplace_back();
+			createInfo.Type = RHICommandType::VideoDecode;
+			createInfo.ID = queueFamilyIndex;
+			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
+			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
+			createInfo.Priority += supportTransfer ? -0.1f : 0.0f;
 			++rhiQueueEndIndex;
 		}
 
 		uint32 rhiQueueCount = rhiQueueEndIndex - rhiQueueStartIndex;
 		for (uint32 queueIndex = rhiQueueStartIndex; queueIndex < rhiQueueEndIndex; ++queueIndex)
 		{
-			rhiQueueCreateInfos[queueIndex].IsDedicated = rhiQueueCount == 1;
+			m_commandQueueCIs[queueIndex].IsDedicated = rhiQueueCount == 1;
 		}
 	}
-
-	return rhiQueueCreateInfos;
 }
 
-IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
+void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
+{
+	if (nullptr == pCommandQueueCIs)
+	{
+		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
+		return;
+	}
+
+	for (uint32 queueIndex = 0; queueIndex < queueCICount; ++queueIndex)
+	{
+		pCommandQueueCIs[queueIndex] = &m_commandQueueCIs[queueIndex];
+	}
+}
+
+IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const
 {
 	// Enable extra extensions/features/properties by requirement.
 	std::vector<const char*> enabledExtensions;
@@ -266,13 +279,15 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, con
 	}
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	for (const auto& commandQueueCI : commandQueueCIs)
+	for (uint32 queueCIIndex = 0; queueCIIndex < queueCICount; ++queueCIIndex)
 	{
+		const RHICommandQueueCreateInfo* commandQueueCI = pCommandQueueCIs[queueCIIndex];
+
 		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = commandQueueCI.ID;
+		queueCreateInfo.queueFamilyIndex = commandQueueCI->ID;
 		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &commandQueueCI.Priority;
+		queueCreateInfo.pQueuePriorities = &commandQueueCI->Priority;
 	}
 
 	VkDeviceCreateInfo deviceCreateInfo {};

@@ -29,6 +29,29 @@ D3D12Adapter::D3D12Adapter(IDXGIAdapter1* pAdapter) :
 
 void D3D12Adapter::Init()
 {
+	{
+		auto& commandQueue = m_commandQueueCIs.emplace_back();
+		commandQueue.Type = RHICommandType::Graphics;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+	}
+
+	{
+		auto& commandQueue = m_commandQueueCIs.emplace_back();
+		commandQueue.Type = RHICommandType::Compute;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+	}
+
+	{
+		auto& commandQueue = m_commandQueueCIs.emplace_back();
+		commandQueue.Type = RHICommandType::Copy;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+	}
+
+	{
+		auto& commandQueue = m_commandQueueCIs.emplace_back();
+		commandQueue.Type = RHICommandType::VideoDecode;
+		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+	}
 }
 
 void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
@@ -48,39 +71,24 @@ void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
 	}
 }
 
-std::vector<RHICommandQueueCreateInfo> D3D12Adapter::QueryCommandQueueCreateInfos()
+void D3D12Adapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
-	std::vector<RHICommandQueueCreateInfo> createInfos;
-
+	if (nullptr == pCommandQueueCIs)
 	{
-		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandType::Graphics;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
+		return;
 	}
 
+	for (uint32 queueIndex = 0; queueIndex < queueCICount; ++queueIndex)
 	{
-		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandType::Compute;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
+		pCommandQueueCIs[queueIndex] = &m_commandQueueCIs[queueIndex];
 	}
-
-	{
-		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandType::Copy;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
-	}
-
-	{
-		auto& commandQueue = createInfos.emplace_back();
-		commandQueue.Type = RHICommandType::VideoDecode;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
-	}
-
-	return createInfos;
 }
 
-IRHIDevice* D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, const std::vector<RHICommandQueueCreateInfo>& commandQueueCIs) const
+IRHIDevice* D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const
 {
+	UNUSED(pCommandQueueCIs);
+
 	ID3D12Device* pDevice;
 	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
 	assert(pDevice);
