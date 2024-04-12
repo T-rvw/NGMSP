@@ -7,7 +7,7 @@ local function MakeSample(projectPath)
 		kind("ConsoleApp")
 
 		dependson {
-			"RHID3D12", "RHIVulkan"
+			"Graphics"
 		}
 
 		Project.CppLanguage()
@@ -23,7 +23,7 @@ local function MakeSample(projectPath)
 		}
 
 		links {
-			"Core"
+			"Core", "Graphics"
 		}
 end
 

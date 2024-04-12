@@ -44,8 +44,8 @@ Module.Create = function(moduleName, moduleCallback)
 		}
 
 		vpaths {
-			["Public/*"] = path.join(RootPath, "Engine/Source/Runtime/Public/**.*"),
-			["Private/*"] = path.join(RootPath, "Engine/Source/Runtime/Private/**.*"),
+			--["Public/*"] = path.join(RootPath, "Engine/Source/Runtime/Public/**.*"),
+			--["Private/*"] = path.join(RootPath, "Engine/Source/Runtime/Private/**.*"),
 			["ThirdParty/*"] = path.join(ThirdPartySourcePath, "**.*"),
 		}
 
