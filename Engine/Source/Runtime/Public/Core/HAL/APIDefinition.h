@@ -13,9 +13,11 @@
 
 #ifdef ENGINE_BUILD_SHARED
 #define CORE_API API_EXPORT
+#define GFX_API API_EXPORT
 #define RHI_API API_EXPORT
 #else
 #define CORE_API API_IMPORT
+#define GFX_API API_IMPORT
 #define RHI_API API_IMPORT
 #endif
 

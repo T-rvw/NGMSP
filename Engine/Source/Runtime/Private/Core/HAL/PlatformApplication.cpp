@@ -12,12 +12,12 @@ PlatformApplication::PlatformApplication()
 	m_pImpl = new PlatformApplicationImpl();
 }
 
-PlatformApplication::PlatformApplication(PlatformApplication&& other) noexcept
+PlatformApplication::PlatformApplication(PlatformApplication&& other)
 {
 	*this = MoveTemp(other);
 }
 
-PlatformApplication& PlatformApplication::operator=(PlatformApplication&& other) noexcept
+PlatformApplication& PlatformApplication::operator=(PlatformApplication&& other)
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
-
 #include <type_traits>
 
 namespace ow

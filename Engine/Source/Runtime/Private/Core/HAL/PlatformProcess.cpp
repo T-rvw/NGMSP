@@ -12,12 +12,12 @@ PlatformProcess::PlatformProcess()
 	m_pImpl = new PlatformProcessImpl();
 }
 
-PlatformProcess::PlatformProcess(PlatformProcess&& other) noexcept
+PlatformProcess::PlatformProcess(PlatformProcess&& other)
 {
 	*this = MoveTemp(other);
 }
 
-PlatformProcess& PlatformProcess::operator=(PlatformProcess&& other) noexcept
+PlatformProcess& PlatformProcess::operator=(PlatformProcess&& other)
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;

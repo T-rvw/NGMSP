@@ -17,8 +17,8 @@ public:
 	PlatformApplication();
 	PlatformApplication(const PlatformApplication&) = delete;
 	PlatformApplication& operator=(const PlatformApplication&) = delete;
-	PlatformApplication(PlatformApplication&& other) noexcept;
-	PlatformApplication& operator=(PlatformApplication&& other) noexcept;
+	PlatformApplication(PlatformApplication&& other);
+	PlatformApplication& operator=(PlatformApplication&& other);
 	~PlatformApplication();
 
 	void Init();

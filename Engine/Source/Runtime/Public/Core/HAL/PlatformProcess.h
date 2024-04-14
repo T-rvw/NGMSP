@@ -16,8 +16,8 @@ public:
 	PlatformProcess();
 	PlatformProcess(const PlatformProcess&) = delete;
 	PlatformProcess& operator=(const PlatformProcess&) = delete;
-	PlatformProcess(PlatformProcess&& other) noexcept;
-	PlatformProcess& operator=(PlatformProcess&& other) noexcept;
+	PlatformProcess(PlatformProcess&& other);
+	PlatformProcess& operator=(PlatformProcess&& other);
 	~PlatformProcess();
 
 	bool Init();

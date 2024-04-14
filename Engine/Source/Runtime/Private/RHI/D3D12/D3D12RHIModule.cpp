@@ -2,8 +2,6 @@
 
 #include "D3D12Instance.h"
 
-#include <Core/HAL/APIDefinition.h>
-
 namespace ow
 {
 

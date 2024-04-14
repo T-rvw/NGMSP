@@ -12,12 +12,12 @@ PlatformWindow::PlatformWindow()
 	m_pImpl = new PlatformWindowImpl();
 }
 
-PlatformWindow::PlatformWindow(PlatformWindow&& other) noexcept
+PlatformWindow::PlatformWindow(PlatformWindow&& other)
 {
 	*this = MoveTemp(other);
 }
 
-PlatformWindow& PlatformWindow::operator=(PlatformWindow&& other) noexcept
+PlatformWindow& PlatformWindow::operator=(PlatformWindow&& other)
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;

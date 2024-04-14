@@ -12,12 +12,12 @@ PlatformSemaphore::PlatformSemaphore()
 	m_pImpl = new PlatformSemaphoreImpl();
 }
 
-PlatformSemaphore::PlatformSemaphore(PlatformSemaphore&& other) noexcept
+PlatformSemaphore::PlatformSemaphore(PlatformSemaphore&& other)
 {
 	*this = MoveTemp(other);
 }
 
-PlatformSemaphore& PlatformSemaphore::operator=(PlatformSemaphore&& other) noexcept
+PlatformSemaphore& PlatformSemaphore::operator=(PlatformSemaphore&& other)
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;

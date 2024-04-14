@@ -19,12 +19,12 @@ PlatformModule::PlatformModule(const char* pModuleName, const char* pModulePath)
 	m_pImpl->SetModulePath(pModulePath);
 }
 
-PlatformModule::PlatformModule(PlatformModule&& other) noexcept
+PlatformModule::PlatformModule(PlatformModule&& other)
 {
 	*this = MoveTemp(other);
 }
 
-PlatformModule& PlatformModule::operator=(PlatformModule&& other) noexcept
+PlatformModule& PlatformModule::operator=(PlatformModule&& other)
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;

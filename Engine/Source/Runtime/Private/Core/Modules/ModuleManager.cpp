@@ -16,12 +16,12 @@ ModuleManager::ModuleManager()
 	m_pImpl = new ModuleManagerImpl();
 }
 
-ModuleManager::ModuleManager(ModuleManager&& other) noexcept
+ModuleManager::ModuleManager(ModuleManager&& other)
 {
 	*this = MoveTemp(other);
 }
 
-ModuleManager& ModuleManager::operator=(ModuleManager&& other) noexcept
+ModuleManager& ModuleManager::operator=(ModuleManager&& other)
 {
 	std::swap(m_pImpl, other.m_pImpl);
 	return *this;

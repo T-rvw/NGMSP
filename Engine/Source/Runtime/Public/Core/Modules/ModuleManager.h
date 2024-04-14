@@ -16,8 +16,8 @@ public:
 	ModuleManager();
 	ModuleManager(const ModuleManager&) = delete;
 	ModuleManager& operator=(const ModuleManager&) = delete;
-	ModuleManager(ModuleManager&& other) noexcept;
-	ModuleManager& operator=(ModuleManager&& other) noexcept;
+	ModuleManager(ModuleManager&& other);
+	ModuleManager& operator=(ModuleManager&& other);
 	~ModuleManager();
 
 	void LoadModules();

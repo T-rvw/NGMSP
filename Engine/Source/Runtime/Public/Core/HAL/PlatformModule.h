@@ -18,8 +18,8 @@ public:
 	explicit PlatformModule(const char* pModuleName, const char* pModulePath);
 	PlatformModule(const PlatformModule&) = delete;
 	PlatformModule& operator=(const PlatformModule&) = delete;
-	PlatformModule(PlatformModule&& other) noexcept;
-	PlatformModule& operator=(PlatformModule&& other) noexcept;
+	PlatformModule(PlatformModule&& other);
+	PlatformModule& operator=(PlatformModule&& other);
 	~PlatformModule();
 
 	const char* GetModuleName() const;
