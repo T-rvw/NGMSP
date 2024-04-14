@@ -79,8 +79,6 @@ Module.Create("Graphics", function()
 	links {
 		"Core"
 	}
-
-	Project.LinkVulkan()
 end)
 
 group("")

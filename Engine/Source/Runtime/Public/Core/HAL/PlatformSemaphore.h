@@ -17,8 +17,8 @@ public:
 	PlatformSemaphore();
 	PlatformSemaphore(const PlatformSemaphore&) = delete;
 	PlatformSemaphore& operator=(const PlatformSemaphore&) = delete;
-	PlatformSemaphore(PlatformSemaphore&& other) noexcept;
-	PlatformSemaphore& operator=(PlatformSemaphore&& other) noexcept;
+	PlatformSemaphore(PlatformSemaphore&& other);
+	PlatformSemaphore& operator=(PlatformSemaphore&& other);
 	~PlatformSemaphore();
 
 	void Init(int32 initialCount = 0, int32 maxCount = 1);

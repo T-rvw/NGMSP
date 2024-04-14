@@ -1,6 +1,6 @@
 #include <Engine.h>
 
-#include "RHIUtils.h"
+#include <Graphics/GraphicsContext.h>
 
 int main()
 {
@@ -11,44 +11,43 @@ int main()
 	instanceCI.Backend = RHIBackend::D3D12;
 	instanceCI.Debug = RHIDebugMode::Normal;
 	instanceCI.Validation = RHIValidationMode::GPU;
-	IRHIInstance* pRHIInstance = CreateRHIInstance(instanceCI);
-	Dump(pRHIInstance);
+	GraphicsContext graphics(instanceCI);
 
 	// Query all RHI adapters.
-	uint32 adapterCount;
-	pRHIInstance->EnumerateAdapters(adapterCount, nullptr);
-	std::vector<IRHIAdapter*> rhiAdapters(adapterCount);
-	pRHIInstance->EnumerateAdapters(adapterCount, rhiAdapters.data());
-	for (const auto* pRHIAdapter : rhiAdapters)
-	{
-		Dump(pRHIAdapter);
-	}
-
-	// Find a proper GPU to create logical device.
-	auto optAdapterIndex = FindBestRHIAdapter(rhiAdapters);
-	assert(optAdapterIndex.has_value());
-	int32 adapterIndex = optAdapterIndex.value();
-	auto& pBestAdapter = rhiAdapters[adapterIndex];
-	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
-	pBestAdapter->Init();
-	
-	// Create device and command queues.
-	printf("\n");
-	uint32 commandQueueCICount;
-	pBestAdapter->QueryCommandQueueCreateInfos(commandQueueCICount, nullptr);
-	std::vector<RHICommandQueueCreateInfo*> commandQueueCIs;
-	pBestAdapter->QueryCommandQueueCreateInfos(commandQueueCICount, commandQueueCIs.data());
-	for (const auto& queueCI : commandQueueCIs)
-	{
-		queueCI->Dump();
-	}
-	
-	std::vector<RHICommandType> expectQueueTypes { RHICommandType::Graphics, RHICommandType::Compute, RHICommandType::Copy };
-	std::vector<RHICommandQueueCreateInfo*> bestQueueCIs = FindBestCommandQueues(expectQueueTypes, commandQueueCIs);
-	for (const auto& bestQueueCI : bestQueueCIs)
-	{
-		printf("Select %s command queue : %u\n", EnumName(bestQueueCI->Type).data(), bestQueueCI->ID);
-	}
+	//uint32 adapterCount;
+	//pRHIInstance->EnumerateAdapters(adapterCount, nullptr);
+	//std::vector<IRHIAdapter*> rhiAdapters(adapterCount);
+	//pRHIInstance->EnumerateAdapters(adapterCount, rhiAdapters.data());
+	//for (const auto* pRHIAdapter : rhiAdapters)
+	//{
+	//	Dump(pRHIAdapter);
+	//}
+	//
+	//// Find a proper GPU to create logical device.
+	//auto optAdapterIndex = FindBestRHIAdapter(rhiAdapters);
+	//assert(optAdapterIndex.has_value());
+	//int32 adapterIndex = optAdapterIndex.value();
+	//auto& pBestAdapter = rhiAdapters[adapterIndex];
+	//printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
+	//pBestAdapter->Init();
+	//
+	//// Create device and command queues.
+	//printf("\n");
+	//uint32 commandQueueCICount;
+	//pBestAdapter->QueryCommandQueueCreateInfos(commandQueueCICount, nullptr);
+	//std::vector<RHICommandQueueCreateInfo*> commandQueueCIs;
+	//pBestAdapter->QueryCommandQueueCreateInfos(commandQueueCICount, commandQueueCIs.data());
+	//for (const auto& queueCI : commandQueueCIs)
+	//{
+	//	queueCI->Dump();
+	//}
+	//
+	//std::vector<RHICommandType> expectQueueTypes { RHICommandType::Graphics, RHICommandType::Compute, RHICommandType::Copy };
+	//std::vector<RHICommandQueueCreateInfo*> bestQueueCIs = FindBestCommandQueues(expectQueueTypes, commandQueueCIs);
+	//for (const auto& bestQueueCI : bestQueueCIs)
+	//{
+	//	printf("Select %s command queue : %u\n", EnumName(bestQueueCI->Type).data(), bestQueueCI->ID);
+	//}
 	
 	//RHIDeviceCreateInfo deviceCI;
 	//deviceCI.Features.Headless = false;

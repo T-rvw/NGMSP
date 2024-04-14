@@ -5,7 +5,7 @@
 
 namespace ow
 {
-	
+
 class CORE_API IModule
 {
 public:

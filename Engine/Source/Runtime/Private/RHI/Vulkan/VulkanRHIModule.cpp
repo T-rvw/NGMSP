@@ -2,8 +2,6 @@
 
 #include "VulkanInstance.h"
 
-#include <Core/HAL/APIDefinition.h>
-
 namespace ow
 {
 

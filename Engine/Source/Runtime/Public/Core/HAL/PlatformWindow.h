@@ -18,8 +18,8 @@ public:
 	PlatformWindow();
 	PlatformWindow(const PlatformWindow&) = delete;
 	PlatformWindow& operator=(const PlatformWindow&) = delete;
-	PlatformWindow(PlatformWindow&& other) noexcept;
-	PlatformWindow& operator=(PlatformWindow&& other) noexcept;
+	PlatformWindow(PlatformWindow&& other);
+	PlatformWindow& operator=(PlatformWindow&& other);
 	~PlatformWindow();
 
 	void Init(const WindowCreateInfo& createInfo, void* pInstance = nullptr);

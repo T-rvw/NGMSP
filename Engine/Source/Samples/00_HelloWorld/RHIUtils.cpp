@@ -10,17 +10,17 @@ namespace ow
 
 IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
 {
-	ModuleData* rhiModule = nullptr;
+	ModuleData* pRHIModule = nullptr;
 	switch (createInfo.Backend)
 	{
 	case RHIBackend::D3D12:
 	{
-		rhiModule = ModuleManager::Get().LoadModule("[RHI][D3D12]", "RHID3D12");
+		pRHIModule = ModuleManager::Get().LoadModule("[RHI][D3D12]", "RHID3D12");
 		break;
 	}
 	case RHIBackend::Vulkan:
 	{
-		rhiModule = ModuleManager::Get().LoadModule("[RHI][Vulkan]", "RHIVulkan");
+		pRHIModule = ModuleManager::Get().LoadModule("[RHI][Vulkan]", "RHIVulkan");
 		break;
 	}
 	default:
@@ -30,8 +30,8 @@ IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
 	}
 	}
 
-	assert(rhiModule);
-	auto* pModule = static_cast<IRHIModule*>(rhiModule->InitFunc());
+	assert(pRHIModule);
+	auto* pModule = static_cast<IRHIModule*>(pRHIModule->InitFunc());
 	auto* pRHIInstance = pModule->CreateRHIInstance();
 	pRHIInstance->Init(createInfo);
 
