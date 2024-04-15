@@ -1,7 +1,10 @@
 #pragma once
 
 #include <Core/Base/BitFlags.h>
+#include <Core/Base/Hash/FastCRC32.h>
+#include <Core/Base/Hash/FNV1A.h>
 #include <Core/Base/NameOf.h>
+#include <Core/Base/StringID.h>
 #include <Core/Base/TypeTraits.h>
 #include <Core/Modules/IModule.h>
 #include <Core/Modules/ModuleManager.h>

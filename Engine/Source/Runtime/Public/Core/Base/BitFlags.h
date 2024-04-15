@@ -6,7 +6,7 @@ namespace ow
 {
 
 /// <summary>
-/// Helps to define bit flags in a safe way by using enum class.
+/// Define bit flags in a safe way by using enum class.
 /// </summary>
 /// <typeparam name="T">Type of enum class</typeparam>
 template<typename T>

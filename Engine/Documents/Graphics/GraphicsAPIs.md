@@ -8,6 +8,10 @@
 	
         * [Vulkanised 2023 Tutorial: An Introduction to Vulkan](https://www.youtube.com/watch?v=e14z9oOsPu0)
 
+* Graphics
+
+	* [Bindless Rendering in DirectX12 and SM6.6](https://rtarun9.github.io/blogs/bindless_rendering/)
+
 * Memory Management
  
 	* [Differences in memory management between Direct3D 12 and Vulkan](https://asawicki.info/articles/memory_management_vulkan_direct3d_12.php5)

@@ -16,7 +16,7 @@
     
     * [Mesh shaders arrive on your Linux computers](https://timur.hu/blog/2022/mesh-shaders-arrive-on-linux)
 
-  * [GDC 2024 - Mesh Shaders in AMD RDNA™ 3 Architecture](https://www.youtube.com/watch?v=MQv76-q2cm8&list=PLx15eYqzJifdT1M-vOTz74fwdqHIlMrVc&index=7)
+    * [GDC 2024 - Mesh Shaders in AMD RDNA™ 3 Architecture](https://www.youtube.com/watch?v=MQv76-q2cm8&list=PLx15eYqzJifdT1M-vOTz74fwdqHIlMrVc&index=7)
   
 * DirectX
   

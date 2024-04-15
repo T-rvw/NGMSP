@@ -7,3 +7,5 @@
 * [Maister's Graphics Adventures](https://themaister.net/blog)
 
 * [MJP - The Danger Zone](https://therealmjp.github.io/)
+
+* [Tarun Ramaswamy](https://rtarun9.github.io/blogs/)
