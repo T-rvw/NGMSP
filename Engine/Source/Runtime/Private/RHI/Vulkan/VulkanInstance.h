@@ -28,10 +28,12 @@ public:
 
 private:
 	void InitAdapters();
+	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
 
 private:
-	VkDebugUtilsMessengerEXT m_debugUtilsMessenger = VK_NULL_HANDLE;
 	VkInstance m_instance = VK_NULL_HANDLE;
+	VkDebugUtilsMessengerEXT m_debugUtilsMessenger = VK_NULL_HANDLE;
+	std::vector<VkExtensionProperties> m_availableExtensions;
 
 	std::vector<VulkanAdapter> m_adapters;
 };

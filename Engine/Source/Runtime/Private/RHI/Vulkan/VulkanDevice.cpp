@@ -62,7 +62,7 @@ IRHISwapChain* VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& creat
 //	auto vkInstance = static_cast<VkInstance>(createInfo.Instance->GetHandle());
 //
 //	VkSurfaceKHR vkSurface;
-//#ifdef PLATFORM_WINDOWS
+//#ifdef VK_USE_PLATFORM_WIN32_KHR
 //	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
 //	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 //	surfaceCreateInfo.hwnd = (HWND)createInfo.NativeWindowHandle;

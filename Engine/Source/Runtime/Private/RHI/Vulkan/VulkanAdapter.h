@@ -71,14 +71,13 @@ public:
 
 private:
 	void InitCommandQueueCreateInfos();
-	void SetType(VkPhysicalDeviceType deviceType);
-	bool CheckExtensionSupport(const char* pExtensionName) const;
+	void SetType(VkPhysicalDeviceType adapterType);
 	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
 	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
 
 private:
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	std::vector<VkExtensionProperties> m_adapterExtensions;
+	std::vector<VkExtensionProperties> m_availableExtensions;
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
 	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;

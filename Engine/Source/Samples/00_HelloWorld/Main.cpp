@@ -6,12 +6,13 @@ int main()
 {
 	using namespace ow;
 
-	// Init RHI instance.
+	GraphicsContext graphicsContext;
+
 	RHIInstanceCreateInfo instanceCI;
 	instanceCI.Backend = RHIBackend::D3D12;
 	instanceCI.Debug = RHIDebugMode::Normal;
 	instanceCI.Validation = RHIValidationMode::GPU;
-	GraphicsContext graphics(instanceCI);
+	graphicsContext.InitializeInstance(instanceCI);
 
 	// Query all RHI adapters.
 	//uint32 adapterCount;

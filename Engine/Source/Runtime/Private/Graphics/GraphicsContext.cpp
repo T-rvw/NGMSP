@@ -5,7 +5,9 @@
 namespace ow
 {
 
-GraphicsContext::GraphicsContext(const RHIInstanceCreateInfo& createInfo)
+GraphicsContext::~GraphicsContext() = default;
+
+void GraphicsContext::InitializeInstance(const RHIInstanceCreateInfo& createInfo)
 {
 	switch (createInfo.Backend)
 	{
@@ -32,7 +34,5 @@ GraphicsContext::GraphicsContext(const RHIInstanceCreateInfo& createInfo)
 	assert(m_pRHIInstance);
 	m_pRHIInstance->Init(createInfo);
 }
-
-GraphicsContext::~GraphicsContext() = default;
 
 }

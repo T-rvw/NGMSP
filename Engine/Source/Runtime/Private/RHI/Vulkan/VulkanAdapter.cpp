@@ -95,7 +95,7 @@ namespace ow
 VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
 	m_physicalDevice(physicalDevice)
 {
-	VkPhysicalDeviceProperties properties{};
+	VkPhysicalDeviceProperties properties {};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
 	SetType(properties.deviceType);
@@ -103,7 +103,7 @@ VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
 	m_info.Vendor = GetGPUVendor(properties.vendorID);
 	m_info.DeviceID = properties.deviceID;
 
-	VkPhysicalDeviceMemoryProperties memoryProperties{};
+	VkPhysicalDeviceMemoryProperties memoryProperties {};
 	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
 	const bool isIntegratedGPU = GPUAdapterType::Integrated == m_info.Type;
@@ -146,8 +146,8 @@ void VulkanAdapter::Init()
 {
 	uint32 extensionCount;
 	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));
-	m_adapterExtensions.resize(extensionCount);
-	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_adapterExtensions.data()));
+	m_availableExtensions.resize(extensionCount);
+	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_availableExtensions.data()));
 
 	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
 	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
@@ -309,54 +309,14 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 	return nullptr;
 }
 
-void VulkanAdapter::SetType(VkPhysicalDeviceType deviceType)
+void VulkanAdapter::SetType(VkPhysicalDeviceType adapterType)
 {
-	switch (deviceType)
-	{
-	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-	{
-		m_info.Type = GPUAdapterType::Discrete;
-		break;
-	}
-	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-	{
-		m_info.Type = GPUAdapterType::Integrated;
-		break;
-	}
-	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-	{
-		m_info.Type = GPUAdapterType::Virtual;
-		break;
-	}
-	case VK_PHYSICAL_DEVICE_TYPE_CPU:
-	{
-		m_info.Type = GPUAdapterType::CPU;
-		break;
-	}
-	default:
-	{
-		m_info.Type = GPUAdapterType::CPU;
-		break;
-	}
-	}
-}
-
-bool VulkanAdapter::CheckExtensionSupport(const char* pExtensionName) const
-{
-	for (const auto& extension : m_adapterExtensions)
-	{
-		if (0 == strcmp(extension.extensionName, pExtensionName))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	m_info.Type = VulkanUtils::ToRHI(adapterType);
 }
 
 bool VulkanAdapter::EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const
 {
-	if (!CheckExtensionSupport(pExtensionName))
+	if (!VulkanUtils::FindExtension(m_availableExtensions, pExtensionName))
 	{
 		return false;
 	}
@@ -367,12 +327,9 @@ bool VulkanAdapter::EnableExtensionSafely(std::vector<const char*>& extensions, 
 
 bool VulkanAdapter::EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const
 {
-	for (const auto& requireExtension : requireExtensions)
+	if (!VulkanUtils::FindExtensions(m_availableExtensions, requireExtensions))
 	{
-		if (!CheckExtensionSupport(requireExtension))
-		{
-			return false;
-		}
+		return false;
 	}
 
 	for (const auto& requireExtension : requireExtensions)

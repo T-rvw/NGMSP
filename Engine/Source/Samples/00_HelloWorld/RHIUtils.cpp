@@ -8,36 +8,6 @@
 namespace ow
 {
 
-IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
-{
-	ModuleData* pRHIModule = nullptr;
-	switch (createInfo.Backend)
-	{
-	case RHIBackend::D3D12:
-	{
-		pRHIModule = ModuleManager::Get().LoadModule("[RHI][D3D12]", "RHID3D12");
-		break;
-	}
-	case RHIBackend::Vulkan:
-	{
-		pRHIModule = ModuleManager::Get().LoadModule("[RHI][Vulkan]", "RHIVulkan");
-		break;
-	}
-	default:
-	{
-		assert("Unknown RHI backend.");
-		break;
-	}
-	}
-
-	assert(pRHIModule);
-	auto* pModule = static_cast<IRHIModule*>(pRHIModule->InitFunc());
-	auto* pRHIInstance = pModule->CreateRHIInstance();
-	pRHIInstance->Init(createInfo);
-
-	return pRHIInstance;
-}
-
 std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters)
 {
 	std::optional<int32> bestAdapterIndex;
@@ -116,18 +86,5 @@ std::vector<RHICommandQueueCreateInfo*> FindBestCommandQueues(const std::vector<
 
 	return bestCommandQueueCIs;
 }
-
-void Dump(const IRHIAdapter* pRHIAdapter)
-{
-}
-
-void Dump(const IRHIDevice* pRHIDevice)
-{
-}
-
-void Dump(const IRHIInstance* pRHIInstance)
-{
-}
-
 
 }

@@ -3,6 +3,8 @@
 #ifdef PLATFORM_WINDOWS
 #include "../../Core/HAL/Windows/WindowsUndefines.h"
 #define VK_USE_PLATFORM_WIN32_KHR
+// Undef windows macros which will affect RHI interfaces.
+#undef CreateSemaphore
 #endif
 
 #define VK_NO_PROTOTYPES
@@ -11,11 +13,7 @@
 #include <VulkanMemoryAllocator/vk_mem_alloc.h>
 
 #include "VulkanTypes.h"
-
-#ifdef PLATFORM_WINDOWS
-// Undef windows macros which will affect RHI interfaces.
-#undef CreateSemaphore
-#endif
+#include "VulkanUtils.h"
 
 #include <cassert>
 #include <memory>

@@ -49,7 +49,6 @@ RHIBackend VulkanInstance::GetBackend() const
 
 void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 {
-	assert(VK_NULL_HANDLE == m_instance);
 	VK_VERIFY(volkInitialize());
 
 	// Enable instance layers.
@@ -81,80 +80,53 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 		}
 	}
 
-	// Debug utils.
-	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
-	
 	// Enable instance extensions.
 	uint32_t extensionCount;
 	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
-	std::vector<VkExtensionProperties> availableInstanceExtensions(extensionCount);
-	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableInstanceExtensions.data()));
+	m_availableExtensions.resize(extensionCount);
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, m_availableExtensions.data()));
 
 	std::vector<const char*> instanceExtensions;
-	for (const auto& availableExtension : availableInstanceExtensions)
-	{
-		if (createInfo.Debug != RHIDebugMode::Disabled)
-		{
-			if (0 == strcmp(availableExtension.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
-			{
-				instanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-
-				VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo {};
-				debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-				debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
-				debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-				debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
-				debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
-				debugUtilsCreateInfo.pfnUserCallback = DebugUtilsMessengerCallback;
-				optDebugUtilsCreateInfo = debugUtilsCreateInfo;
-			}
-			else if (0 == strcmp(availableExtension.extensionName, VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
-			{
-				instanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-			}
-		}
-
-		if (0 == strcmp(availableExtension.extensionName, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
-		{
-			instanceExtensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-		}
-		else if (0 == strcmp(availableExtension.extensionName, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME))
-		{
-			instanceExtensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
-		}
-		else if (0 == strcmp(availableExtension.extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
-		{
-			instanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-		}
-#ifdef PLATFORM_WINDOWS
-		else if (0 == strcmp(availableExtension.extensionName, VK_KHR_WIN32_SURFACE_EXTENSION_NAME))
-		{
-			instanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-		}
+	EnableExtensionSafely(instanceExtensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+	EnableExtensionSafely(instanceExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+	EnableExtensionSafely(instanceExtensions, VK_KHR_SURFACE_EXTENSION_NAME);
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+	EnableExtensionSafely(instanceExtensions, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+	EnableExtensionSafely(instanceExtensions, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
+#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+	EnableExtensionSafely(instanceExtensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+#elif defined(VK_USE_PLATFORM_XLIB_KHR)
+	EnableExtensionSafely(instanceExtensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+#elif defined(VK_USE_PLATFORM_XCB_KHR)
+	EnableExtensionSafely(instanceExtensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+#elif defined(VK_USE_PLATFORM_IOS_MVK)
+	EnableExtensionSafely(instanceExtensions, VK_MVK_IOS_SURFACE_EXTENSION_NAME);
+#elif defined(VK_USE_PLATFORM_MACOS_MVK)
+	EnableExtensionSafely(instanceExtensions, VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
 #endif
-	}
 
-	// Dump
+	// Debug utils.
+	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
+	if (createInfo.Debug != RHIDebugMode::Disabled &&
+		EnableExtensionSafely(instanceExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
 	{
-		printf("[VulkanInstance]\n");
-		printf("\t[Layers]\n");
-		for (const auto& instanceLayer : instanceLayers)
-		{
-			printf("\t\t%s\n", instanceLayer);
-		}
-
-		printf("\t[Extensions]\n");
-		for (const auto& instanceExtension : instanceExtensions)
-		{
-			printf("\t\t%s\n", instanceExtension);
-		}
-		printf("\n");
+		VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo{};
+		debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
+		debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+		debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
+		debugUtilsCreateInfo.pfnUserCallback = DebugUtilsMessengerCallback;
+		optDebugUtilsCreateInfo = debugUtilsCreateInfo;
 	}
 
-	// Create instance.
+	uint32 maxAPIVersion;
+	vkEnumerateInstanceVersion(&maxAPIVersion);
+
 	VkApplicationInfo applicationInfo{};
 	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	applicationInfo.apiVersion = VK_API_VERSION_1_3;
+	applicationInfo.apiVersion = maxAPIVersion;
 	applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	applicationInfo.pApplicationName = "Hamster Graphics";
 	applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -211,6 +183,17 @@ void VulkanInstance::EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdap
 	{
 		pAdapters[adapterIndex] = &m_adapters[adapterIndex];
 	}
+}
+
+bool VulkanInstance::EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const
+{
+	if (!VulkanUtils::FindExtension(m_availableExtensions, pExtensionName))
+	{
+		return false;
+	}
+
+	extensions.push_back(pExtensionName);
+	return true;
 }
 
 }

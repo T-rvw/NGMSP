@@ -15,13 +15,14 @@ struct RHIInstanceCreateInfo;
 class RHI_API GraphicsContext
 {
 public:
-	GraphicsContext() = delete;
-	explicit GraphicsContext(const RHIInstanceCreateInfo& createInfo);
+	GraphicsContext() = default;
 	GraphicsContext(const GraphicsContext&) = delete;
 	GraphicsContext& operator=(const GraphicsContext&) = delete;
 	GraphicsContext(GraphicsContext&&) = default;
 	GraphicsContext& operator=(GraphicsContext&&) = default;
 	~GraphicsContext();
+
+	void InitializeInstance(const RHIInstanceCreateInfo& createInfo);
 
 private:
 	ModuleData* m_pRHILibrary = nullptr;
