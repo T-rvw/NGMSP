@@ -7,16 +7,7 @@
 namespace ow
 {
 
-D3D12Instance::~D3D12Instance()
-{
-}
-
-RHIBackend D3D12Instance::GetBackend() const
-{
-	return RHIBackend::D3D12;
-}
-
-void D3D12Instance::Init(const RHIInstanceCreateInfo& createInfo)
+D3D12Instance::D3D12Instance(const RHIInstanceCreateInfo& createInfo)
 {
 	// GPU validator needs to enable debug layer at first.
 	if (createInfo.Validation != RHIValidationMode::Disabled)
@@ -33,6 +24,15 @@ void D3D12Instance::Init(const RHIInstanceCreateInfo& createInfo)
 	assert(m_factory);
 
 	InitAdapters();
+}
+
+D3D12Instance::~D3D12Instance()
+{
+}
+
+RHIBackend D3D12Instance::GetBackend() const
+{
+	return RHIBackend::D3D12;
 }
 
 void D3D12Instance::InitAdapters()

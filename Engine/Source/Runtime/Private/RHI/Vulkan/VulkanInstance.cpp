@@ -31,41 +31,17 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugUtilsMessengerCallback(
 namespace ow
 {
 
-VulkanInstance::VulkanInstance()
+VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 {
-	VK_VERIFY(volkInitialize());
+	Initialize();
 
-	uint32 instanceLayerCount;
-	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr));
-	m_availableLayers.resize(instanceLayerCount);
-	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, m_availableLayers.data()));
-
-	uint32_t extensionCount;
-	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
-	m_availableExtensions.resize(extensionCount);
-	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, m_availableExtensions.data()));
-}
-
-VulkanInstance::~VulkanInstance()
-{
-	vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugUtilsMessenger, nullptr);
-	vkDestroyInstance(m_instance, nullptr);
-}
-
-RHIBackend VulkanInstance::GetBackend() const
-{
-	return RHIBackend::Vulkan;
-}
-
-void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
-{
 	// Enable instance layers.
 	std::vector<const char*> instanceLayers;
 	if (createInfo.Validation != RHIValidationMode::Disabled)
 	{
 		VulkanUtils::EnableLayersSafely(instanceLayers, m_availableLayers, "VK_LAYER_KHRONOS_validation");
 	}
-	
+
 	// Enable instance extensions.
 	std::vector<const char*> instanceExtensions;
 	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
@@ -107,11 +83,11 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	uint32 maxAPIVersion;
 	vkEnumerateInstanceVersion(&maxAPIVersion);
 
-	VkApplicationInfo applicationInfo {};
+	VkApplicationInfo applicationInfo{};
 	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	applicationInfo.apiVersion = maxAPIVersion;
 
-	VkInstanceCreateInfo instanceCreateInfo {};
+	VkInstanceCreateInfo instanceCreateInfo{};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.ppEnabledExtensionNames = instanceExtensions.data();
 	instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
@@ -134,6 +110,32 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	}
 
 	InitAdapters();
+}
+
+VulkanInstance::~VulkanInstance()
+{
+	vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugUtilsMessenger, nullptr);
+	vkDestroyInstance(m_instance, nullptr);
+}
+
+RHIBackend VulkanInstance::GetBackend() const
+{
+	return RHIBackend::Vulkan;
+}
+
+void VulkanInstance::Initialize()
+{
+	VK_VERIFY(volkInitialize());
+
+	uint32 instanceLayerCount;
+	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr));
+	m_availableLayers.resize(instanceLayerCount);
+	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, m_availableLayers.data()));
+
+	uint32_t extensionCount;
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
+	m_availableExtensions.resize(extensionCount);
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, m_availableExtensions.data()));
 }
 
 void VulkanInstance::InitAdapters()

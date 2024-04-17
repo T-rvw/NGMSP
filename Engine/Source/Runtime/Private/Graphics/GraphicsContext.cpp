@@ -35,9 +35,8 @@ void GraphicsContext::InitializeInstance(const RHIInstanceCreateInfo& createInfo
 
 	assert(m_pRHILibrary);
 	m_pRHIModule = static_cast<IRHIModule*>(m_pRHILibrary->InitFunc());
-	m_pRHIInstance = m_pRHIModule->CreateRHIInstance();
+	m_pRHIInstance = m_pRHIModule->CreateRHIInstance(createInfo);
 	assert(m_pRHIInstance);
-	m_pRHIInstance->Init(createInfo);
 
 	// Query all RHI adapters.
 	uint32 adapterCount;
