@@ -23,7 +23,7 @@ public:
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_adapter.Get(); }
 	virtual void QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
-	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const override;
+	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
 private:
 	void SetType(const DXGI_ADAPTER_DESC1& desc);

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Core/Modules/ModuleManager.h>
-#include <RHI/RHI.h>
-
-class IRHIInstance;
-class IRHIModule;
-class ModuleData;
+#include <Core/HAL/APIDefinition.h>
 
 namespace ow
 {
+
+struct ModuleData;
+
+class IRHIInstance;
+class IRHIModule;
 
 struct RHIInstanceCreateInfo;
 

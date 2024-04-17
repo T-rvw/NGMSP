@@ -1,10 +1,5 @@
 #include "VulkanAdapter.h"
 
-#include "VulkanDevice.h"
-
-#include <RHI//IRHIAdapter.h>
-#include <RHI/IRHIDevice.h>
-
 namespace
 {
 
@@ -98,7 +93,7 @@ VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
 	VkPhysicalDeviceProperties properties {};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
-	SetType(properties.deviceType);
+	m_info.Type = VulkanUtils::ToRHI(properties.deviceType);
 	m_info.Name = properties.deviceName;
 	m_info.Vendor = GetGPUVendor(properties.vendorID);
 	m_info.DeviceID = properties.deviceID;
@@ -232,7 +227,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 
 void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
-	if (nullptr == pCommandQueueCIs)
+	if (!pCommandQueueCIs)
 	{
 		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
 		return;
@@ -244,7 +239,7 @@ void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHIComman
 	}
 }
 
-IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const
+IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
 	// Enable extra extensions/features/properties by requirement.
 	std::vector<const char*> enabledExtensions;
@@ -255,12 +250,12 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 		const RHIFeatures& requiredFeatrues = deviceCI.Features;
 		if (!requiredFeatrues.Headless)
 		{
-			assert(EnableExtensionSafely(enabledExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
+			assert(VulkanUtils::EnableExtensionSafely(enabledExtensions, m_availableExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
 		}
 
 		VulkanAdapterRayTracing rayTracing;
 		if (requiredFeatrues.RayTracing &&
-			EnableExtensionsSafely(enabledExtensions, rayTracing.ExtensionNames))
+			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, rayTracing.ExtensionNames))
 		{
 			rayTracing.AppendFeatures(pFeaturesNextChain);
 			rayTracing.AppendProperties(pPropertiesNextChain);
@@ -268,7 +263,7 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 
 		VulkanAdapterMeshShader meshShader;
 		if (requiredFeatrues.MeshShaders &&
-			EnableExtensionsSafely(enabledExtensions, meshShader.ExtensionNames))
+			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, meshShader.ExtensionNames))
 		{
 			meshShader.AppendFeatures(pFeaturesNextChain);
 			meshShader.AppendProperties(pPropertiesNextChain);
@@ -304,40 +299,8 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 	assert(vkDevice != VK_NULL_HANDLE);
 	volkLoadDevice(vkDevice);
 
-	auto vulkanDevice = std::make_unique<VulkanDevice>(m_physicalDevice, vkDevice);
-
-	return nullptr;
-}
-
-void VulkanAdapter::SetType(VkPhysicalDeviceType adapterType)
-{
-	m_info.Type = VulkanUtils::ToRHI(adapterType);
-}
-
-bool VulkanAdapter::EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const
-{
-	if (!VulkanUtils::FindExtension(m_availableExtensions, pExtensionName))
-	{
-		return false;
-	}
-
-	extensions.push_back(pExtensionName);
-	return true;
-}
-
-bool VulkanAdapter::EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const
-{
-	if (!VulkanUtils::FindExtensions(m_availableExtensions, requireExtensions))
-	{
-		return false;
-	}
-
-	for (const auto& requireExtension : requireExtensions)
-	{
-		extensions.push_back(requireExtension);
-	}
-
-	return true;
+	auto& device = m_devices.emplace_back(m_physicalDevice, vkDevice);
+	return &device;
 }
 
 }

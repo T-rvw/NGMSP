@@ -1,6 +1,5 @@
 #include "RHIUtils.h"
 
-#include <Core/Modules/ModuleManager.h>
 #include <RHI/RHI.h>
 
 #include <unordered_set>
@@ -8,7 +7,7 @@
 namespace ow
 {
 
-std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters)
+std::optional<int32> RHIUtils::FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters)
 {
 	std::optional<int32> bestAdapterIndex;
 	uint64 bestScore = 0;
@@ -39,7 +38,7 @@ std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapter
 	return bestAdapterIndex;
 }
 
-std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
+std::optional<int32> RHIUtils::FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
 {
 	std::optional<int32> bestCIIndex;
 	float bestScore = 0.0f;
@@ -66,14 +65,14 @@ std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std:
 	return bestCIIndex;
 }
 
-std::vector<RHICommandQueueCreateInfo*> FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
+std::vector<RHICommandQueueCreateInfo*> RHIUtils::FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
 {
 	std::vector<RHICommandQueueCreateInfo*> bestCommandQueueCIs;
 
 	std::unordered_set<int32> queueIndexes;
 	for (auto commandType : commandTypes)
 	{
-		if (auto optIndex = FindBestCommandQueue(commandType, createInfos); optIndex.has_value())
+		if (auto optIndex = RHIUtils::FindBestCommandQueue(commandType, createInfos); optIndex.has_value())
 		{
 			queueIndexes.insert(optIndex.value());
 		}

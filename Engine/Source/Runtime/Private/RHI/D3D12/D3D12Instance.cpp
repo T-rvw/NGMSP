@@ -46,7 +46,7 @@ void D3D12Instance::InitAdapters()
 
 void D3D12Instance::EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters)
 {
-	if (nullptr == pAdapters)
+	if (!pAdapters)
 	{
 		adapterCount = static_cast<uint32>(m_adapters.size());
 		return;

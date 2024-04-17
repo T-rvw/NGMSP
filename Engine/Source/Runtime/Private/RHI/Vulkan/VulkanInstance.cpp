@@ -1,10 +1,5 @@
 #include "VulkanInstance.h"
 
-#include "VulkanAdapter.h"
-
-#include <RHI/IRHIAdapter.h>
-#include <RHI/RHITypes.h>
-
 #include <optional>
 
 namespace
@@ -36,6 +31,21 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugUtilsMessengerCallback(
 namespace ow
 {
 
+VulkanInstance::VulkanInstance()
+{
+	VK_VERIFY(volkInitialize());
+
+	uint32 instanceLayerCount;
+	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr));
+	m_availableLayers.resize(instanceLayerCount);
+	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, m_availableLayers.data()));
+
+	uint32_t extensionCount;
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
+	m_availableExtensions.resize(extensionCount);
+	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, m_availableExtensions.data()));
+}
+
 VulkanInstance::~VulkanInstance()
 {
 	vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugUtilsMessenger, nullptr);
@@ -49,67 +59,40 @@ RHIBackend VulkanInstance::GetBackend() const
 
 void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 {
-	VK_VERIFY(volkInitialize());
-
 	// Enable instance layers.
-	uint32 instanceLayerCount;
-	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr));
-	std::vector<VkLayerProperties> availableInstanceLayers(instanceLayerCount);
-	VK_VERIFY(vkEnumerateInstanceLayerProperties(&instanceLayerCount, availableInstanceLayers.data()));
-
 	std::vector<const char*> instanceLayers;
-	for (const auto& availableInstanceLayer : availableInstanceLayers)
+	if (createInfo.Validation != RHIValidationMode::Disabled)
 	{
-		if (createInfo.Validation != RHIValidationMode::Disabled)
-		{
-			if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_KHRONOS_validation"))
-			{
-				instanceLayers.push_back("VK_LAYER_KHRONOS_validation");
-				break;
-			}
-			else if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_LUNARG_standard_validation"))
-			{
-				instanceLayers.push_back("VK_LAYER_LUNARG_standard_validation");
-				break;
-			}
-			else if (0 == strcmp(availableInstanceLayer.layerName, "VK_LAYER_LUNARG_core_validation"))
-			{
-				instanceLayers.push_back("VK_LAYER_LUNARG_core_validation");
-				break;
-			}
-		}
+		VulkanUtils::EnableLayersSafely(instanceLayers, m_availableLayers, "VK_LAYER_KHRONOS_validation");
 	}
-
+	
 	// Enable instance extensions.
-	uint32_t extensionCount;
-	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
-	m_availableExtensions.resize(extensionCount);
-	VK_VERIFY(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, m_availableExtensions.data()));
-
 	std::vector<const char*> instanceExtensions;
-	EnableExtensionSafely(instanceExtensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-	EnableExtensionSafely(instanceExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
-	EnableExtensionSafely(instanceExtensions, VK_KHR_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+
+	// Enable surface extension.
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_SURFACE_EXTENSION_NAME);
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-	EnableExtensionSafely(instanceExtensions, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-	EnableExtensionSafely(instanceExtensions, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-	EnableExtensionSafely(instanceExtensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
-	EnableExtensionSafely(instanceExtensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_XCB_KHR)
-	EnableExtensionSafely(instanceExtensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_IOS_MVK)
-	EnableExtensionSafely(instanceExtensions, VK_MVK_IOS_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_MVK_IOS_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_MACOS_MVK)
-	EnableExtensionSafely(instanceExtensions, VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
+	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
 #endif
 
-	// Debug utils.
+	// Enable debug utils extension.
 	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
 	if (createInfo.Debug != RHIDebugMode::Disabled &&
-		EnableExtensionSafely(instanceExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
 	{
 		VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo{};
 		debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -124,13 +107,9 @@ void VulkanInstance::Init(const RHIInstanceCreateInfo& createInfo)
 	uint32 maxAPIVersion;
 	vkEnumerateInstanceVersion(&maxAPIVersion);
 
-	VkApplicationInfo applicationInfo{};
+	VkApplicationInfo applicationInfo {};
 	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	applicationInfo.apiVersion = maxAPIVersion;
-	applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-	applicationInfo.pApplicationName = "Hamster Graphics";
-	applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	applicationInfo.pEngineName = "Hamster Engine";
 
 	VkInstanceCreateInfo instanceCreateInfo {};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -173,7 +152,7 @@ void VulkanInstance::InitAdapters()
 
 void VulkanInstance::EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters)
 {
-	if (nullptr == pAdapters)
+	if (!pAdapters)
 	{
 		adapterCount = static_cast<uint32>(m_adapters.size());
 		return;
@@ -183,17 +162,6 @@ void VulkanInstance::EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdap
 	{
 		pAdapters[adapterIndex] = &m_adapters[adapterIndex];
 	}
-}
-
-bool VulkanInstance::EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const
-{
-	if (!VulkanUtils::FindExtension(m_availableExtensions, pExtensionName))
-	{
-		return false;
-	}
-
-	extensions.push_back(pExtensionName);
-	return true;
 }
 
 }

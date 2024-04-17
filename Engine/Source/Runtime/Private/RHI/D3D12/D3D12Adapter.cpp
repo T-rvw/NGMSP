@@ -73,7 +73,7 @@ void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
 
 void D3D12Adapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
-	if (nullptr == pCommandQueueCIs)
+	if (!pCommandQueueCIs)
 	{
 		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
 		return;
@@ -85,7 +85,7 @@ void D3D12Adapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommand
 	}
 }
 
-IRHIDevice* D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const
+IRHIDevice* D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
 	UNUSED(pCommandQueueCIs);
 

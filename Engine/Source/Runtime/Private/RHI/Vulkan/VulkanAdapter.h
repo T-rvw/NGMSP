@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VulkanHeader.h"
+#include "VulkanDevice.h"
 
 #include <RHI//IRHIAdapter.h>
 
@@ -67,13 +67,10 @@ public:
 	virtual void Init() override;
 	virtual void* GetHandle() const override { return m_physicalDevice; }
 	virtual void QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
-	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const override;
+	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
 private:
 	void InitCommandQueueCreateInfos();
-	void SetType(VkPhysicalDeviceType adapterType);
-	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
-	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
 
 private:
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
@@ -81,6 +78,7 @@ private:
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
 	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
+	std::vector<VulkanDevice> m_devices;
 };
 
 }
