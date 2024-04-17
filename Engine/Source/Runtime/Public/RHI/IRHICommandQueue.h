@@ -10,12 +10,12 @@ class IRHICommandQueue
 public:
 	virtual ~IRHICommandQueue() {}
 	
-	virtual void* GetHandle() const = 0;
-
-	void SetType(RHICommandType commandQueueType) { m_commandQueueType = commandQueueType; }
 	RHICommandType GetType() const { return m_commandQueueType; }
 
-private:
+protected:
+	void SetType(RHICommandType commandQueueType) { m_commandQueueType = commandQueueType; }
+	
+protected:
 	RHICommandType m_commandQueueType;
 };
 

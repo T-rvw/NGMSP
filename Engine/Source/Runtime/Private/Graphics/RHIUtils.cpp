@@ -41,7 +41,7 @@ std::optional<int32> RHIUtils::FindBestRHIAdapter(const std::vector<IRHIAdapter*
 std::optional<int32> RHIUtils::FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
 {
 	std::optional<int32> bestCIIndex;
-	float bestScore = 0.0f;
+	float bestScore = -1.0f;
 	for (int32 ciIndex = 0, ciCount = static_cast<int32>(createInfos.size()); ciIndex < ciCount; ++ciIndex)
 	{
 		const auto& createInfo = createInfos[ciIndex];

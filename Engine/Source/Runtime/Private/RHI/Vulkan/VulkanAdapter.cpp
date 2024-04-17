@@ -137,7 +137,7 @@ VulkanAdapter::~VulkanAdapter()
 {
 }
 
-void VulkanAdapter::Init()
+void VulkanAdapter::Initialize()
 {
 	uint32 extensionCount;
 	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));
@@ -225,7 +225,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 	}
 }
 
-void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
+void VulkanAdapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
 	if (!pCommandQueueCIs)
 	{
@@ -239,7 +239,7 @@ void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHIComman
 	}
 }
 
-IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
+VkDevice VulkanAdapter::CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI)
 {
 	// Enable extra extensions/features/properties by requirement.
 	std::vector<const char*> enabledExtensions;
@@ -274,9 +274,9 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 	}
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	for (uint32 queueCIIndex = 0; queueCIIndex < queueCICount; ++queueCIIndex)
+	for (uint32 queueCIIndex = 0; queueCIIndex < deviceCI.CommandQueueCount; ++queueCIIndex)
 	{
-		const RHICommandQueueCreateInfo* commandQueueCI = pCommandQueueCIs[queueCIIndex];
+		const RHICommandQueueCreateInfo* commandQueueCI = deviceCI.CommandQueueCreateInfo[queueCIIndex];
 
 		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -299,8 +299,7 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 	assert(vkDevice != VK_NULL_HANDLE);
 	volkLoadDevice(vkDevice);
 
-	auto& device = m_devices.emplace_back(m_physicalDevice, vkDevice);
-	return &device;
+	return vkDevice;
 }
 
 }

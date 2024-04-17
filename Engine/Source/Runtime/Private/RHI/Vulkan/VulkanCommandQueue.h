@@ -18,9 +18,8 @@ public:
 	VulkanCommandQueue& operator=(VulkanCommandQueue&&) = default;
 	virtual ~VulkanCommandQueue();
 
-	virtual void* GetHandle() const override { return m_queue; }
-
 private:
+	friend class VulkanRHIModule;
 	VkQueue m_queue = VK_NULL_HANDLE;
 };
 

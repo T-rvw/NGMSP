@@ -99,22 +99,6 @@ struct RHIInstanceCreateInfo
     RHIValidationMode Validation = RHIValidationMode::Disabled;
 };
 
-struct RHIDeviceCreateInfo
-{
-    RHIFeatures Features;
-};
-
-struct RHISwapChainCreateInfo
-{
-    void* NativeWindowHandle = nullptr;
-    void* NativeInstanceHandle = nullptr;
-    RHIFormat Format = RHIFormat::R8G8B8A8Unorm;
-    uint32 BackBufferWidth = 1;
-    uint32 BackBufferHeight = 1;
-    uint32 BackBufferCount = 2;
-    RHIPresentMode PresentMode = RHIPresentMode::VSync;
-};
-
 struct RHICommandQueueCreateInfo
 {
     RHICommandType Type = RHICommandType::Graphics;
@@ -129,6 +113,24 @@ struct RHICommandQueueCreateInfo
         printf("\tIsDedicated = %d\n", IsDedicated);
         printf("\tPriority = %f\n", Priority);
     }
+};
+
+struct RHIDeviceCreateInfo
+{
+    uint32 CommandQueueCount = 0;
+    RHICommandQueueCreateInfo** CommandQueueCreateInfo = nullptr;
+    RHIFeatures Features;
+};
+
+struct RHISwapChainCreateInfo
+{
+    void* NativeWindowHandle = nullptr;
+    void* NativeInstanceHandle = nullptr;
+    RHIFormat Format = RHIFormat::R8G8B8A8Unorm;
+    uint32 BackBufferWidth = 1;
+    uint32 BackBufferHeight = 1;
+    uint32 BackBufferCount = 2;
+    RHIPresentMode PresentMode = RHIPresentMode::VSync;
 };
 
 struct RHIFenceCreateInfo

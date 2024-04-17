@@ -1,7 +1,5 @@
 #include "VulkanRHIModule.h"
 
-#include "VulkanInstance.h"
-
 namespace ow
 {
 
@@ -17,20 +15,26 @@ VulkanRHIModule::~VulkanRHIModule()
 
 IRHIInstance* VulkanRHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
 {
-	return new VulkanInstance(createInfo);
+	auto& rhiInstance = m_rhiInstances.emplace_back(std::make_unique<VulkanInstance>(createInfo));
+	return rhiInstance.get();
 }
 
 IRHIDevice* VulkanRHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo)
 {
-	return nullptr;
-}
-
-IRHISwapChain* VulkanRHIModule::CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo)
-{
-	return nullptr;
+	auto vkDevice = static_cast<VulkanAdapter*>(pAdapter)->CreateLogicalDevice(createInfo);
+	auto& rhiDevice = m_rhiDevices.emplace_back(std::make_unique<VulkanDevice>(vkDevice));
+	return rhiDevice.get();
 }
 
 IRHICommandQueue* VulkanRHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
+{
+	auto vkCommandQueue = static_cast<VulkanDevice*>(pDevice)->CreateCommandQueue(createInfo);
+	auto& rhiCommandQueue = m_rhiCommandQueues.emplace_back(std::make_unique<VulkanCommandQueue>(vkCommandQueue));
+	rhiCommandQueue->SetType(createInfo.Type);
+	return rhiCommandQueue.get();
+}
+
+IRHISwapChain* VulkanRHIModule::CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo)
 {
 	return nullptr;
 }

@@ -35,8 +35,8 @@ public:
 	virtual IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) = 0;
 	virtual IRHIDevice* CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo) = 0;
 
-	virtual IRHISwapChain* CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo) = 0;
 	virtual IRHICommandQueue* CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo) = 0;
+	virtual IRHISwapChain* CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo) = 0;
 
 	virtual IRHIFence* CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo) = 0;
 	virtual IRHISemaphore* CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo) = 0;

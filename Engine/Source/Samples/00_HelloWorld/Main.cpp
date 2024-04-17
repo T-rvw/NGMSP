@@ -8,10 +8,10 @@ int main()
 	GraphicsContext graphicsContext;
 
 	RHIInstanceCreateInfo instanceCI;
-	instanceCI.Backend = RHIBackend::Vulkan;
+	instanceCI.Backend = RHIBackend::D3D12;
 	instanceCI.Debug = RHIDebugMode::Normal;
 	instanceCI.Validation = RHIValidationMode::GPU;
-	graphicsContext.InitializeInstance(instanceCI);
+	graphicsContext.Initialize(instanceCI);
 
 	//// Create application and main window.
 	//PlatformApplication app;

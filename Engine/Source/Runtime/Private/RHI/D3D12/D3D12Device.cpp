@@ -12,20 +12,18 @@
 #include <RHI/IRHISemaphore.h>
 #include <RHI/IRHISwapChain.h>
 
-#include <memory>
-
 namespace ow
 {
 
-D3D12Device::D3D12Device(ID3D12Device* pDevice) :
-	m_device(pDevice)
+D3D12Device::D3D12Device(ComPtr<ID3D12Device> pDevice) :
+	m_device(MoveTemp(pDevice))
 {
 }
 
-IRHICommandQueue* D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
+ComPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	int32 typeIndex = static_cast<int32>(commandQueueCI.Type);
-	ID3D12CommandQueue* pCommandQueue = m_commandQueues[typeIndex].Get();
+	ComPtr<ID3D12CommandQueue> pCommandQueue = m_commandQueues[typeIndex].Get();
 
 	D3D12_COMMAND_QUEUE_DESC queueDesc{};
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -33,27 +31,18 @@ IRHICommandQueue* D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInf
 	queueDesc.Priority = static_cast<int32>(commandQueueCI.Priority);
 	D3D12_VERIFY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue)));
 
-	auto d3d12CommandQueue = std::make_unique<D3D12CommandQueue>(pCommandQueue);
-	d3d12CommandQueue->SetType(commandQueueCI.Type);
-
-	return d3d12CommandQueue.get();
+	return pCommandQueue;
 }
 
-IRHIFence* D3D12Device::CreateFence() const
+ComPtr<ID3D12Fence> D3D12Device::CreateFence() const
 {
-	ID3D12Fence* pFence;
+	ComPtr<ID3D12Fence> pFence;
 	D3D12_VERIFY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence)));
 
-	auto d3d12Fence = std::make_unique<D3D12Fence>(m_device.Get(), pFence);
-	return d3d12Fence.get();
+	return pFence;
 }
 
-IRHISemaphore* D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const
-{
-	return nullptr;
-}
-
-IRHISwapChain* D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
+ComPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
 {
 	//ComPtr<IDXGIFactory4> pDXGIFactory = static_cast<IDXGIFactory4*>(createInfo.Instance->GetHandle());
 	//
@@ -75,12 +64,12 @@ IRHISwapChain* D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& create
 	//
 	//int32 typeIndex = static_cast<int32>(RHICommandType::Graphics);
 	//ID3D12CommandQueue* pDirectCommandQueue = m_commandQueues[typeIndex].Get();
-	//
-	//ComPtr<IDXGISwapChain1> swapChain;
+	
+	ComPtr<IDXGISwapChain1> swapChain;
 	//D3D12_VERIFY(pDXGIFactory->CreateSwapChainForHwnd(pDirectCommandQueue, (HWND)createInfo.NativeWindowHandle,
 	//	&swapChainDesc, &fsSwapChainDesc, nullptr, &swapChain));
 
-	return nullptr;
+	return swapChain;
 }
 
 }

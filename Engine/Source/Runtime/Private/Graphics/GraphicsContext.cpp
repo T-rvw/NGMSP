@@ -12,7 +12,7 @@ namespace ow
 
 GraphicsContext::~GraphicsContext() = default;
 
-void GraphicsContext::InitializeInstance(const RHIInstanceCreateInfo& createInfo)
+void GraphicsContext::Initialize(const RHIInstanceCreateInfo& createInfo)
 {
 	switch (createInfo.Backend)
 	{
@@ -50,14 +50,14 @@ void GraphicsContext::InitializeInstance(const RHIInstanceCreateInfo& createInfo
 	int32 adapterIndex = optAdapterIndex.value();
 	auto& pBestAdapter = rhiAdapters[adapterIndex];
 	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
-	pBestAdapter->Init();
+	pBestAdapter->Initialize();
 
 	// Create device and command queues.
 	printf("\n");
 	uint32 commandQueueCICount;
-	pBestAdapter->QueryCommandQueueCreateInfos(commandQueueCICount, nullptr);
-	std::vector<RHICommandQueueCreateInfo*> commandQueueCIs;
-	pBestAdapter->QueryCommandQueueCreateInfos(commandQueueCICount, commandQueueCIs.data());
+	pBestAdapter->EnumerateCommandQueues(commandQueueCICount, nullptr);
+	std::vector<RHICommandQueueCreateInfo*> commandQueueCIs(commandQueueCICount);
+	pBestAdapter->EnumerateCommandQueues(commandQueueCICount, commandQueueCIs.data());
 	for (const auto& queueCI : commandQueueCIs)
 	{
 		queueCI->Dump();
@@ -71,20 +71,21 @@ void GraphicsContext::InitializeInstance(const RHIInstanceCreateInfo& createInfo
 	}
 
 	RHIDeviceCreateInfo deviceCI;
+	deviceCI.CommandQueueCount = static_cast<uint32>(bestQueueCIs.size());
+	deviceCI.CommandQueueCreateInfo = bestQueueCIs.data();
 	deviceCI.Features.Headless = false;
 	deviceCI.Features.RayTracing = true;
 	deviceCI.Features.MeshShaders = true;
-	const RHICommandQueueCreateInfo* const* pData = bestQueueCIs.data();
-	auto* pRHIDevice = pBestAdapter->CreateDevice(deviceCI, static_cast<uint32>(bestQueueCIs.size()), bestQueueCIs.data());
+	m_pRHIDevice = m_pRHIModule->CreateRHIDevice(pBestAdapter, deviceCI);
 
-	//std::vector<IRHICommandQueue*> commandQueues;
-	//std::vector<IRHIFence*> commandQueueFences;
-	//for (const auto& bestQueueCI : bestQueueCIs)
-	//{
-	//	auto rhiCommandQueue = pRHIDevice->CreateCommandQueue(bestQueueCI);
-	//	commandQueues.emplace_back(MoveTemp(rhiCommandQueue));
-	//	commandQueueFences.push_back(rhiDevice.CreateFence());
-	//}
+	m_pRHICommandQueues.resize(EnumCount<RHICommandType>(), nullptr);
+	m_pRHICommandQueueFences.resize(EnumCount<RHICommandType>(), nullptr);
+	for (const auto& bestQueueCI : bestQueueCIs)
+	{
+		auto typeIndex = static_cast<uint32>(bestQueueCI->Type);
+		m_pRHICommandQueues[typeIndex] = m_pRHIModule->CreateRHICommandQueue(m_pRHIDevice, *bestQueueCI);
+		m_pRHICommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, {});
+	}
 }
 
 }

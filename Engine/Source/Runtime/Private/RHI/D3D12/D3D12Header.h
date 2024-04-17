@@ -6,6 +6,8 @@
 
 #include "D3D12Types.h"
 
+#include <Core/Base/TypeTraits.h>
+
 #include <wrl.h>
 
 template<typename T>
