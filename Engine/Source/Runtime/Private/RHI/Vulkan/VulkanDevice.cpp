@@ -15,8 +15,7 @@
 namespace ow
 {
 
-VulkanDevice::VulkanDevice(VkPhysicalDevice physcialDevice, VkDevice device) :
-	m_physicalDevice(physcialDevice),
+VulkanDevice::VulkanDevice(VkDevice device) :
 	m_device(device)
 {
 }
@@ -26,18 +25,15 @@ VulkanDevice::~VulkanDevice()
 	vkDestroyDevice(m_device, nullptr);
 }
 
-IRHICommandQueue* VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
+VkQueue VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const
 {
 	VkQueue vkCommandQueue;
 	vkGetDeviceQueue(m_device, commandQueueCI.ID, 0, &vkCommandQueue);
 
-	auto vulkanCommandQueue = std::make_unique<VulkanCommandQueue>(vkCommandQueue);
-	vulkanCommandQueue->SetType(commandQueueCI.Type);
-
-	return nullptr;
+	return vkCommandQueue;
 }
 
-IRHIFence* VulkanDevice::CreateFence() const
+VkFence VulkanDevice::CreateFence() const
 {
 	VkFenceCreateInfo fenceCI {};
 	fenceCI.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -45,24 +41,21 @@ IRHIFence* VulkanDevice::CreateFence() const
 	VkFence vkFence;
 	VK_VERIFY(vkCreateFence(m_device, &fenceCI, nullptr, &vkFence));
 
-	auto vulkanFence = std::make_unique<VulkanFence>(m_device, vkFence);
-
-	return nullptr;
+	return vkFence;
 }
 
-IRHISemaphore* VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const
+VkSemaphore VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const
 {
-	auto vulkanSemaphore = std::make_unique<VulkanSemaphore>();
-
-	return nullptr;
+	VkSemaphore semaphore {};
+	return semaphore;
 }
 
-IRHISwapChain* VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
+VkSwapchainKHR VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
 {
 //	auto vkInstance = static_cast<VkInstance>(createInfo.Instance->GetHandle());
 //
 //	VkSurfaceKHR vkSurface;
-//#ifdef PLATFORM_WINDOWS
+//#ifdef VK_USE_PLATFORM_WIN32_KHR
 //	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
 //	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 //	surfaceCreateInfo.hwnd = (HWND)createInfo.NativeWindowHandle;
@@ -154,12 +147,11 @@ IRHISwapChain* VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& creat
 //	swapChainCreateInfo.imageExtent = swapChainSize;
 //	swapChainCreateInfo.imageArrayLayers = 1;
 //	swapChainCreateInfo.presentMode = swapChainPresentMode;
-//
-//	VkSwapchainKHR swapChain;
-//	VK_VERIFY(vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, nullptr, &swapChain));
-//
-//	auto vulkanSwapChain = std::make_unique<VulkanSwapChain>(vkInstance, m_device, vkSurface, swapChainFormat, swapChain);
-	return nullptr;
+
+	VkSwapchainKHR swapChain {};
+	//VK_VERIFY(vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, nullptr, &swapChain));
+
+	return swapChain;
 }
 
 }

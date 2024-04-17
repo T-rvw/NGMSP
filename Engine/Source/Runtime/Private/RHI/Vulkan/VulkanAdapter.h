@@ -51,8 +51,6 @@ struct VulkanAdapterProperties
 	void* pNextChain;
 };
 
-class IRHIDevice;
-
 class VulkanAdapter : public IRHIAdapter
 {
 public:
@@ -64,21 +62,18 @@ public:
 	VulkanAdapter& operator=(VulkanAdapter&&) = default;
 	virtual ~VulkanAdapter();
 
-	virtual void Init() override;
-	virtual void* GetHandle() const override { return m_physicalDevice; }
-	virtual void QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
-	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const override;
+	virtual void Initialize() override;
+	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
 private:
 	void InitCommandQueueCreateInfos();
-	void SetType(VkPhysicalDeviceType deviceType);
-	bool CheckExtensionSupport(const char* pExtensionName) const;
-	bool EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const;
-	bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const;
+	VkDevice CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
+	friend class VulkanRHIModule;
+
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	std::vector<VkExtensionProperties> m_adapterExtensions;
+	std::vector<VkExtensionProperties> m_availableExtensions;
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
 	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;

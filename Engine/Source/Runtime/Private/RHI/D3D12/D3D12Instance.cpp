@@ -7,16 +7,7 @@
 namespace ow
 {
 
-D3D12Instance::~D3D12Instance()
-{
-}
-
-RHIBackend D3D12Instance::GetBackend() const
-{
-	return RHIBackend::D3D12;
-}
-
-void D3D12Instance::Init(const RHIInstanceCreateInfo& createInfo)
+D3D12Instance::D3D12Instance(const RHIInstanceCreateInfo& createInfo)
 {
 	// GPU validator needs to enable debug layer at first.
 	if (createInfo.Validation != RHIValidationMode::Disabled)
@@ -35,6 +26,15 @@ void D3D12Instance::Init(const RHIInstanceCreateInfo& createInfo)
 	InitAdapters();
 }
 
+D3D12Instance::~D3D12Instance()
+{
+}
+
+RHIBackend D3D12Instance::GetBackend() const
+{
+	return RHIBackend::D3D12;
+}
+
 void D3D12Instance::InitAdapters()
 {
 	ComPtr<IDXGIAdapter1> adapter;
@@ -46,7 +46,7 @@ void D3D12Instance::InitAdapters()
 
 void D3D12Instance::EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters)
 {
-	if (nullptr == pAdapters)
+	if (!pAdapters)
 	{
 		adapterCount = static_cast<uint32>(m_adapters.size());
 		return;

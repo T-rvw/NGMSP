@@ -11,11 +11,9 @@
 #include <VulkanMemoryAllocator/vk_mem_alloc.h>
 
 #include "VulkanTypes.h"
+#include "VulkanUtils.h"
 
-#ifdef PLATFORM_WINDOWS
-// Undef windows macros which will affect RHI interfaces.
-#undef CreateSemaphore
-#endif
+#include <Core/Base/TypeTraits.h>
 
 #include <cassert>
 #include <memory>

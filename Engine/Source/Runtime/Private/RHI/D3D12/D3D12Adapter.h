@@ -20,15 +20,15 @@ public:
 	D3D12Adapter& operator=(D3D12Adapter&&) = default;
 	virtual ~D3D12Adapter() = default;
 
-	virtual void Init() override;
-	virtual void* GetHandle() const override { return m_adapter.Get(); }
-	virtual void QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
-	virtual IRHIDevice* CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const override;
+	virtual void Initialize() override;
+	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
 private:
 	void SetType(const DXGI_ADAPTER_DESC1& desc);
+	ComPtr<ID3D12Device> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
+	friend class D3D12RHIModule;
 	ComPtr<IDXGIAdapter1> m_adapter;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
 };

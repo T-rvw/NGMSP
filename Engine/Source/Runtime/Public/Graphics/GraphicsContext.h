@@ -1,32 +1,42 @@
 #pragma once
 
-#include <Core/Modules/ModuleManager.h>
-#include <RHI/RHI.h>
+#include <Core/HAL/APIDefinition.h>
 
-class IRHIInstance;
-class IRHIModule;
-class ModuleData;
+#include <vector>
 
 namespace ow
 {
 
+struct ModuleData;
+
+class IRHICommandQueue;
+class IRHIDevice;
+class IRHIFence;
+class IRHIInstance;
+class IRHIModule;
+
 struct RHIInstanceCreateInfo;
 
-class RHI_API GraphicsContext
+class GraphicsContext
 {
 public:
-	GraphicsContext() = delete;
-	explicit GraphicsContext(const RHIInstanceCreateInfo& createInfo);
+	RHI_API GraphicsContext() = default;
 	GraphicsContext(const GraphicsContext&) = delete;
 	GraphicsContext& operator=(const GraphicsContext&) = delete;
 	GraphicsContext(GraphicsContext&&) = default;
 	GraphicsContext& operator=(GraphicsContext&&) = default;
-	~GraphicsContext();
+	RHI_API ~GraphicsContext();
+
+	RHI_API void Initialize(const RHIInstanceCreateInfo& createInfo);
 
 private:
 	ModuleData* m_pRHILibrary = nullptr;
 	IRHIModule* m_pRHIModule = nullptr;
 	IRHIInstance* m_pRHIInstance = nullptr;
+	IRHIDevice* m_pRHIDevice = nullptr;
+
+	std::vector<IRHICommandQueue*> m_pRHICommandQueues;
+	std::vector<IRHIFence*> m_pRHICommandQueueFences;
 };
 
 }

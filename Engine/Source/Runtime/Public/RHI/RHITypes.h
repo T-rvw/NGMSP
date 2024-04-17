@@ -92,11 +92,6 @@ struct RHIAdapterInfo
     std::string Name = "Unknown";
 };
 
-struct RHIDeviceCreateInfo
-{
-    RHIFeatures Features;
-};
-
 struct RHIInstanceCreateInfo
 {
     RHIBackend Backend = RHIBackend::Vulkan;
@@ -120,15 +115,15 @@ struct RHICommandQueueCreateInfo
     }
 };
 
-struct RHISemaphoreCreateInfo
+struct RHIDeviceCreateInfo
 {
-
+    uint32 CommandQueueCount = 0;
+    RHICommandQueueCreateInfo** CommandQueueCreateInfo = nullptr;
+    RHIFeatures Features;
 };
 
-class IRHIInstance;
 struct RHISwapChainCreateInfo
 {
-    IRHIInstance* Instance = nullptr;
     void* NativeWindowHandle = nullptr;
     void* NativeInstanceHandle = nullptr;
     RHIFormat Format = RHIFormat::R8G8B8A8Unorm;
@@ -136,6 +131,31 @@ struct RHISwapChainCreateInfo
     uint32 BackBufferHeight = 1;
     uint32 BackBufferCount = 2;
     RHIPresentMode PresentMode = RHIPresentMode::VSync;
+};
+
+struct RHIFenceCreateInfo
+{
+
+};
+
+struct RHISemaphoreCreateInfo
+{
+
+};
+
+struct RHIBufferCreateInfo
+{
+
+};
+
+struct RHITextureCreateInfo
+{
+
+};
+
+struct RHISamplerCreateInfo
+{
+
 };
 
 }

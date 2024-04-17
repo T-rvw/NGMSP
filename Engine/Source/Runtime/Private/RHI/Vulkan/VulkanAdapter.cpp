@@ -1,10 +1,5 @@
 #include "VulkanAdapter.h"
 
-#include "VulkanDevice.h"
-
-#include <RHI//IRHIAdapter.h>
-#include <RHI/IRHIDevice.h>
-
 namespace
 {
 
@@ -95,15 +90,15 @@ namespace ow
 VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
 	m_physicalDevice(physicalDevice)
 {
-	VkPhysicalDeviceProperties properties{};
+	VkPhysicalDeviceProperties properties {};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
-	SetType(properties.deviceType);
+	m_info.Type = VulkanUtils::ToRHI(properties.deviceType);
 	m_info.Name = properties.deviceName;
 	m_info.Vendor = GetGPUVendor(properties.vendorID);
 	m_info.DeviceID = properties.deviceID;
 
-	VkPhysicalDeviceMemoryProperties memoryProperties{};
+	VkPhysicalDeviceMemoryProperties memoryProperties {};
 	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
 	const bool isIntegratedGPU = GPUAdapterType::Integrated == m_info.Type;
@@ -142,12 +137,12 @@ VulkanAdapter::~VulkanAdapter()
 {
 }
 
-void VulkanAdapter::Init()
+void VulkanAdapter::Initialize()
 {
 	uint32 extensionCount;
 	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));
-	m_adapterExtensions.resize(extensionCount);
-	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_adapterExtensions.data()));
+	m_availableExtensions.resize(extensionCount);
+	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_availableExtensions.data()));
 
 	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
 	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
@@ -230,9 +225,9 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 	}
 }
 
-void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
+void VulkanAdapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
-	if (nullptr == pCommandQueueCIs)
+	if (!pCommandQueueCIs)
 	{
 		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
 		return;
@@ -244,7 +239,7 @@ void VulkanAdapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHIComman
 	}
 }
 
-IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const
+VkDevice VulkanAdapter::CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI)
 {
 	// Enable extra extensions/features/properties by requirement.
 	std::vector<const char*> enabledExtensions;
@@ -255,12 +250,12 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 		const RHIFeatures& requiredFeatrues = deviceCI.Features;
 		if (!requiredFeatrues.Headless)
 		{
-			assert(EnableExtensionSafely(enabledExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
+			assert(VulkanUtils::EnableExtensionSafely(enabledExtensions, m_availableExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
 		}
 
 		VulkanAdapterRayTracing rayTracing;
 		if (requiredFeatrues.RayTracing &&
-			EnableExtensionsSafely(enabledExtensions, rayTracing.ExtensionNames))
+			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, rayTracing.ExtensionNames))
 		{
 			rayTracing.AppendFeatures(pFeaturesNextChain);
 			rayTracing.AppendProperties(pPropertiesNextChain);
@@ -268,7 +263,7 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 
 		VulkanAdapterMeshShader meshShader;
 		if (requiredFeatrues.MeshShaders &&
-			EnableExtensionsSafely(enabledExtensions, meshShader.ExtensionNames))
+			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, meshShader.ExtensionNames))
 		{
 			meshShader.AppendFeatures(pFeaturesNextChain);
 			meshShader.AppendProperties(pPropertiesNextChain);
@@ -279,9 +274,9 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 	}
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	for (uint32 queueCIIndex = 0; queueCIIndex < queueCICount; ++queueCIIndex)
+	for (uint32 queueCIIndex = 0; queueCIIndex < deviceCI.CommandQueueCount; ++queueCIIndex)
 	{
-		const RHICommandQueueCreateInfo* commandQueueCI = pCommandQueueCIs[queueCIIndex];
+		const RHICommandQueueCreateInfo* commandQueueCI = deviceCI.CommandQueueCreateInfo[queueCIIndex];
 
 		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -304,83 +299,7 @@ IRHIDevice* VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uin
 	assert(vkDevice != VK_NULL_HANDLE);
 	volkLoadDevice(vkDevice);
 
-	auto vulkanDevice = std::make_unique<VulkanDevice>(m_physicalDevice, vkDevice);
-
-	return nullptr;
-}
-
-void VulkanAdapter::SetType(VkPhysicalDeviceType deviceType)
-{
-	switch (deviceType)
-	{
-	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-	{
-		m_info.Type = GPUAdapterType::Discrete;
-		break;
-	}
-	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-	{
-		m_info.Type = GPUAdapterType::Integrated;
-		break;
-	}
-	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-	{
-		m_info.Type = GPUAdapterType::Virtual;
-		break;
-	}
-	case VK_PHYSICAL_DEVICE_TYPE_CPU:
-	{
-		m_info.Type = GPUAdapterType::CPU;
-		break;
-	}
-	default:
-	{
-		m_info.Type = GPUAdapterType::CPU;
-		break;
-	}
-	}
-}
-
-bool VulkanAdapter::CheckExtensionSupport(const char* pExtensionName) const
-{
-	for (const auto& extension : m_adapterExtensions)
-	{
-		if (0 == strcmp(extension.extensionName, pExtensionName))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool VulkanAdapter::EnableExtensionSafely(std::vector<const char*>& extensions, const char* pExtensionName) const
-{
-	if (!CheckExtensionSupport(pExtensionName))
-	{
-		return false;
-	}
-
-	extensions.push_back(pExtensionName);
-	return true;
-}
-
-bool VulkanAdapter::EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<const char*>& requireExtensions) const
-{
-	for (const auto& requireExtension : requireExtensions)
-	{
-		if (!CheckExtensionSupport(requireExtension))
-		{
-			return false;
-		}
-	}
-
-	for (const auto& requireExtension : requireExtensions)
-	{
-		extensions.push_back(requireExtension);
-	}
-
-	return true;
+	return vkDevice;
 }
 
 }

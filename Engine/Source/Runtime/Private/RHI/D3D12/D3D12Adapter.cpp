@@ -4,8 +4,6 @@
 
 #include <RHI/IRHIDevice.h>
 
-#include <memory>
-
 namespace ow
 {
 
@@ -27,7 +25,7 @@ D3D12Adapter::D3D12Adapter(IDXGIAdapter1* pAdapter) :
 	m_info.SharedMemorySize = adapterDesc.SharedSystemMemory;
 }
 
-void D3D12Adapter::Init()
+void D3D12Adapter::Initialize()
 {
 	{
 		auto& commandQueue = m_commandQueueCIs.emplace_back();
@@ -71,9 +69,9 @@ void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
 	}
 }
 
-void D3D12Adapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
+void D3D12Adapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
 {
-	if (nullptr == pCommandQueueCIs)
+	if (!pCommandQueueCIs)
 	{
 		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
 		return;
@@ -85,16 +83,15 @@ void D3D12Adapter::QueryCommandQueueCreateInfos(uint32& queueCICount, RHICommand
 	}
 }
 
-IRHIDevice* D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI, uint32 queueCICount, const RHICommandQueueCreateInfo** pCommandQueueCIs) const
+ComPtr<ID3D12Device> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI)
 {
-	UNUSED(pCommandQueueCIs);
+	UNUSED(deviceCI);
 
-	ID3D12Device* pDevice;
+	ComPtr<ID3D12Device> pDevice;
 	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
 	assert(pDevice);
 
-	auto d3d12Device = std::make_unique<D3D12Device>(pDevice);
-	return d3d12Device.get();
+	return pDevice;
 }
 
 }
