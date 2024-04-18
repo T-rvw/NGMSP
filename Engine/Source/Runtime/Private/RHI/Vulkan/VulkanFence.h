@@ -7,11 +7,13 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanFence : public IRHIFence
 {
 public:
 	VulkanFence() = default;
-	explicit VulkanFence(VkDevice device, VkFence fence);
+	explicit VulkanFence(const VulkanDevice* pDevice, const RHIFenceCreateInfo& createInfo);
 	VulkanFence(const VulkanFence&) = delete;
 	VulkanFence& operator=(const VulkanFence&) = delete;
 	VulkanFence(VulkanFence&&) = default;
@@ -22,7 +24,7 @@ public:
 	virtual void Reset() override;
 
 private:
-	VkDevice m_device = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice = nullptr;
 	VkFence m_fence = VK_NULL_HANDLE;
 };
 

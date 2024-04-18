@@ -24,11 +24,11 @@ public:
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
 private:
+	friend class D3D12RHIModule;
 	void SetType(const DXGI_ADAPTER_DESC1& desc);
 	ComPtr<ID3D12Device> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
-	friend class D3D12RHIModule;
 	ComPtr<IDXGIAdapter1> m_adapter;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
 };

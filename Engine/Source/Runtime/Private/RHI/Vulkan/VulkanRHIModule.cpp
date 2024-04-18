@@ -21,8 +21,9 @@ IRHIInstance* VulkanRHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& cr
 
 IRHIDevice* VulkanRHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo)
 {
-	auto vkDevice = static_cast<VulkanAdapter*>(pAdapter)->CreateLogicalDevice(createInfo);
-	auto& rhiDevice = m_rhiDevices.emplace_back(std::make_unique<VulkanDevice>(vkDevice));
+	auto* pVulkanAdapter = static_cast<VulkanAdapter*>(pAdapter);
+	auto vkDevice = pVulkanAdapter->CreateLogicalDevice(createInfo);
+	auto& rhiDevice = m_rhiDevices.emplace_back(std::make_unique<VulkanDevice>(pVulkanAdapter, vkDevice));
 	return rhiDevice.get();
 }
 
@@ -36,17 +37,23 @@ IRHICommandQueue* VulkanRHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, co
 
 IRHISwapChain* VulkanRHIModule::CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo)
 {
-	return nullptr;
+	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
+	auto& rhiSwapChain = m_rhiSwapChains.emplace_back(std::make_unique<VulkanSwapChain>(pVulkanDevice, createInfo));
+	return rhiSwapChain.get();
 }
 
 IRHIFence* VulkanRHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo)
 {
-	return nullptr;
+	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
+	auto& rhiFence = m_rhiFences.emplace_back(std::make_unique<VulkanFence>(pVulkanDevice, createInfo));
+	return rhiFence.get();
 }
 
 IRHISemaphore* VulkanRHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)
 {
-	return nullptr;
+	auto vkSemaphore = static_cast<VulkanDevice*>(pDevice)->CreateSemaphore(createInfo);
+	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<VulkanSemaphore>(vkSemaphore));
+	return rhiSemaphore.get();
 }
 
 IRHIBuffer* VulkanRHIModule::CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo)

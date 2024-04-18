@@ -36,17 +36,22 @@ IRHICommandQueue* D3D12RHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, con
 
 IRHISwapChain* D3D12RHIModule::CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo)
 {
-	return nullptr;
+	auto d3d12SwapChain = static_cast<D3D12Device*>(pDevice)->CreateSwapChain(createInfo);
+	auto& rhiSwapChain = m_rhiSwapChains.emplace_back(std::make_unique<D3D12SwapChain>(d3d12SwapChain));
+	return rhiSwapChain.get();
 }
 
 IRHIFence* D3D12RHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo)
 {
-	return nullptr;
+	auto d3d12Fence = static_cast<D3D12Device*>(pDevice)->CreateFence(createInfo);
+	auto& rhiFence = m_rhiFences.emplace_back(std::make_unique<D3D12Fence>(d3d12Fence));
+	return rhiFence.get();
 }
 
 IRHISemaphore* D3D12RHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)
 {
-	return nullptr;
+	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<D3D12Semaphore>());
+	return rhiSemaphore.get();
 }
 
 IRHIBuffer* D3D12RHIModule::CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo)

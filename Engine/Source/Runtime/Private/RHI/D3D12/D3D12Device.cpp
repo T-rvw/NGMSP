@@ -34,7 +34,7 @@ ComPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueue
 	return pCommandQueue;
 }
 
-ComPtr<ID3D12Fence> D3D12Device::CreateFence() const
+ComPtr<ID3D12Fence> D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo) const
 {
 	ComPtr<ID3D12Fence> pFence;
 	D3D12_VERIFY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence)));

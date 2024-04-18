@@ -7,11 +7,13 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanSwapChain : public IRHISwapChain
 {
 public:
 	VulkanSwapChain() = default;
-	explicit VulkanSwapChain(VkInstance instance, VkDevice device, VkSurfaceKHR surface, VkFormat format, VkSwapchainKHR swapChain);
+	explicit VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChainCreateInfo& createInfo);
 	VulkanSwapChain(const VulkanSwapChain&) = delete;
 	VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;
 	VulkanSwapChain(VulkanSwapChain&&) = default;
@@ -19,8 +21,7 @@ public:
 	virtual ~VulkanSwapChain();
 
 private:
-	VkInstance m_instance = VK_NULL_HANDLE;
-	VkDevice m_device = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice = nullptr;
 	VkSurfaceKHR m_surface = VK_NULL_HANDLE;
 	VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 	std::vector<VkImage> m_swapChainImages;

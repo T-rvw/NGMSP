@@ -24,6 +24,7 @@ template<typename T>
 constexpr T FastCRCHash(const char* data, uint64 length)
 {
     using Traits = FastCRCTraits<T>;
+
     T crc = 0;
     while (length--)
     {
@@ -38,6 +39,7 @@ constexpr T FastCRCHash(const char* data, uint64 length)
         crc = (crc >> 1) ^ (-int(crc & 1) & Traits::Polynomial);
         crc = (crc >> 1) ^ (-int(crc & 1) & Traits::Polynomial);
     }
+
     return ~crc;
 }
 

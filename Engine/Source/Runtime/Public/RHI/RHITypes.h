@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Base/NameOf.h>
+#include <Core/Base/BitFlags.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
 #include <RHI/RHIEnums.h>
@@ -69,17 +70,6 @@ static GPUVendor GetGPUVendor(uint32 vendorID)
     }
 }
 
-struct RHIFeatures
-{
-    bool Barycentrics : 1;
-    bool ShaderFloat16 : 1;
-    bool Headless : 1;
-    bool MeshShaders : 1;
-    bool RayTracing : 1;
-    bool VariableRateShading : 1;
-    bool WorkGraphs : 1;
-};
-
 struct RHIAdapterInfo
 {
     GPUAdapterType Type = GPUAdapterType::CPU;
@@ -94,7 +84,7 @@ struct RHIAdapterInfo
 
 struct RHIInstanceCreateInfo
 {
-    RHIBackend Backend = RHIBackend::Vulkan;
+    BitFlags<RHIFeatures> Features;
     RHIDebugMode Debug = RHIDebugMode::Disabled;
     RHIValidationMode Validation = RHIValidationMode::Disabled;
 };
@@ -117,15 +107,15 @@ struct RHICommandQueueCreateInfo
 
 struct RHIDeviceCreateInfo
 {
+    BitFlags<RHIFeatures> Features;
     uint32 CommandQueueCount = 0;
     RHICommandQueueCreateInfo** CommandQueueCreateInfo = nullptr;
-    RHIFeatures Features;
 };
 
 struct RHISwapChainCreateInfo
 {
-    void* NativeWindowHandle = nullptr;
     void* NativeInstanceHandle = nullptr;
+    void* NativeWindowHandle = nullptr;
     RHIFormat Format = RHIFormat::R8G8B8A8Unorm;
     uint32 BackBufferWidth = 1;
     uint32 BackBufferHeight = 1;

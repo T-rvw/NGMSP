@@ -87,7 +87,8 @@ struct VulkanAdapterMeshShader
 namespace ow
 {
 
-VulkanAdapter::VulkanAdapter(VkPhysicalDevice physicalDevice) :
+VulkanAdapter::VulkanAdapter(VkInstance instance, VkPhysicalDevice physicalDevice) :
+	m_instance(instance),
 	m_physicalDevice(physicalDevice)
 {
 	VkPhysicalDeviceProperties properties {};
@@ -247,14 +248,14 @@ VkDevice VulkanAdapter::CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI)
 		void** pFeaturesNextChain = &m_adapterFeatures->pNextChain;
 		void** pPropertiesNextChain = &m_adapterProperties->pNextChain;
 
-		const RHIFeatures& requiredFeatrues = deviceCI.Features;
-		if (!requiredFeatrues.Headless)
+		auto requiredFeatrues = deviceCI.Features;
+		if (!requiredFeatrues.IsEnabled(RHIFeatures::Headless))
 		{
 			assert(VulkanUtils::EnableExtensionSafely(enabledExtensions, m_availableExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
 		}
 
 		VulkanAdapterRayTracing rayTracing;
-		if (requiredFeatrues.RayTracing &&
+		if (requiredFeatrues.IsEnabled(RHIFeatures::RayTracing) &&
 			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, rayTracing.ExtensionNames))
 		{
 			rayTracing.AppendFeatures(pFeaturesNextChain);
@@ -262,7 +263,7 @@ VkDevice VulkanAdapter::CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI)
 		}
 
 		VulkanAdapterMeshShader meshShader;
-		if (requiredFeatrues.MeshShaders &&
+		if (requiredFeatrues.IsEnabled(RHIFeatures::MeshShaders) &&
 			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, meshShader.ExtensionNames))
 		{
 			meshShader.AppendFeatures(pFeaturesNextChain);

@@ -5,9 +5,8 @@
 namespace ow
 {
 
-D3D12Fence::D3D12Fence(ID3D12Device* pDevice, ID3D12Fence* pFence) :
-	m_device(pDevice),
-	m_fence(pFence)
+D3D12Fence::D3D12Fence(ComPtr<ID3D12Fence> pFence) :
+	m_fence(MoveTemp(pFence))
 {
 }
 

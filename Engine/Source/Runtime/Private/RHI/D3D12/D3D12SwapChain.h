@@ -11,7 +11,7 @@ class D3D12SwapChain : public IRHISwapChain
 {
 public:
 	D3D12SwapChain() = default;
-	explicit D3D12SwapChain(IDXGISwapChain1* pSwapChain);
+	explicit D3D12SwapChain(ComPtr<IDXGISwapChain1> pSwapChain);
 	D3D12SwapChain(const D3D12SwapChain&) = delete;
 	D3D12SwapChain& operator=(const D3D12SwapChain&) = delete;
 	D3D12SwapChain(D3D12SwapChain&&) = default;

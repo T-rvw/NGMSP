@@ -20,6 +20,8 @@ public:
 
 private:
 	friend class VulkanRHIModule;
+
+private:
 	VkQueue m_queue = VK_NULL_HANDLE;
 };
 

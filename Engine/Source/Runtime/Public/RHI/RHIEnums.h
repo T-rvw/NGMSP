@@ -78,6 +78,15 @@ enum class RHIDebugMode
     Disabled
 };
 
+enum class RHIFeatures
+{
+    Headless,
+    MeshShaders,
+    RayTracing,
+    VariableRateShading,
+    WorkGraphs
+};
+
 enum class RHIFillMode
 {
     Wireframe,

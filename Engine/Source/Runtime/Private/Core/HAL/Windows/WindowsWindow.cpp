@@ -9,6 +9,8 @@ const TCHAR WindowsWindow::WindowClassName[] = TEXT("OW_WindowClass");
 
 void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 {
+	HINSTANCE processInstance = pInstance ? (HINSTANCE)pInstance : ::GetModuleHandle(NULL);
+
 	int32 windowWidth = createInfo.Width;
 	int32 windowHeight = createInfo.Height;
 	uint32 windowStyle = WS_OVERLAPPEDWINDOW;

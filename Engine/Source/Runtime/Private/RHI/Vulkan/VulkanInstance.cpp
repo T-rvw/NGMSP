@@ -45,25 +45,29 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	// Enable instance extensions.
 	std::vector<const char*> instanceExtensions;
 	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 
 	// Enable surface extension.
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_SURFACE_EXTENSION_NAME);
+	if (!createInfo.Features.IsEnabled(RHIFeatures::Headless))
+	{
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_SURFACE_EXTENSION_NAME);
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_XCB_KHR)
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_IOS_MVK)
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_MVK_IOS_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_MVK_IOS_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_MACOS_MVK)
-	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
 #endif
+	}
 
 	// Enable debug utils extension.
 	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
@@ -148,7 +152,7 @@ void VulkanInstance::InitAdapters()
 
 	for (uint32 adapterIndex = 0; adapterIndex < adapterCount; ++adapterIndex)
 	{
-		m_adapters.emplace_back(physicalDevices[adapterIndex]);
+		m_adapters.emplace_back(m_instance, physicalDevices[adapterIndex]);
 	}
 }
 

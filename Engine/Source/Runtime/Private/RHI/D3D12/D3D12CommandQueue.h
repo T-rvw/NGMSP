@@ -20,6 +20,8 @@ public:
 
 private:
 	friend class D3D12RHIModule;
+
+private:
 	ComPtr<ID3D12CommandQueue> m_commandQueue;
 };
 

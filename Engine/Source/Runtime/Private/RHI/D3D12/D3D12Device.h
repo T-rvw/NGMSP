@@ -24,12 +24,12 @@ public:
 	virtual ~D3D12Device() = default;
 
 private:
+	friend class D3D12RHIModule;
 	ComPtr<ID3D12CommandQueue> CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const;
-	ComPtr<ID3D12Fence> CreateFence() const;
+	ComPtr<ID3D12Fence> CreateFence(const RHIFenceCreateInfo& createInfo) const;
 	ComPtr<IDXGISwapChain1> CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const;
 
 private:
-	friend class D3D12RHIModule;
 	ComPtr<ID3D12CommandQueue> m_commandQueues[EnumCount<RHICommandType>()];
 	ComPtr<ID3D12Device> m_device;
 };

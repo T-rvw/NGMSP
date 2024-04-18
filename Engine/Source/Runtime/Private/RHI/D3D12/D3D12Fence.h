@@ -12,7 +12,7 @@ class D3D12Fence : public IRHIFence
 {
 public:
 	D3D12Fence() = default;
-	explicit D3D12Fence(ID3D12Device* pDevice, ID3D12Fence* pFence);
+	explicit D3D12Fence(ComPtr<ID3D12Fence> pFence);
 	D3D12Fence(const D3D12Fence&) = delete;
 	D3D12Fence& operator=(const D3D12Fence&) = delete;
 	D3D12Fence(D3D12Fence&&) = default;
@@ -23,7 +23,6 @@ public:
 	virtual void Reset() override;
 
 private:
-	ComPtr<ID3D12Device> m_device;
 	ComPtr<ID3D12Fence> m_fence;
 	uint64 m_fenceValue = 0;
 };

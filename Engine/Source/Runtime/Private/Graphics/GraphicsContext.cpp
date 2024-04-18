@@ -12,7 +12,7 @@ namespace ow
 
 GraphicsContext::~GraphicsContext() = default;
 
-void GraphicsContext::Initialize(const RHIInstanceCreateInfo& createInfo)
+void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 {
 	switch (createInfo.Backend)
 	{
@@ -35,7 +35,11 @@ void GraphicsContext::Initialize(const RHIInstanceCreateInfo& createInfo)
 
 	assert(m_pRHILibrary);
 	m_pRHIModule = static_cast<IRHIModule*>(m_pRHILibrary->InitFunc());
-	m_pRHIInstance = m_pRHIModule->CreateRHIInstance(createInfo);
+	RHIInstanceCreateInfo instanceCI;
+	instanceCI.Features = createInfo.Features;
+	instanceCI.Debug = RHIDebugMode::Normal;
+	instanceCI.Validation = RHIValidationMode::GPU;
+	m_pRHIInstance = m_pRHIModule->CreateRHIInstance(instanceCI);
 	assert(m_pRHIInstance);
 
 	// Query all RHI adapters.
@@ -52,7 +56,7 @@ void GraphicsContext::Initialize(const RHIInstanceCreateInfo& createInfo)
 	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
 	pBestAdapter->Initialize();
 
-	// Create device and command queues.
+	// Query command queue info to create device.
 	printf("\n");
 	uint32 commandQueueCICount;
 	pBestAdapter->EnumerateCommandQueues(commandQueueCICount, nullptr);
@@ -71,13 +75,12 @@ void GraphicsContext::Initialize(const RHIInstanceCreateInfo& createInfo)
 	}
 
 	RHIDeviceCreateInfo deviceCI;
+	deviceCI.Features = createInfo.Features;
 	deviceCI.CommandQueueCount = static_cast<uint32>(bestQueueCIs.size());
 	deviceCI.CommandQueueCreateInfo = bestQueueCIs.data();
-	deviceCI.Features.Headless = false;
-	deviceCI.Features.RayTracing = true;
-	deviceCI.Features.MeshShaders = true;
 	m_pRHIDevice = m_pRHIModule->CreateRHIDevice(pBestAdapter, deviceCI);
 
+	// Create command queues and fences.
 	m_pRHICommandQueues.resize(EnumCount<RHICommandType>(), nullptr);
 	m_pRHICommandQueueFences.resize(EnumCount<RHICommandType>(), nullptr);
 	for (const auto& bestQueueCI : bestQueueCIs)
@@ -86,6 +89,17 @@ void GraphicsContext::Initialize(const RHIInstanceCreateInfo& createInfo)
 		m_pRHICommandQueues[typeIndex] = m_pRHIModule->CreateRHICommandQueue(m_pRHIDevice, *bestQueueCI);
 		m_pRHICommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, {});
 	}
+
+	// Create SwapChain to bind to native window.
+	RHISwapChainCreateInfo swapChainCI;
+	swapChainCI.NativeInstanceHandle = createInfo.NativeInstanceHandle;
+	swapChainCI.NativeWindowHandle = createInfo.NativeWindowHandle;
+	swapChainCI.BackBufferWidth = createInfo.BackBufferWidth;
+	swapChainCI.BackBufferHeight = createInfo.BackBufferHeight;
+	swapChainCI.BackBufferCount = 2;
+	swapChainCI.Format = RHIFormat::R8G8B8A8Unorm;
+	swapChainCI.PresentMode = RHIPresentMode::VSync;
+	m_pRHISwapChain = m_pRHIModule->CreateRHISwapChain(m_pRHIDevice, swapChainCI);
 }
 
 }

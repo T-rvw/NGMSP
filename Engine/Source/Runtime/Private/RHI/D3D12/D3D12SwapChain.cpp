@@ -5,8 +5,8 @@
 namespace ow
 {
 
-D3D12SwapChain::D3D12SwapChain(IDXGISwapChain1* pSwapChain) :
-	m_swapChain(pSwapChain)
+D3D12SwapChain::D3D12SwapChain(ComPtr<IDXGISwapChain1> pSwapChain) :
+	m_swapChain(MoveTemp(pSwapChain))
 {
 }
 
