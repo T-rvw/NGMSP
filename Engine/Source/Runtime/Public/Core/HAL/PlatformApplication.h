@@ -21,7 +21,6 @@ public:
 	PlatformApplication& operator=(PlatformApplication&& other);
 	~PlatformApplication();
 
-	void Init();
 	void* GetProcessInstance() const;
 	void Run();
 

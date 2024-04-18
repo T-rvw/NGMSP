@@ -2,6 +2,8 @@
 
 #include <Core/HAL/PlatformTypes.h>
 
+#include <cassert>
+
 namespace ow
 {
 

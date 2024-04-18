@@ -18,6 +18,8 @@ public:
 	D3D12CommandQueue& operator=(D3D12CommandQueue&&) = default;
 	virtual ~D3D12CommandQueue() = default;
 
+	ComPtr<ID3D12CommandQueue> GetHandle() const { return m_commandQueue; }
+
 private:
 	friend class D3D12RHIModule;
 

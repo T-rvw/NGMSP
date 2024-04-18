@@ -24,6 +24,8 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters) override;
 
+	ComPtr<IDXGIFactory4> GetHandle() const { return m_factory; }
+
 private:
 	void InitAdapters();
 

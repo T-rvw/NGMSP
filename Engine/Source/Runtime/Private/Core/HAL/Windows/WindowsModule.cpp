@@ -1,5 +1,7 @@
 #include "WindowsModule.h"
 
+#include <cassert>
+
 namespace ow
 {
 

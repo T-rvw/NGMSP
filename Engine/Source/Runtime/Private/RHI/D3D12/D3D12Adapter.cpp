@@ -1,17 +1,19 @@
 #include "D3D12Adapter.h"
 
 #include "D3D12Device.h"
+#include "D3D12Instance.h"
 
 #include <RHI/IRHIDevice.h>
 
 namespace ow
 {
 
-D3D12Adapter::D3D12Adapter(IDXGIAdapter1* pAdapter) :
-	m_adapter(pAdapter)
+D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter1> pAdapter) :
+	m_pInstance(pInstance),
+	m_adapter(MoveTemp(pAdapter))
 {
 	DXGI_ADAPTER_DESC1 adapterDesc;
-	pAdapter->GetDesc1(&adapterDesc);
+	m_adapter->GetDesc1(&adapterDesc);
 
 	char adapterName[256];
 	sprintf_s(adapterName, "%ws", adapterDesc.Description);
@@ -23,6 +25,11 @@ D3D12Adapter::D3D12Adapter(IDXGIAdapter1* pAdapter) :
 	m_info.VideoMemorySize = adapterDesc.DedicatedVideoMemory;
 	m_info.SystemMemorySize = adapterDesc.DedicatedSystemMemory;
 	m_info.SharedMemorySize = adapterDesc.SharedSystemMemory;
+}
+
+ComPtr<IDXGIFactory4> D3D12Adapter::GetFactory() const
+{
+	return m_pInstance->GetHandle();
 }
 
 void D3D12Adapter::Initialize()

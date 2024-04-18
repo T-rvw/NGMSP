@@ -152,7 +152,7 @@ void VulkanInstance::InitAdapters()
 
 	for (uint32 adapterIndex = 0; adapterIndex < adapterCount; ++adapterIndex)
 	{
-		m_adapters.emplace_back(m_instance, physicalDevices[adapterIndex]);
+		m_adapters.emplace_back(this, physicalDevices[adapterIndex]);
 	}
 }
 
