@@ -10,7 +10,10 @@
 namespace ow
 {
 
-GraphicsContext::~GraphicsContext() = default;
+GraphicsContext::~GraphicsContext()
+{
+	m_pRHIModule->Shutdown();
+}
 
 void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 {

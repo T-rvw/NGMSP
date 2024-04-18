@@ -8,7 +8,7 @@ C_ABI RHI_API IRHIModule* InitializeModule()
 	return new VulkanRHIModule();
 }
 
-VulkanRHIModule::~VulkanRHIModule()
+void VulkanRHIModule::Shutdown()
 {
 	delete this;
 }

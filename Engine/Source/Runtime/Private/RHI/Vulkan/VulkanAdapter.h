@@ -51,11 +51,13 @@ struct VulkanAdapterProperties
 	void* pNextChain;
 };
 
+class VulkanInstance;
+
 class VulkanAdapter : public IRHIAdapter
 {
 public:
 	VulkanAdapter() = default;
-	explicit VulkanAdapter(VkInstance instance, VkPhysicalDevice physcialDevice);
+	explicit VulkanAdapter(const VulkanInstance* pInstance, VkPhysicalDevice physcialDevice);
 	VulkanAdapter(const VulkanAdapter&) = delete;
 	VulkanAdapter& operator=(const VulkanAdapter&) = delete;
 	VulkanAdapter(VulkanAdapter&&) = default;
@@ -66,7 +68,7 @@ public:
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
 	VkPhysicalDevice GetHandle() const { return m_physicalDevice; }
-	VkInstance GetInstance() const { return m_instance; }
+	VkInstance GetInstance() const;
 
 private:
 	friend class VulkanRHIModule;
@@ -74,7 +76,7 @@ private:
 	VkDevice CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
-	VkInstance m_instance = VK_NULL_HANDLE;
+	const VulkanInstance* m_pInstance = nullptr;
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
 	std::vector<VkExtensionProperties> m_availableExtensions;
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;

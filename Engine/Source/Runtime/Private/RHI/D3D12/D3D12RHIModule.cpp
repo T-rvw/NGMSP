@@ -8,8 +8,26 @@ C_ABI RHI_API IRHIModule* InitializeModule()
 	return new D3D12RHIModule();
 }
 
-D3D12RHIModule::~D3D12RHIModule()
+void D3D12RHIModule::Shutdown()
 {
+	m_rhiTextures.clear();
+	m_rhiBuffer.clear();
+	m_rhiSemaphores.clear();
+	m_rhiFences.clear();
+	m_rhiSwapChains.clear();
+	m_rhiCommandQueues.clear();
+
+#ifndef NDEBUG
+	std::vector<ComPtr<ID3D12DebugDevice>> debugDevices;
+	for (const auto& device : m_rhiDevices)
+	{
+		device->ReportLiveObjects();
+	}
+#endif
+
+	m_rhiDevices.clear();
+	m_rhiInstances.clear();
+
 	delete this;
 }
 
@@ -21,16 +39,19 @@ IRHIInstance* D3D12RHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& cre
 
 IRHIDevice* D3D12RHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo)
 {
-	auto d3d12Device = static_cast<D3D12Adapter*>(pAdapter)->CreateDevice(createInfo);
-	auto& rhiDevice = m_rhiDevices.emplace_back(std::make_unique<D3D12Device>(d3d12Device));
+	auto* pD3D12Adapter = static_cast<D3D12Adapter*>(pAdapter);
+	auto d3d12Device = pD3D12Adapter->CreateDevice(createInfo);
+	auto& rhiDevice = m_rhiDevices.emplace_back(std::make_unique<D3D12Device>(pD3D12Adapter, d3d12Device));
 	return rhiDevice.get();
 }
 
 IRHICommandQueue* D3D12RHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
 {
-	auto d3d12CommandQueue = static_cast<D3D12Device*>(pDevice)->CreateCommandQueue(createInfo);
+	auto* pD3D12Device = static_cast<D3D12Device*>(pDevice);
+	auto d3d12CommandQueue = pD3D12Device->CreateCommandQueue(createInfo);
 	auto& rhiCommandQueue = m_rhiCommandQueues.emplace_back(std::make_unique<D3D12CommandQueue>(d3d12CommandQueue));
 	rhiCommandQueue->SetType(createInfo.Type);
+	pD3D12Device->SetCommandQueue(rhiCommandQueue.get());
 	return rhiCommandQueue.get();
 }
 

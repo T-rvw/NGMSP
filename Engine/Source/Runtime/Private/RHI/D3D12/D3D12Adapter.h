@@ -7,13 +7,13 @@
 namespace ow
 {
 
-class IRHIDevice;
+class D3D12Instance;
 
 class D3D12Adapter : public IRHIAdapter
 {
 public:
 	D3D12Adapter() = default;
-	explicit D3D12Adapter(IDXGIAdapter1* pAdapter);
+	explicit D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter1> pAdapter);
 	D3D12Adapter(const D3D12Adapter&) = delete;
 	D3D12Adapter& operator=(const D3D12Adapter&) = delete;
 	D3D12Adapter(D3D12Adapter&&) = default;
@@ -23,6 +23,8 @@ public:
 	virtual void Initialize() override;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
+	ComPtr<IDXGIFactory4> GetFactory() const;
+
 private:
 	friend class D3D12RHIModule;
 	void SetType(const DXGI_ADAPTER_DESC1& desc);
@@ -30,6 +32,7 @@ private:
 
 private:
 	ComPtr<IDXGIAdapter1> m_adapter;
+	const D3D12Instance* m_pInstance = nullptr;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
 };
 

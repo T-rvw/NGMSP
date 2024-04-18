@@ -8,4 +8,6 @@
 
 * [MJP - The Danger Zone](https://therealmjp.github.io/)
 
+* [Simon Coenen](https://simoncoenen.com/blog)
+
 * [Tarun Ramaswamy](https://rtarun9.github.io/blogs/)

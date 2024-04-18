@@ -21,7 +21,7 @@ namespace ow
 class D3D12RHIModule : public IRHIModule
 {
 public:
-	virtual ~D3D12RHIModule();
+	virtual void Shutdown() override;
 
 	virtual IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) override;
 	virtual IRHIDevice* CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo) override;

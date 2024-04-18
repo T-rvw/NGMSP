@@ -1,5 +1,7 @@
 #include "VulkanAdapter.h"
 
+#include "VulkanInstance.h"
+
 namespace
 {
 
@@ -87,8 +89,8 @@ struct VulkanAdapterMeshShader
 namespace ow
 {
 
-VulkanAdapter::VulkanAdapter(VkInstance instance, VkPhysicalDevice physicalDevice) :
-	m_instance(instance),
+VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice physicalDevice) :
+	m_pInstance(m_pInstance),
 	m_physicalDevice(physicalDevice)
 {
 	VkPhysicalDeviceProperties properties {};
@@ -136,6 +138,11 @@ VulkanAdapter::VulkanAdapter(VkInstance instance, VkPhysicalDevice physicalDevic
 
 VulkanAdapter::~VulkanAdapter()
 {
+}
+
+VkInstance VulkanAdapter::GetInstance() const
+{
+	return m_pInstance->GetHandle();
 }
 
 void VulkanAdapter::Initialize()

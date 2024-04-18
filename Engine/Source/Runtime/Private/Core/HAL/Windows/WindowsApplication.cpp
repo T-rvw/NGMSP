@@ -4,6 +4,8 @@
 
 #include <Core/HAL/PlatformTime.h>
 
+#include <cassert>
+
 namespace ow
 {
 
@@ -15,13 +17,31 @@ LRESULT CALLBACK WindowsApplication::WindowProcessFunc(HWND hwnd, uint32 msg, WP
 	return s_pApplication->WindowProcessFuncImpl(hwnd, msg, wParam, lParam);
 }
 
-void WindowsApplication::Init()
+WindowsApplication::WindowsApplication()
 {
 	assert(!s_pApplication);
 	s_pApplication = this;
 	s_pProcessInstance = ::GetModuleHandle(NULL);
-	PlatformTime::Init();
 	RegisterWindowClass(s_pProcessInstance, NULL);
+}
+
+void WindowsApplication::Initialize()
+{
+	PlatformTime::Init();
+}
+
+void WindowsApplication::Update()
+{
+	m_lastTime = m_currentTime;
+	m_currentTime = PlatformTime::Seconds();
+
+	while (PollMessages())
+	{
+	}
+}
+
+void WindowsApplication::Shutdown()
+{
 }
 
 void* WindowsApplication::GetProcessInstance() const
@@ -34,26 +54,21 @@ double WindowsApplication::GetDeltaTime() const
 	return m_currentTime - m_lastTime;
 }
 
-void WindowsApplication::Tick()
+bool WindowsApplication::PollMessages()
 {
-	m_lastTime = m_currentTime;
-	m_currentTime = PlatformTime::Seconds();
-
-	bool quit = false;
 	MSG msg {};
-	while (!quit)
+	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
-		while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
 
-			if (WM_QUIT == msg.message)
-			{
-				quit = true;
-			}
+		if (WM_QUIT == msg.message)
+		{
+			return false;
 		}
 	}
+
+	return true;
 }
 
 LRESULT WindowsApplication::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)

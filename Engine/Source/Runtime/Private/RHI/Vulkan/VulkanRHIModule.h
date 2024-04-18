@@ -21,7 +21,7 @@ namespace ow
 class VulkanRHIModule : public IRHIModule
 {
 public:
-	virtual ~VulkanRHIModule();
+	virtual void Shutdown() override;
 
 	virtual IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) override;
 	virtual IRHIDevice* CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo) override;

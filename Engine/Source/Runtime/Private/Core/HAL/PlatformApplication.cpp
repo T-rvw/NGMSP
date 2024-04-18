@@ -32,11 +32,6 @@ PlatformApplication::~PlatformApplication()
 	}
 }
 
-void PlatformApplication::Init()
-{
-	m_pImpl->Init();
-}
-
 void* PlatformApplication::GetProcessInstance() const
 {
 	return m_pImpl->GetProcessInstance();
@@ -44,7 +39,9 @@ void* PlatformApplication::GetProcessInstance() const
 
 void PlatformApplication::Run()
 {
-	m_pImpl->Tick();
+	m_pImpl->Initialize();
+	m_pImpl->Update();
+	m_pImpl->Shutdown();
 }
 
 }

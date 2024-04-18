@@ -17,7 +17,3 @@ static_assert(1 == sizeof(uint8));
 static_assert(2 == sizeof(uint16));
 static_assert(4 == sizeof(uint32));
 static_assert(8 == sizeof(uint64));
-
-#define UNUSED(a) (a)
-
-#include <cassert>

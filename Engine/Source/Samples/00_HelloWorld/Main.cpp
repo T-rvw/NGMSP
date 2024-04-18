@@ -7,7 +7,6 @@ int main()
 
 	// Create application and main window.
 	PlatformApplication app;
-	app.Init();
 
 	WindowCreateInfo windowCI;
 	PlatformWindow mainWindow;

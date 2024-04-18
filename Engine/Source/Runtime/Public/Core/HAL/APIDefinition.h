@@ -22,3 +22,6 @@
 #endif
 
 #define C_ABI extern "C"
+
+// Language specified helper macros
+#define UNUSED(a) (a)
