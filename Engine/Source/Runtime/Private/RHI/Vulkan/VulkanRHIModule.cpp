@@ -51,8 +51,8 @@ IRHIFence* VulkanRHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCr
 
 IRHISemaphore* VulkanRHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)
 {
-	auto vkSemaphore = static_cast<VulkanDevice*>(pDevice)->CreateSemaphore(createInfo);
-	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<VulkanSemaphore>(vkSemaphore));
+	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
+	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<VulkanSemaphore>(pVulkanDevice, createInfo));
 	return rhiSemaphore.get();
 }
 

@@ -5,11 +5,12 @@
 namespace ow
 {
 
-D3D12Semaphore::~D3D12Semaphore()
+D3D12Semaphore::D3D12Semaphore(const RHISemaphoreCreateInfo& createInfo)
 {
+	m_semaphore.Init();
 }
 
-void D3D12Semaphore::Init()
+D3D12Semaphore::~D3D12Semaphore()
 {
 }
 

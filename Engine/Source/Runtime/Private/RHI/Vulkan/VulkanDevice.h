@@ -2,17 +2,12 @@
 
 #include "VulkanHeader.h"
 
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-#undef CreateSemaphore
-#endif
-
 #include <RHI//IRHIDevice.h>
 
 namespace ow
 {
 
 struct RHICommandQueueCreateInfo;
-struct RHISemaphoreCreateInfo;
 
 class VulkanAdapter;
 
@@ -34,7 +29,6 @@ public:
 private:
 	friend class VulkanRHIModule;
 	VkQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const;
-	VkSemaphore CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const;
 
 private:
 	const VulkanAdapter* m_pAdapter = nullptr;

@@ -2,11 +2,9 @@
 
 #include "VulkanCommandQueue.h"
 #include "VulkanInstance.h"
-#include "VulkanSemaphore.h"
 
 #include <RHI/IRHICommandQueue.h>
 #include <RHI/IRHIInstance.h>
-#include <RHI/IRHISemaphore.h>
 
 namespace ow
 {
@@ -38,12 +36,6 @@ VkQueue VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& comman
 	vkGetDeviceQueue(m_device, commandQueueCI.ID, 0, &vkCommandQueue);
 
 	return vkCommandQueue;
-}
-
-VkSemaphore VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) const
-{
-	VkSemaphore semaphore {};
-	return semaphore;
 }
 
 }
