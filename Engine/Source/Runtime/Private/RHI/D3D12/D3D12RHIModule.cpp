@@ -71,7 +71,7 @@ IRHIFence* D3D12RHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCre
 
 IRHISemaphore* D3D12RHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)
 {
-	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<D3D12Semaphore>());
+	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<D3D12Semaphore>(createInfo));
 	return rhiSemaphore.get();
 }
 

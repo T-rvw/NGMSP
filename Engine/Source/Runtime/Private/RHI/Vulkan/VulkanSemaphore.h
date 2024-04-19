@@ -7,20 +7,21 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanSemaphore : public IRHISemaphore
 {
 public:
-	VulkanSemaphore() = default;
-	explicit VulkanSemaphore(VkSemaphore semaphore);
+	VulkanSemaphore() = delete;
+	explicit VulkanSemaphore(const VulkanDevice* pDevice, const RHISemaphoreCreateInfo& createInfo);
 	VulkanSemaphore(const VulkanSemaphore&) = delete;
 	VulkanSemaphore& operator=(const VulkanSemaphore&) = delete;
 	VulkanSemaphore(VulkanSemaphore&&) = default;
 	VulkanSemaphore& operator=(VulkanSemaphore&&) = default;
 	virtual ~VulkanSemaphore();
 
-	virtual void Init() override;
-
 private:
+	const VulkanDevice* m_pDevice = nullptr;
 	VkSemaphore m_semaphore = VK_NULL_HANDLE;
 };
 

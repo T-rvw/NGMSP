@@ -116,7 +116,7 @@ struct RHISwapChainCreateInfo
 {
     void* NativeInstanceHandle = nullptr;
     void* NativeWindowHandle = nullptr;
-    RHIFormat Format = RHIFormat::R8G8B8A8Unorm;
+    RHIFormat Format = RHIFormat::RGBA8_UNORM;
     uint32 BackBufferWidth = 1;
     uint32 BackBufferHeight = 1;
     uint32 BackBufferCount = 2;

@@ -12,7 +12,7 @@ class VulkanDevice;
 class VulkanFence : public IRHIFence
 {
 public:
-	VulkanFence() = default;
+	VulkanFence() = delete;
 	explicit VulkanFence(const VulkanDevice* pDevice, const RHIFenceCreateInfo& createInfo);
 	VulkanFence(const VulkanFence&) = delete;
 	VulkanFence& operator=(const VulkanFence&) = delete;
