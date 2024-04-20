@@ -13,7 +13,7 @@ struct RHIInstanceCreateInfo;
 class D3D12Instance : public IRHIInstance
 {
 public:
-	D3D12Instance() = default;
+	D3D12Instance() = delete;
 	D3D12Instance(const RHIInstanceCreateInfo& createInfo);
 	D3D12Instance(const D3D12Instance&) = delete;
 	D3D12Instance& operator=(const D3D12Instance&) = delete;
@@ -24,13 +24,13 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters) override;
 
-	ComPtr<IDXGIFactory4> GetHandle() const { return m_factory; }
+	ComPtr<IDXGIFactory6> GetHandle() const { return m_factory; }
 
 private:
 	void InitAdapters();
 
 private:
-	ComPtr<IDXGIFactory4> m_factory;
+	ComPtr<IDXGIFactory6> m_factory;
 	std::vector<D3D12Adapter> m_adapters;
 };
 

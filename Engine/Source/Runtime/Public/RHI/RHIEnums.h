@@ -57,6 +57,23 @@ enum class RHIBlendType
     InvSrc1Alpha,
 };
 
+enum class RHIColorSpace
+{
+    SRGB_NONLINEAR,
+    DISPLAY_P3_LINEAR,
+    DISPLAY_P3_NONLINEAR,
+    DCI_P3_LINEAR,
+    DCI_P3_NONLINEAR,
+    BT709_LINEAR,
+    BT709_NONLINEAR,
+    BT2020_LINEAR,
+    HDR10_ST2084,
+    HDR10_HLG,
+    DOLBYVISION,
+    ADOBERGB_LINEAR,
+    ADOBERGB_NONLINEAR
+};
+
 enum class RHICommandType
 {
     Graphics,

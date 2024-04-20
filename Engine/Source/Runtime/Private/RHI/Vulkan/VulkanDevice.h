@@ -14,7 +14,7 @@ class VulkanAdapter;
 class VulkanDevice : public IRHIDevice
 {
 public:
-	VulkanDevice() = default;
+	VulkanDevice() = delete;
 	explicit VulkanDevice(const VulkanAdapter* pAdapter, VkDevice device);
 	VulkanDevice(const VulkanDevice&) = delete;
 	VulkanDevice& operator=(const VulkanDevice&) = delete;

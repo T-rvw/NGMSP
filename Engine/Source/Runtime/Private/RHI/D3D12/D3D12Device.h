@@ -2,6 +2,7 @@
 
 #include "D3D12Header.h"
 
+#include <Core/Base/NameOf.h>
 #include <RHI/IRHIDevice.h>
 
 namespace ow
@@ -25,7 +26,7 @@ public:
 	D3D12Device& operator=(D3D12Device&&) = default;
 	virtual ~D3D12Device();
 
-	ComPtr<IDXGIFactory4> GetFactory() const;
+	ComPtr<IDXGIFactory6> GetFactory() const;
 
 private:
 	friend class D3D12RHIModule;

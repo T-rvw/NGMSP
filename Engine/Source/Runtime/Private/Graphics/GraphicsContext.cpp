@@ -100,7 +100,8 @@ void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 	swapChainCI.BackBufferWidth = createInfo.BackBufferWidth;
 	swapChainCI.BackBufferHeight = createInfo.BackBufferHeight;
 	swapChainCI.BackBufferCount = 2;
-	swapChainCI.Format = RHIFormat::R8G8B8A8Unorm;
+	swapChainCI.Format = RHIFormat::RGBA8_UNORM;
+	swapChainCI.ColorSpace = RHIColorSpace::SRGB_NONLINEAR;
 	swapChainCI.PresentMode = RHIPresentMode::VSync;
 	m_pRHISwapChain = m_pRHIModule->CreateRHISwapChain(m_pRHIDevice, swapChainCI);
 }

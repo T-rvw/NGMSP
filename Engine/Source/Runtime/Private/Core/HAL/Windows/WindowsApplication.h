@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WindowsHeader.hpp"
+#include "WindowsHeader.h"
 
 #include <Core/HAL/Interfaces/IPlatformApplication.h>
 

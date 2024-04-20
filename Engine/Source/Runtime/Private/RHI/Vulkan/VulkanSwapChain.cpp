@@ -59,7 +59,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         }
     }
 
-    VkFormat swapChainFormat = ToVK(createInfo.Format);
+    VkFormat swapChainFormat = VulkanTypes::ToVK(createInfo.Format);
     VkColorSpaceKHR swapChainColorSpace;
     {
         uint32_t surfaceFormatCount;

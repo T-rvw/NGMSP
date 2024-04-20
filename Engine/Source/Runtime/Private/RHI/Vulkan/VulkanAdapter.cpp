@@ -96,7 +96,7 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	VkPhysicalDeviceProperties properties {};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
-	m_info.Type = VulkanUtils::ToRHI(properties.deviceType);
+	m_info.Type = VulkanTypes::ToRHI(properties.deviceType);
 	m_info.Name = properties.deviceName;
 	m_info.Vendor = GetGPUVendor(properties.vendorID);
 	m_info.DeviceID = properties.deviceID;
@@ -155,7 +155,35 @@ void VulkanAdapter::Initialize()
 	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
 	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
 	
+	InitOutputInfos();
 	InitCommandQueueCreateInfos();
+}
+
+void VulkanAdapter::InitOutputInfos()
+{
+	uint32 displayCount;
+	VK_VERIFY(vkGetPhysicalDeviceDisplayPropertiesKHR(m_physicalDevice, &displayCount, nullptr));
+	std::vector<VkDisplayPropertiesKHR> adapterDisplayInfos(displayCount);
+	VK_VERIFY(vkGetPhysicalDeviceDisplayPropertiesKHR(m_physicalDevice, &displayCount, adapterDisplayInfos.data()));
+
+	for (uint32 displayIndex = 0; displayIndex < displayCount; ++displayIndex)
+	{
+		VkDisplayPropertiesKHR vkDisplay = adapterDisplayInfos[displayIndex];
+
+		auto& outputInfo = m_outputInfos.emplace_back();
+		outputInfo.Name = vkDisplay.displayName;
+
+		uint32_t modeCount;
+		VK_VERIFY(vkGetDisplayModePropertiesKHR(m_physicalDevice, vkDisplay.display, &modeCount, nullptr));
+		std::vector<VkDisplayModePropertiesKHR> adapterDisplayModeInfos(modeCount);
+		VK_VERIFY(vkGetDisplayModePropertiesKHR(m_physicalDevice, vkDisplay.display, &modeCount, adapterDisplayModeInfos.data()));
+
+		for (uint32 modeIndex = 0; modeIndex < modeCount; ++modeIndex)
+		{
+			VkDisplayModePropertiesKHR vkDisplayMode = adapterDisplayModeInfos[modeIndex];
+
+		}
+	}
 }
 
 void VulkanAdapter::InitCommandQueueCreateInfos()
@@ -230,6 +258,20 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		{
 			m_commandQueueCIs[queueIndex].IsDedicated = rhiQueueCount == 1;
 		}
+	}
+}
+
+void VulkanAdapter::EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos)
+{
+	if (!pOutputInfos)
+	{
+		outputCount = static_cast<uint32>(m_outputInfos.size());
+		return;
+	}
+
+	for (uint32 outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+	{
+		pOutputInfos[outputIndex] = &m_outputInfos[outputIndex];
 	}
 }
 

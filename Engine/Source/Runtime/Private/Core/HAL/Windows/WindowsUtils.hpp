@@ -19,4 +19,12 @@ static std::vector<WCHAR> CreateWideStringFromUTF8(const char* pValue)
 	return target;
 }
 
+static std::vector<char> CreateUTF8StringFromWide(const wchar_t* pValue)
+{
+	int32_t count = WideCharToMultiByte(CP_UTF8, 0, pValue, -1, NULL, 0, NULL, NULL);
+	std::vector<char> target(count, 0);
+	WideCharToMultiByte(CP_UTF8, 0, pValue, -1, target.data(), count, NULL, NULL);
+	return target;
+}
+
 }

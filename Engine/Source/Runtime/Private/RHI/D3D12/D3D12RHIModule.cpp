@@ -1,5 +1,7 @@
 #include "D3D12RHIModule.h"
 
+#include <RHI/RHITypes.h>
+
 namespace ow
 {
 
