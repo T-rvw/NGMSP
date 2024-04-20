@@ -3,7 +3,72 @@
 namespace ow
 {
 
-VkFormat ToVK(const RHIFormat& rhiType)
+GPUAdapterType VulkanTypes::ToRHI(VkPhysicalDeviceType vkType)
+{
+    switch (vkType)
+    {
+    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+    {
+        return GPUAdapterType::Discrete;
+        break;
+    }
+    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+    {
+        return GPUAdapterType::Integrated;
+        break;
+    }
+    case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+    {
+        return GPUAdapterType::Virtual;
+        break;
+    }
+    case VK_PHYSICAL_DEVICE_TYPE_CPU:
+    default:
+    {
+        return GPUAdapterType::CPU;
+        break;
+    }
+    }
+
+    return GPUAdapterType::CPU;
+}
+
+VkColorSpaceKHR VulkanTypes::ToVK(RHIColorSpace rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIColorSpace::SRGB_NONLINEAR:
+        return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+    case RHIColorSpace::DISPLAY_P3_LINEAR:
+        return VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT;
+    case RHIColorSpace::DISPLAY_P3_NONLINEAR:
+        return VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT;
+    case RHIColorSpace::DCI_P3_LINEAR:
+        return VK_COLOR_SPACE_DCI_P3_LINEAR_EXT;
+    case RHIColorSpace::DCI_P3_NONLINEAR:
+        return VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT;
+    case RHIColorSpace::BT709_LINEAR:
+        return VK_COLOR_SPACE_BT709_LINEAR_EXT;
+    case RHIColorSpace::BT709_NONLINEAR:
+        return VK_COLOR_SPACE_BT709_NONLINEAR_EXT;
+    case RHIColorSpace::BT2020_LINEAR:
+        return VK_COLOR_SPACE_BT2020_LINEAR_EXT;
+    case RHIColorSpace::HDR10_ST2084:
+        return VK_COLOR_SPACE_HDR10_ST2084_EXT;
+    case RHIColorSpace::HDR10_HLG:
+        return VK_COLOR_SPACE_HDR10_HLG_EXT;
+    case RHIColorSpace::DOLBYVISION:
+        return VK_COLOR_SPACE_DOLBYVISION_EXT;
+    case RHIColorSpace::ADOBERGB_LINEAR:
+        return VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT;
+    case RHIColorSpace::ADOBERGB_NONLINEAR:
+        return VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT;
+    default:
+        return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+    }
+}
+
+VkFormat VulkanTypes::ToVK(RHIFormat rhiType)
 {
     switch (rhiType)
     {

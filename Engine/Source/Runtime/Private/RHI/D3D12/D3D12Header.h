@@ -1,10 +1,15 @@
 #pragma once
 
+#ifdef PLATFORM_WINDOWS
+#include "../../Core/HAL/Windows/WindowsUtils.hpp"
+#endif
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <D3D12MemoryAllocator/D3D12MemAlloc.h>
 
 #include "D3D12Types.h"
+#include "D3D12Utils.h"
 
 #include <Core/Base/TypeTraits.h>
 

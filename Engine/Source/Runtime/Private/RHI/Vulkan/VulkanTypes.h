@@ -7,6 +7,13 @@
 namespace ow
 {
 
-extern VkFormat ToVK(const RHIFormat& rhiType);
+class VulkanTypes
+{
+public:
+	static GPUAdapterType ToRHI(VkPhysicalDeviceType vkType);
+
+	static VkColorSpaceKHR ToVK(RHIColorSpace rhiType);
+	static VkFormat ToVK(RHIFormat rhiType);
+};
 
 }

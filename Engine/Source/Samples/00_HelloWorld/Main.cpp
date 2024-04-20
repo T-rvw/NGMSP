@@ -18,7 +18,7 @@ int main()
 	// Create graphics engine.
 	GraphicsContext graphicsContext;
 	GraphicsCreateInfo graphicsCI;
-	graphicsCI.Backend = RHIBackend::Vulkan;
+	graphicsCI.Backend = RHIBackend::D3D12;
 	graphicsCI.Features |= RHIFeatures::MeshShaders;
 	graphicsCI.Features |= RHIFeatures::RayTracing;
 	graphicsCI.Features |= RHIFeatures::WorkGraphs;

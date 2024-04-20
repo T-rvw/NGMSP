@@ -1,19 +1,18 @@
 #include "D3D12Adapter.h"
 
-#include "D3D12Device.h"
 #include "D3D12Instance.h"
 
-#include <RHI/IRHIDevice.h>
+#include <RHI/RHITypes.h>
 
 namespace ow
 {
 
-D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter1> pAdapter) :
+D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter4> pAdapter) :
 	m_pInstance(pInstance),
 	m_adapter(MoveTemp(pAdapter))
 {
-	DXGI_ADAPTER_DESC1 adapterDesc;
-	m_adapter->GetDesc1(&adapterDesc);
+	DXGI_ADAPTER_DESC3 adapterDesc;
+	m_adapter->GetDesc3(&adapterDesc);
 
 	char adapterName[256];
 	sprintf_s(adapterName, "%ws", adapterDesc.Description);
@@ -25,9 +24,31 @@ D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter1>
 	m_info.VideoMemorySize = adapterDesc.DedicatedVideoMemory;
 	m_info.SystemMemorySize = adapterDesc.DedicatedSystemMemory;
 	m_info.SharedMemorySize = adapterDesc.SharedSystemMemory;
+
+	// Query monitor outputs information.
+	uint32 outputIndex = 0;
+	ComPtr<IDXGIOutput> pOutput;
+	while (D3D12_SUCCEED(m_adapter->EnumOutputs(outputIndex++, pOutput.ReleaseAndGetAddressOf())))
+	{
+		ComPtr<IDXGIOutput6> pOutput6;
+		D3D12_VERIFY(pOutput.As<IDXGIOutput6>(&pOutput6));
+
+		DXGI_OUTPUT_DESC1 outputDesc;
+		pOutput6->GetDesc1(&outputDesc);
+
+		auto& outputInfo = m_outputInfos.emplace_back();
+		outputInfo.Name = CreateUTF8StringFromWide(outputDesc.DeviceName).data();
+		outputInfo.Width = outputDesc.DesktopCoordinates.right - outputDesc.DesktopCoordinates.left;
+		outputInfo.Height = outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top;
+		outputInfo.ColorSpace = D3D12Types::ToRHI(outputDesc.ColorSpace);
+		outputInfo.BitsPerColor = outputDesc.BitsPerColor;
+		outputInfo.MinLuminance = outputDesc.MinLuminance;
+		outputInfo.MaxLuminance = outputDesc.MaxLuminance;
+		outputInfo.MaxFullFrameLuminance = outputDesc.MaxFullFrameLuminance;
+	}
 }
 
-ComPtr<IDXGIFactory4> D3D12Adapter::GetFactory() const
+ComPtr<IDXGIFactory6> D3D12Adapter::GetFactory() const
 {
 	return m_pInstance->GetHandle();
 }
@@ -59,20 +80,17 @@ void D3D12Adapter::Initialize()
 	}
 }
 
-void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC1& desc)
+void D3D12Adapter::EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos)
 {
-	auto& info = GetInfo();
-
-	if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+	if (!pOutputInfos)
 	{
-		info.Type = GPUAdapterType::CPU;
+		outputCount = static_cast<uint32>(m_outputInfos.size());
+		return;
 	}
-	else
+
+	for (uint32 outputIndex = 0; outputIndex < outputCount; ++outputIndex)
 	{
-		// TODO : Check integrated adapter in a correct way.
-		// bool isIntegratedAdapter = 0 == desc.DedicatedVideoMemory;
-		bool isIntegratedAdapter = GPUVendor::Intel == GetGPUVendor(desc.VendorId);
-		info.Type = isIntegratedAdapter ? GPUAdapterType::Integrated : GPUAdapterType::Discrete;
+		pOutputInfos[outputIndex] = &m_outputInfos[outputIndex];
 	}
 }
 
@@ -100,5 +118,23 @@ ComPtr<ID3D12Device> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& devic
 
 	return pDevice;
 }
+
+void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC3& desc)
+{
+	auto& info = GetInfo();
+
+	if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+	{
+		info.Type = GPUAdapterType::CPU;
+	}
+	else
+	{
+		// TODO : Check integrated adapter in a correct way.
+		// bool isIntegratedAdapter = 0 == desc.DedicatedVideoMemory;
+		bool isIntegratedAdapter = GPUVendor::Intel == GetGPUVendor(desc.VendorId);
+		info.Type = isIntegratedAdapter ? GPUAdapterType::Integrated : GPUAdapterType::Discrete;
+	}
+}
+
 
 }

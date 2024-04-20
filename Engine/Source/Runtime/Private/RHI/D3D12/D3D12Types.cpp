@@ -3,7 +3,40 @@
 namespace ow
 {
 
-D3D12_BLEND_OP ToD3D12(const RHIBlendOperation& rhiType)
+RHIColorSpace D3D12Types::ToRHI(DXGI_COLOR_SPACE_TYPE d3d12Type)
+{
+    switch (d3d12Type)
+    {
+    case DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709:
+        return RHIColorSpace::SRGB_NONLINEAR;
+    case DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P2020:
+        return RHIColorSpace::DISPLAY_P3_LINEAR;
+    case DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P709:
+        return RHIColorSpace::DISPLAY_P3_NONLINEAR;
+    case DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P601:
+        return RHIColorSpace::DCI_P3_NONLINEAR;
+    case DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P709:
+        return RHIColorSpace::BT709_LINEAR;
+    case DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P709:
+        return RHIColorSpace::BT709_NONLINEAR;
+    case DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P2020:
+        return RHIColorSpace::BT2020_LINEAR;
+    case DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020:
+        return RHIColorSpace::HDR10_ST2084;
+    case DXGI_COLOR_SPACE_YCBCR_STUDIO_GHLG_TOPLEFT_P2020:
+        return RHIColorSpace::HDR10_HLG;
+    case DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_LEFT_P2020:
+        return RHIColorSpace::DOLBYVISION;
+    case DXGI_COLOR_SPACE_RGB_STUDIO_G24_NONE_P709:
+        return RHIColorSpace::ADOBERGB_LINEAR;
+    case DXGI_COLOR_SPACE_RGB_STUDIO_G24_NONE_P2020:
+        return RHIColorSpace::ADOBERGB_NONLINEAR;
+    default:
+        return RHIColorSpace::SRGB_NONLINEAR;
+    }
+}
+
+D3D12_BLEND_OP D3D12Types::ToD3D12(RHIBlendOperation rhiType)
 {
     switch (rhiType)
     {
@@ -22,7 +55,7 @@ D3D12_BLEND_OP ToD3D12(const RHIBlendOperation& rhiType)
     }
 }
 
-D3D12_BLEND ToD3D12(const RHIBlendType& rhiType)
+D3D12_BLEND D3D12Types::ToD3D12(RHIBlendType rhiType)
 {
     switch (rhiType)
     {
@@ -65,7 +98,42 @@ D3D12_BLEND ToD3D12(const RHIBlendType& rhiType)
     }
 }
 
-D3D12_COMMAND_LIST_TYPE ToD3D12(const RHICommandType& rhiType)
+DXGI_COLOR_SPACE_TYPE D3D12Types::ToD3D12(RHIColorSpace rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIColorSpace::SRGB_NONLINEAR:
+        return DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
+    case RHIColorSpace::DISPLAY_P3_LINEAR:
+        return DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P2020;
+    case RHIColorSpace::DISPLAY_P3_NONLINEAR:
+        return DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P709;
+    case RHIColorSpace::DCI_P3_LINEAR:
+        return ToD3D12(RHIColorSpace::DISPLAY_P3_LINEAR);
+    case RHIColorSpace::DCI_P3_NONLINEAR:
+        return DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P601;
+    case RHIColorSpace::BT709_LINEAR:
+        return DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P709;
+    case RHIColorSpace::BT709_NONLINEAR:
+        return DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P709;
+    case RHIColorSpace::BT2020_LINEAR:
+        return DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P2020;
+    case RHIColorSpace::HDR10_ST2084:
+        return DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020;
+    case RHIColorSpace::HDR10_HLG:
+        return DXGI_COLOR_SPACE_YCBCR_STUDIO_GHLG_TOPLEFT_P2020;
+    case RHIColorSpace::DOLBYVISION:
+        return DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_LEFT_P2020;
+    case RHIColorSpace::ADOBERGB_LINEAR:
+        return DXGI_COLOR_SPACE_RGB_STUDIO_G24_NONE_P709;
+    case RHIColorSpace::ADOBERGB_NONLINEAR:
+        return DXGI_COLOR_SPACE_RGB_STUDIO_G24_NONE_P2020;
+    default:
+        return DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
+    }
+}
+
+D3D12_COMMAND_LIST_TYPE D3D12Types::ToD3D12(RHICommandType rhiType)
 {
     switch (rhiType)
     {
@@ -80,7 +148,22 @@ D3D12_COMMAND_LIST_TYPE ToD3D12(const RHICommandType& rhiType)
     }
 }
 
-DXGI_FORMAT ToD3D12(const RHIFormat& rhiType)
+D3D12_CULL_MODE D3D12Types::ToD3D12(RHICullMode rhiType)
+{
+    switch (rhiType)
+    {
+    case RHICullMode::None:
+        return D3D12_CULL_MODE_NONE;
+    case RHICullMode::Front:
+        return D3D12_CULL_MODE_FRONT;
+    case RHICullMode::Back:
+        return D3D12_CULL_MODE_BACK;
+    default:
+        return D3D12_CULL_MODE_NONE;
+    }
+}
+
+DXGI_FORMAT D3D12Types::ToD3D12(RHIFormat rhiType)
 {
     switch (rhiType)
     {

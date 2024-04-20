@@ -14,7 +14,7 @@ struct RHIInstanceCreateInfo;
 class VulkanInstance : public IRHIInstance
 {
 public:
-	VulkanInstance() = default;
+	VulkanInstance() = delete;
 	VulkanInstance(const RHIInstanceCreateInfo& createInfo);
 	VulkanInstance(const VulkanInstance&) = delete;
 	VulkanInstance& operator=(const VulkanInstance&) = delete;

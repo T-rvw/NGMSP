@@ -49,6 +49,7 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	// Enable surface extension.
 	if (!createInfo.Features.IsEnabled(RHIFeatures::Headless))
 	{
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_DISPLAY_EXTENSION_NAME);
 		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 
 		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_SURFACE_EXTENSION_NAME);

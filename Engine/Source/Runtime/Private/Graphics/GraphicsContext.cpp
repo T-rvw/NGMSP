@@ -59,6 +59,15 @@ void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
 	pBestAdapter->Initialize();
 
+	uint32 adapterOutputCount;
+	pBestAdapter->EnumerateOutputs(adapterOutputCount, nullptr);
+	std::vector<RHIOutputInfo*> outputInfos(adapterOutputCount);
+	pBestAdapter->EnumerateOutputs(adapterOutputCount, outputInfos.data());
+	for (const auto* outputInfo : outputInfos)
+	{
+		outputInfo->Dump();
+	}
+
 	// Query command queue info to create device.
 	printf("\n");
 	uint32 commandQueueCICount;
@@ -100,7 +109,8 @@ void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 	swapChainCI.BackBufferWidth = createInfo.BackBufferWidth;
 	swapChainCI.BackBufferHeight = createInfo.BackBufferHeight;
 	swapChainCI.BackBufferCount = 2;
-	swapChainCI.Format = RHIFormat::R8G8B8A8Unorm;
+	swapChainCI.Format = RHIFormat::RGBA8_UNORM;
+	swapChainCI.ColorSpace = RHIColorSpace::SRGB_NONLINEAR;
 	swapChainCI.PresentMode = RHIPresentMode::VSync;
 	m_pRHISwapChain = m_pRHIModule->CreateRHISwapChain(m_pRHIDevice, swapChainCI);
 }

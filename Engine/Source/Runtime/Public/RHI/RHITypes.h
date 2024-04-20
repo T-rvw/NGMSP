@@ -82,6 +82,29 @@ struct RHIAdapterInfo
     std::string Name = "Unknown";
 };
 
+struct RHIOutputInfo
+{
+    uint32 Width;
+    uint32 Height;
+    RHIColorSpace ColorSpace;
+    uint32 BitsPerColor;
+    float MinLuminance;
+    float MaxLuminance;
+    float MaxFullFrameLuminance;
+    std::string Name = "Unknown";
+
+    void Dump() const
+    {
+        printf("[RHIOutputInfo] Name = %s\n", Name.c_str());
+        printf("\tWidth = %u, Height = %u\n", Width, Height);
+        printf("\tColorSpace = %s\n", EnumName(ColorSpace).data());
+        printf("\tBitsPerColor = %u\n", BitsPerColor);
+        printf("\tMinLuminance = %f\n", MinLuminance);
+        printf("\tMaxLuminance = %f\n", MaxLuminance);
+        printf("\tMaxFullFrameLuminance = %f\n", MaxFullFrameLuminance);
+    }
+};
+
 struct RHIInstanceCreateInfo
 {
     BitFlags<RHIFeatures> Features;
@@ -117,6 +140,7 @@ struct RHISwapChainCreateInfo
     void* NativeInstanceHandle = nullptr;
     void* NativeWindowHandle = nullptr;
     RHIFormat Format = RHIFormat::RGBA8_UNORM;
+    RHIColorSpace ColorSpace = RHIColorSpace::SRGB_NONLINEAR;
     uint32 BackBufferWidth = 1;
     uint32 BackBufferHeight = 1;
     uint32 BackBufferCount = 2;

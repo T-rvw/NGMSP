@@ -37,10 +37,11 @@ RHIBackend D3D12Instance::GetBackend() const
 
 void D3D12Instance::InitAdapters()
 {
-	ComPtr<IDXGIAdapter1> adapter;
-	for (uint32 adapterIndex = 0; D3D12_SUCCEED(m_factory->EnumAdapters1(adapterIndex, &adapter)); ++adapterIndex)
+	uint32 adapterIndex = 0;
+	ComPtr<IDXGIAdapter4> pAdapter;
+	while (D3D12_SUCCEED(m_factory->EnumAdapterByGpuPreference(adapterIndex++, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(pAdapter.ReleaseAndGetAddressOf()))))
 	{
-		m_adapters.emplace_back(this, adapter.Get());
+		m_adapters.emplace_back(this, pAdapter.Get());
 	}
 }
 

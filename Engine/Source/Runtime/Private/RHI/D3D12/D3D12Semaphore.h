@@ -8,6 +8,8 @@
 namespace ow
 {
 
+struct RHISemaphoreCreateInfo;
+
 class D3D12Semaphore : public IRHISemaphore
 {
 public:

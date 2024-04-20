@@ -2,14 +2,8 @@
 
 #include "D3D12Adapter.h"
 #include "D3D12CommandQueue.h"
-#include "D3D12Fence.h"
-#include "D3D12Semaphore.h"
-#include "D3D12SwapChain.h"
 
-#include <RHI/IRHICommandQueue.h>
-#include <RHI/IRHIFence.h>
-#include <RHI/IRHISemaphore.h>
-#include <RHI/IRHISwapChain.h>
+#include <RHI/RHITypes.h>
 
 namespace ow
 {
@@ -24,7 +18,7 @@ D3D12Device::~D3D12Device()
 {
 }
 
-ComPtr<IDXGIFactory4> D3D12Device::GetFactory() const
+ComPtr<IDXGIFactory6> D3D12Device::GetFactory() const
 {
 	return m_pAdapter->GetFactory();
 }
@@ -35,7 +29,7 @@ ComPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueue
 
 	D3D12_COMMAND_QUEUE_DESC queueDesc {};
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	queueDesc.Type = ToD3D12(commandQueueCI.Type);
+	queueDesc.Type = D3D12Types::ToD3D12(commandQueueCI.Type);
 	queueDesc.Priority = static_cast<int32>(commandQueueCI.Priority);
 	D3D12_VERIFY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)));
 
@@ -55,7 +49,7 @@ ComPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInf
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
 	swapChainDesc.Width = createInfo.BackBufferWidth;
 	swapChainDesc.Height = createInfo.BackBufferHeight;
-	swapChainDesc.Format = ToD3D12(createInfo.Format);
+	swapChainDesc.Format = D3D12Types::ToD3D12(createInfo.Format);
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = createInfo.BackBufferCount;
 	swapChainDesc.SampleDesc.Count = 1;
