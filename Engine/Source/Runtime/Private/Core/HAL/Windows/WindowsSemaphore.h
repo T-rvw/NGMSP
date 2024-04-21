@@ -15,7 +15,7 @@ public:
 	WindowsSemaphore& operator=(const WindowsSemaphore&) = delete;
 	WindowsSemaphore(WindowsSemaphore&&) = default;
 	WindowsSemaphore& operator=(WindowsSemaphore&&) = default;
-	~WindowsSemaphore();
+	virtual ~WindowsSemaphore();
 
 	virtual void Init(int32 initialCount, int32 maxCount) override;
 	virtual void Wait() const override;

@@ -21,9 +21,19 @@ VulkanFence::~VulkanFence()
 	vkDestroyFence(m_pDevice->GetHandle(), m_fence, nullptr);
 }
 
+uint64 VulkanFence::Signal(uint64 fenceValue)
+{
+	return 0;
+}
+
 void VulkanFence::Wait(uint64 timeout)
 {
 	vkWaitForFences(m_pDevice->GetHandle(), 1, &m_fence, true, timeout);
+}
+
+bool VulkanFence::IsComplete(uint64 fenceValue)
+{
+	return true;
 }
 
 void VulkanFence::Reset()

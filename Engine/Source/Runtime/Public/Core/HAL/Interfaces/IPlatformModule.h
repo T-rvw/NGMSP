@@ -6,6 +6,8 @@ namespace ow
 class IPlatformModule
 {
 public:
+	virtual ~IPlatformModule() {}
+
 	virtual bool Load() = 0;
 	virtual void Unload() = 0;
 

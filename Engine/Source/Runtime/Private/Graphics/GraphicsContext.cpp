@@ -16,6 +16,7 @@ GraphicsContext::~GraphicsContext()
 
 void GraphicsContext::Init(const GraphicsCreateInfo& createInfo)
 {
+	// Load backend specified dll to init graphics.
 	ModuleData* pRHILibrary = nullptr;
 	switch (createInfo.Backend)
 	{
@@ -94,13 +95,16 @@ void GraphicsContext::Init(const GraphicsCreateInfo& createInfo)
 	m_pRHIDevice = m_pRHIModule->CreateRHIDevice(pBestAdapter, deviceCI);
 
 	// Create command queues and fences.
-	m_rhiCommandQueues.resize(EnumCount<RHICommandType>(), nullptr);
-	m_rhiCommandQueueFences.resize(EnumCount<RHICommandType>(), nullptr);
+	constexpr int32 CommandTypeCount = EnumCount<RHICommandType>();
+	m_rhiCommandQueues.resize(CommandTypeCount);
+	m_rhiCommandQueueFences.resize(CommandTypeCount);
 	for (const auto& bestQueueCI : bestQueueCIs)
 	{
 		auto typeIndex = static_cast<uint32>(bestQueueCI->Type);
 		m_rhiCommandQueues[typeIndex] = m_pRHIModule->CreateRHICommandQueue(m_pRHIDevice, *bestQueueCI);
-		m_rhiCommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, {});
+
+		RHIFenceCreateInfo fenceCI;
+		m_rhiCommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, fenceCI);
 	}
 
 	// Create SwapChain to bind to native window.

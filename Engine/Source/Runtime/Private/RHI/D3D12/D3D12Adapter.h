@@ -33,7 +33,7 @@ public:
 private:
 	friend class D3D12RHIModule;
 	void SetType(const DXGI_ADAPTER_DESC3& desc);
-	RefCountPtr<ID3D12Device> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
+	RefCountPtr<ID3D12Device5> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
 	RefCountPtr<IDXGIAdapter4> m_adapter;

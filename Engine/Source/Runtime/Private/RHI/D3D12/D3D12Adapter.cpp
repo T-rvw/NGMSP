@@ -108,11 +108,11 @@ void D3D12Adapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueC
 	}
 }
 
-RefCountPtr<ID3D12Device> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI)
+RefCountPtr<ID3D12Device5> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI)
 {
 	UNUSED(deviceCI);
 
-	RefCountPtr<ID3D12Device> pDevice;
+	RefCountPtr<ID3D12Device5> pDevice;
 	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
 	assert(pDevice);
 

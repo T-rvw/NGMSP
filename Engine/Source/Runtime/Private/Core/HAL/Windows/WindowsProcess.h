@@ -15,7 +15,7 @@ public:
 	WindowsProcess& operator=(const WindowsProcess&) = delete;
 	WindowsProcess(WindowsProcess&&) = default;
 	WindowsProcess& operator=(WindowsProcess&&) = default;
-	~WindowsProcess() = default;
+	virtual ~WindowsProcess() = default;
 
 	virtual bool Init() override;
 };

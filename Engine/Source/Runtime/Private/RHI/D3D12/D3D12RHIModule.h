@@ -12,9 +12,6 @@
 
 #include <RHI/IRHIModule.h>
 
-#include <list>
-#include <memory>
-
 namespace ow
 {
 
@@ -30,9 +27,6 @@ public:
 	virtual RefCountPtr<IRHIBuffer> CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo) override;
 	virtual RefCountPtr<IRHISampler> CreateRHISampler(IRHIDevice* pDevice, const RHISamplerCreateInfo& createInfo) override;
 	virtual RefCountPtr<IRHITexture> CreateRHITexture(IRHIDevice* pDevice, const RHITextureCreateInfo& createInfo) override;
-
-private:
-	std::list<std::unique_ptr<D3D12Instance>> m_rhiInstances;
 };
 
 }

@@ -20,7 +20,9 @@ public:
 	VulkanFence& operator=(VulkanFence&&) = default;
 	virtual ~VulkanFence();
 
-	virtual void Wait(uint64 timeout) override;
+	virtual uint64 Signal(uint64 fenceValue) override;
+	virtual void Wait(uint64 fenceValue) override;
+	virtual bool IsComplete(uint64 fenceValue) override;
 	virtual void Reset() override;
 
 private:

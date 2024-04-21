@@ -20,7 +20,7 @@ public:
 	WindowsWindow& operator=(const WindowsWindow&) = delete;
 	WindowsWindow(WindowsWindow&&) = default;
 	WindowsWindow& operator=(WindowsWindow&&) = default;
-	~WindowsWindow() = default;
+	virtual ~WindowsWindow() = default;
 
 	virtual void Init(const WindowCreateInfo& createInfo, void* pInstance) override;
 	virtual void* GetHandle() const override { return m_handle; }

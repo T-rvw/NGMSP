@@ -18,7 +18,7 @@ public:
 	WindowsApplication& operator=(const WindowsApplication&) = delete;
 	WindowsApplication(WindowsApplication&&) = default;
 	WindowsApplication& operator=(WindowsApplication&&) = default;
-	~WindowsApplication() = default;
+	virtual ~WindowsApplication() = default;
 
 	virtual void Init() override;
 	virtual void Update() override;

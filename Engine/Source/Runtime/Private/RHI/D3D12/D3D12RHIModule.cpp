@@ -40,8 +40,8 @@ RefCountPtr<IRHISwapChain> D3D12RHIModule::CreateRHISwapChain(IRHIDevice* pDevic
 
 RefCountPtr<IRHIFence> D3D12RHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo)
 {
-	auto d3d12Fence = static_cast<D3D12Device*>(pDevice)->CreateFence(createInfo);
-	return MakeRefCountPtr<D3D12Fence>(d3d12Fence);
+	auto* pD3D12Device = static_cast<D3D12Device*>(pDevice);
+	return MakeRefCountPtr<D3D12Fence>(pD3D12Device, createInfo);
 }
 
 RefCountPtr<IRHISemaphore> D3D12RHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)

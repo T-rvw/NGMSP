@@ -8,7 +8,7 @@
 namespace ow
 {
 
-D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, RefCountPtr<ID3D12Device> pDevice) :
+D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, RefCountPtr<ID3D12Device5> pDevice) :
 	m_pAdapter(pAdapter),
 	m_device(MoveTemp(pDevice))
 {
@@ -28,20 +28,12 @@ RefCountPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommand
 	RefCountPtr<ID3D12CommandQueue> commandQueue;
 
 	D3D12_COMMAND_QUEUE_DESC queueDesc {};
-	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Type = D3D12Types::ToD3D12(commandQueueCI.Type);
+	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Priority = static_cast<int32>(commandQueueCI.Priority);
 	D3D12_VERIFY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)));
 
 	return commandQueue;
-}
-
-RefCountPtr<ID3D12Fence> D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo) const
-{
-	RefCountPtr<ID3D12Fence> pFence;
-	D3D12_VERIFY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence)));
-
-	return pFence;
 }
 
 RefCountPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const

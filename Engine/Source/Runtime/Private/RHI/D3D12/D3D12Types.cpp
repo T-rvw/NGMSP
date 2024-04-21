@@ -163,6 +163,21 @@ D3D12_CULL_MODE D3D12Types::ToD3D12(RHICullMode rhiType)
     }
 }
 
+D3D12_FENCE_FLAGS D3D12Types::ToD3D12(RHIFenceType rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIFenceType::Default:
+        return D3D12_FENCE_FLAG_NONE;
+    case RHIFenceType::Shared:
+        return D3D12_FENCE_FLAG_SHARED;
+    case RHIFenceType::CrossAdapter:
+        return D3D12_FENCE_FLAG_SHARED_CROSS_ADAPTER;
+    default:
+        return D3D12_FENCE_FLAG_NONE;
+    }
+}
+
 DXGI_FORMAT D3D12Types::ToD3D12(RHIFormat rhiType)
 {
     switch (rhiType)

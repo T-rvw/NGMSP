@@ -10,6 +10,7 @@
 #include <Core/Modules/IModule.h>
 #include <Core/Modules/ModuleManager.h>
 #include <Core/HAL/PlatformApplication.h>
+#include <Core/HAL/PlatformEvent.h>
 #include <Core/HAL/PlatformModule.h>
 #include <Core/HAL/PlatformProcess.h>
 #include <Core/HAL/PlatformWindow.h>

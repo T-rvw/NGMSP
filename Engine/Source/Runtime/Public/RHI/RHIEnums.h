@@ -104,6 +104,13 @@ enum class RHIFeatures
     WorkGraphs
 };
 
+enum class RHIFenceType
+{
+    Default,
+    Shared,
+    CrossAdapter
+};
+
 enum class RHIFillMode
 {
     Wireframe,

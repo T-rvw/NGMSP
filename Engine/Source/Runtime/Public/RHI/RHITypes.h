@@ -149,7 +149,8 @@ struct RHISwapChainCreateInfo
 
 struct RHIFenceCreateInfo
 {
-
+    RHIFenceType FenceType = RHIFenceType::Default;
+    uint64 InitialValue = 0;
 };
 
 struct RHISemaphoreCreateInfo

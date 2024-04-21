@@ -17,7 +17,7 @@ public:
 	WindowsModule& operator=(const WindowsModule&) = delete;
 	WindowsModule(WindowsModule&&) = default;
 	WindowsModule& operator=(WindowsModule&&) = default;
-	~WindowsModule() = default;
+	virtual ~WindowsModule() = default;
 
 	virtual const char* GetModuleName() const override { return m_moduleName.c_str(); }
 	virtual void SetModuleName(const char* pModuleName) override { m_moduleName = pModuleName; }
