@@ -46,14 +46,9 @@ void ModuleManager::UnloadModules()
 	m_pImpl->UnloadModules();
 }
 
-ModuleData* ModuleManager::AddModule(const char* pModuleName, const char* pModulePath)
+ModuleData* ModuleManager::AddModule(const char* pModuleName, const char* pModulePath, bool autoLoad)
 {
-	return m_pImpl->AddModule(pModuleName, pModulePath);
-}
-
-ModuleData* ModuleManager::LoadModule(const char* pModuleName, const char* pModulePath)
-{
-	return m_pImpl->LoadModule(pModuleName, pModulePath);
+	return m_pImpl->AddModule(pModuleName, pModulePath, autoLoad);
 }
 
 bool ModuleManager::FindModule(const char* pModuleName) const

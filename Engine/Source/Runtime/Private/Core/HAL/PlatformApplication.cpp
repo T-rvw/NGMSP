@@ -39,7 +39,7 @@ void* PlatformApplication::GetProcessInstance() const
 
 void PlatformApplication::Run()
 {
-	m_pImpl->Initialize();
+	m_pImpl->Init();
 	m_pImpl->Update();
 	m_pImpl->Shutdown();
 }

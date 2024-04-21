@@ -145,7 +145,7 @@ VkInstance VulkanAdapter::GetInstance() const
 	return m_pInstance->GetHandle();
 }
 
-void VulkanAdapter::Initialize()
+void VulkanAdapter::Init()
 {
 	uint32 extensionCount;
 	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));

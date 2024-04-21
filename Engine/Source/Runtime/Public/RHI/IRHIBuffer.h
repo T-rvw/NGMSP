@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+
 namespace ow
 {
 
-class IRHIBuffer
+class IRHIBuffer : public RefCountObject
 {
 public:
 	virtual ~IRHIBuffer() {}

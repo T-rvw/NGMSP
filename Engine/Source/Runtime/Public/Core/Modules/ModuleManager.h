@@ -23,8 +23,7 @@ public:
 	void LoadModules();
 	void UnloadModules();
 
-	ModuleData* AddModule(const char* pModuleName, const char* pModulePath);
-	ModuleData* LoadModule(const char* pModuleName, const char* pModulePath);
+	ModuleData* AddModule(const char* pModuleName, const char* pModulePath, bool autoLoad = true);
 	bool FindModule(const char* pModuleName) const;
 	ModuleData* GetModule(const char* pModuleName);
 	const ModuleData* GetModule(const char* pModuleName) const;

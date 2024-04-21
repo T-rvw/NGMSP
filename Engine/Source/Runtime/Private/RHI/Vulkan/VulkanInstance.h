@@ -28,7 +28,7 @@ public:
 	VkInstance GetHandle() const { return m_instance; }
 
 private:
-	void Initialize();
+	void Init();
 	void InitAdapters();
 
 private:

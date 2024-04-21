@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+
 namespace ow
 {
 
-class IRHISwapChain
+class IRHISwapChain : public RefCountObject
 {
 public:
 	virtual ~IRHISwapChain() {}

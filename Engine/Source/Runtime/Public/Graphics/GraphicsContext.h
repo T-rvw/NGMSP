@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Core/Base/BitFlags.h>
+#include <Core/Base/RefCountPtr.h>
 #include <Core/HAL/APIDefinition.h>
-#include <Core/HAL/BasicTypes.h>
 #include <RHI/RHIEnums.h>
 
 #include <vector>
@@ -41,17 +41,15 @@ public:
 	GFX_API GraphicsContext& operator=(GraphicsContext&&) = default;
 	GFX_API ~GraphicsContext();
 
-	GFX_API void Initialize(const GraphicsCreateInfo& createInfo);
+	GFX_API void Init(const GraphicsCreateInfo& createInfo);
 
 private:
-	ModuleData* m_pRHILibrary = nullptr;
-	IRHIModule* m_pRHIModule = nullptr;
-	IRHIInstance* m_pRHIInstance = nullptr;
-	IRHIDevice* m_pRHIDevice = nullptr;
-	IRHISwapChain* m_pRHISwapChain = nullptr;
-
-	std::vector<IRHICommandQueue*> m_pRHICommandQueues;
-	std::vector<IRHIFence*> m_pRHICommandQueueFences;
+	RefCountPtr<IRHIModule> m_pRHIModule;
+	RefCountPtr<IRHIInstance> m_pRHIInstance;
+	RefCountPtr<IRHIDevice> m_pRHIDevice;
+	RefCountPtr<IRHISwapChain> m_pRHISwapChain;
+	std::vector<RefCountPtr<IRHICommandQueue>> m_rhiCommandQueues;
+	std::vector<RefCountPtr<IRHIFence>> m_rhiCommandQueueFences;
 };
 
 }

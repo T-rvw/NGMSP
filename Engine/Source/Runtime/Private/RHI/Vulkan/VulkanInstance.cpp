@@ -33,7 +33,7 @@ namespace ow
 
 VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 {
-	Initialize();
+	Init();
 
 	// Enable instance layers.
 	std::vector<const char*> instanceLayers;
@@ -128,7 +128,7 @@ RHIBackend VulkanInstance::GetBackend() const
 	return RHIBackend::Vulkan;
 }
 
-void VulkanInstance::Initialize()
+void VulkanInstance::Init()
 {
 	VK_VERIFY(volkInitialize());
 

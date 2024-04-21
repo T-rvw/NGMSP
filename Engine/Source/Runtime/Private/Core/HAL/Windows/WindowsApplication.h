@@ -20,7 +20,7 @@ public:
 	WindowsApplication& operator=(WindowsApplication&&) = default;
 	~WindowsApplication() = default;
 
-	virtual void Initialize() override;
+	virtual void Init() override;
 	virtual void Update() override;
 	virtual void Shutdown() override;
 	virtual void* GetProcessInstance() const override;

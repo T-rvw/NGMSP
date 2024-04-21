@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/BasicTypes.h>
+#include <Core/Base/RefCountPtr.h>
 #include <Core/Modules/IModule.h>
 
 namespace ow
@@ -27,23 +27,20 @@ class IRHISemaphore;
 class IRHISwapChain;
 class IRHITexture;
 
-class RHI_API IRHIModule : public IModule
+class IRHIModule : public IModule, public RefCountObject
 {
 public:
 	virtual ~IRHIModule() {}
 
-	virtual IRHIInstance* CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) = 0;
-	virtual IRHIDevice* CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo) = 0;
-
-	virtual IRHICommandQueue* CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo) = 0;
-	virtual IRHISwapChain* CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo) = 0;
-
-	virtual IRHIFence* CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo) = 0;
-	virtual IRHISemaphore* CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo) = 0;
-
-	virtual IRHIBuffer* CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo) = 0;
-	virtual IRHISampler* CreateRHISampler(IRHIDevice* pDevice, const RHISamplerCreateInfo& createInfo) = 0;
-	virtual IRHITexture* CreateRHITexture(IRHIDevice* pDevice, const RHITextureCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHIInstance> CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHIDevice> CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHICommandQueue> CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHISwapChain> CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHIFence> CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHISemaphore> CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHIBuffer> CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHISampler> CreateRHISampler(IRHIDevice* pDevice, const RHISamplerCreateInfo& createInfo) = 0;
+	virtual RefCountPtr<IRHITexture> CreateRHITexture(IRHIDevice* pDevice, const RHITextureCreateInfo& createInfo) = 0;
 };
 
 }

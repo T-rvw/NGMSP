@@ -3,6 +3,11 @@
 namespace ow
 {
 
+ModuleManagerImpl::~ModuleManagerImpl()
+{
+	UnloadModules();
+}
+
 void ModuleManagerImpl::LoadModules()
 {
 	for (auto& [_, module] : m_allModules)
@@ -25,7 +30,7 @@ void ModuleManagerImpl::UnloadModules()
 	}
 }
 
-ModuleData* ModuleManagerImpl::AddModule(const char* pModuleName, const char* pModulePath)
+ModuleData* ModuleManagerImpl::AddModule(const char* pModuleName, const char* pModulePath, bool autoLoad)
 {
 	auto itModule = m_allModules.find(pModuleName);
 	if (itModule != m_allModules.end())
@@ -33,21 +38,18 @@ ModuleData* ModuleManagerImpl::AddModule(const char* pModuleName, const char* pM
 		return &itModule->second;
 	}
 
-	ModuleData module;
-	module.Library.SetModuleName(pModuleName);
-	module.Library.SetModulePath(pModulePath);
-	m_allModules[pModuleName] = MoveTemp(module);
+	ModuleData moduleData;
+	moduleData.Library.SetModuleName(pModuleName);
+	moduleData.Library.SetModulePath(pModulePath);
+	if (autoLoad)
+	{
+		assert(moduleData.Library.Load());
+		moduleData.InitFunc = (InitializeModuleFunc)moduleData.Library.GetFunctionAddress("InitializeModule");
+		assert(moduleData.InitFunc);
+	}
+	m_allModules[pModuleName] = MoveTemp(moduleData);
+
 	return &m_allModules[pModuleName];
-}
-
-ModuleData* ModuleManagerImpl::LoadModule(const char* pModuleName, const char* pModulePath)
-{
-	auto* pModule = AddModule(pModuleName, pModulePath);
-	assert(pModule->Library.Load());
-
-	pModule->InitFunc = (InitializeModuleFunc)pModule->Library.GetFunctionAddress("InitializeModule");
-	assert(pModule->InitFunc);
-	return pModule;
 }
 
 bool ModuleManagerImpl::FindModule(const char* pModuleName) const

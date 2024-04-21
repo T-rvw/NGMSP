@@ -17,11 +17,12 @@ class StringID
 public:
 	using T = uint32;
 	static constexpr T InvalidID() { return 0xFFFFFFFF; }
+	static constexpr T GetHashValue(const char* data, uint64 length) { return FastCRCHash<T>(data, length); }
 
 public:
 	StringID() = default;
-	explicit constexpr StringID(std::string_view sv) : m_hashValue(FastCRCHash<T>(sv.data(), sv.size())) {}
-	explicit constexpr StringID(const char* str, uint64 n) : m_hashValue(FastCRCHash<T>(str, n)) {}
+	explicit constexpr StringID(std::string_view sv) : m_hashValue(GetHashValue(sv.data(), sv.size())) {}
+	explicit constexpr StringID(const char* str, uint64 n) : m_hashValue(GetHashValue(str, n)) {}
 	StringID(const StringID&) = default;
 	StringID& operator=(const StringID&) = default;
 	StringID(StringID&&) = default;

@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+
 #include <RHI/RHIEnums.h>
 
 namespace ow
 {
 
-class IRHICommandQueue
+class IRHICommandQueue : public RefCountObject
 {
 public:
 	virtual ~IRHICommandQueue() {}

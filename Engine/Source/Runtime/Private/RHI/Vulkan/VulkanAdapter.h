@@ -64,7 +64,7 @@ public:
 	VulkanAdapter& operator=(VulkanAdapter&&) = default;
 	virtual ~VulkanAdapter();
 
-	virtual void Initialize() override;
+	virtual void Init() override;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 

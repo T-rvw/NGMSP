@@ -12,32 +12,33 @@ namespace ow
 
 GraphicsContext::~GraphicsContext()
 {
-	m_pRHIModule->Shutdown();
 }
 
-void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
+void GraphicsContext::Init(const GraphicsCreateInfo& createInfo)
 {
+	ModuleData* pRHILibrary = nullptr;
 	switch (createInfo.Backend)
 	{
 	case RHIBackend::D3D12:
 	{
-		m_pRHILibrary = ModuleManager::Get().LoadModule("[RHI][D3D12]", "RHID3D12");
+		pRHILibrary = ModuleManager::Get().AddModule("[RHI][D3D12]", "RHID3D12");
 		break;
 	}
 	case RHIBackend::Vulkan:
 	{
-		m_pRHILibrary = ModuleManager::Get().LoadModule("[RHI][Vulkan]", "RHIVulkan");
+		pRHILibrary = ModuleManager::Get().AddModule("[RHI][Vulkan]", "RHIVulkan");
 		break;
 	}
 	default:
 	{
 		assert("Unknown RHI backend.");
-		break;
+		return;
 	}
 	}
 
-	assert(m_pRHILibrary);
-	m_pRHIModule = static_cast<IRHIModule*>(m_pRHILibrary->InitFunc());
+	assert(pRHILibrary);
+	m_pRHIModule = static_cast<IRHIModule*>(pRHILibrary->InitFunc());
+
 	RHIInstanceCreateInfo instanceCI;
 	instanceCI.Features = createInfo.Features;
 	instanceCI.Debug = RHIDebugMode::Normal;
@@ -57,7 +58,7 @@ void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 	int32 adapterIndex = optAdapterIndex.value();
 	auto& pBestAdapter = rhiAdapters[adapterIndex];
 	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
-	pBestAdapter->Initialize();
+	pBestAdapter->Init();
 
 	uint32 adapterOutputCount;
 	pBestAdapter->EnumerateOutputs(adapterOutputCount, nullptr);
@@ -93,13 +94,13 @@ void GraphicsContext::Initialize(const GraphicsCreateInfo& createInfo)
 	m_pRHIDevice = m_pRHIModule->CreateRHIDevice(pBestAdapter, deviceCI);
 
 	// Create command queues and fences.
-	m_pRHICommandQueues.resize(EnumCount<RHICommandType>(), nullptr);
-	m_pRHICommandQueueFences.resize(EnumCount<RHICommandType>(), nullptr);
+	m_rhiCommandQueues.resize(EnumCount<RHICommandType>(), nullptr);
+	m_rhiCommandQueueFences.resize(EnumCount<RHICommandType>(), nullptr);
 	for (const auto& bestQueueCI : bestQueueCIs)
 	{
 		auto typeIndex = static_cast<uint32>(bestQueueCI->Type);
-		m_pRHICommandQueues[typeIndex] = m_pRHIModule->CreateRHICommandQueue(m_pRHIDevice, *bestQueueCI);
-		m_pRHICommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, {});
+		m_rhiCommandQueues[typeIndex] = m_pRHIModule->CreateRHICommandQueue(m_pRHIDevice, *bestQueueCI);
+		m_rhiCommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, {});
 	}
 
 	// Create SwapChain to bind to native window.

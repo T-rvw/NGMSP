@@ -25,7 +25,7 @@ WindowsApplication::WindowsApplication()
 	RegisterWindowClass(s_pProcessInstance, NULL);
 }
 
-void WindowsApplication::Initialize()
+void WindowsApplication::Init()
 {
 	PlatformTime::Init();
 }

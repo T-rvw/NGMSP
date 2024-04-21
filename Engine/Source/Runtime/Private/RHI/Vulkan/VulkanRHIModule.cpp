@@ -3,72 +3,62 @@
 namespace ow
 {
 
-C_ABI RHI_API IRHIModule* InitializeModule()
+C_ABI RHI_API IModule* InitializeModule()
 {
 	return new VulkanRHIModule();
 }
 
-void VulkanRHIModule::Shutdown()
+RefCountPtr<IRHIInstance> VulkanRHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
 {
-	delete this;
+	return MakeRefCountPtr<VulkanInstance>(createInfo);
 }
 
-IRHIInstance* VulkanRHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
-{
-	auto& rhiInstance = m_rhiInstances.emplace_back(std::make_unique<VulkanInstance>(createInfo));
-	return rhiInstance.get();
-}
-
-IRHIDevice* VulkanRHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo)
+RefCountPtr<IRHIDevice> VulkanRHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo)
 {
 	auto* pVulkanAdapter = static_cast<VulkanAdapter*>(pAdapter);
 	auto vkDevice = pVulkanAdapter->CreateLogicalDevice(createInfo);
-	auto& rhiDevice = m_rhiDevices.emplace_back(std::make_unique<VulkanDevice>(pVulkanAdapter, vkDevice));
-	return rhiDevice.get();
+	return MakeRefCountPtr<VulkanDevice>(pVulkanAdapter, vkDevice);
 }
 
-IRHICommandQueue* VulkanRHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
+RefCountPtr<IRHICommandQueue> VulkanRHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
 {
 	auto vkCommandQueue = static_cast<VulkanDevice*>(pDevice)->CreateCommandQueue(createInfo);
-	auto& rhiCommandQueue = m_rhiCommandQueues.emplace_back(std::make_unique<VulkanCommandQueue>(vkCommandQueue));
+	auto rhiCommandQueue = MakeRefCountPtr<VulkanCommandQueue>(vkCommandQueue);
 	rhiCommandQueue->SetType(createInfo.Type);
-	return rhiCommandQueue.get();
+	return rhiCommandQueue;
 }
 
-IRHISwapChain* VulkanRHIModule::CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo)
+RefCountPtr<IRHISwapChain> VulkanRHIModule::CreateRHISwapChain(IRHIDevice* pDevice, const RHISwapChainCreateInfo& createInfo)
 {
 	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
-	auto& rhiSwapChain = m_rhiSwapChains.emplace_back(std::make_unique<VulkanSwapChain>(pVulkanDevice, createInfo));
-	return rhiSwapChain.get();
+	return MakeRefCountPtr<VulkanSwapChain>(pVulkanDevice, createInfo);
 }
 
-IRHIFence* VulkanRHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo)
+RefCountPtr<IRHIFence> VulkanRHIModule::CreateRHIFence(IRHIDevice* pDevice, const RHIFenceCreateInfo& createInfo)
 {
 	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
-	auto& rhiFence = m_rhiFences.emplace_back(std::make_unique<VulkanFence>(pVulkanDevice, createInfo));
-	return rhiFence.get();
+	return MakeRefCountPtr<VulkanFence>(pVulkanDevice, createInfo);
 }
 
-IRHISemaphore* VulkanRHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)
+RefCountPtr<IRHISemaphore> VulkanRHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)
 {
 	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
-	auto& rhiSemaphore = m_rhiSemaphores.emplace_back(std::make_unique<VulkanSemaphore>(pVulkanDevice, createInfo));
-	return rhiSemaphore.get();
+	return MakeRefCountPtr<VulkanSemaphore>(pVulkanDevice, createInfo);
 }
 
-IRHIBuffer* VulkanRHIModule::CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo)
+RefCountPtr<IRHIBuffer> VulkanRHIModule::CreateRHIBuffer(IRHIDevice* pDevice, const RHIBufferCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<VulkanBuffer>();
+}
+
+RefCountPtr<IRHISampler> VulkanRHIModule::CreateRHISampler(IRHIDevice* pDevice, const RHISamplerCreateInfo& createInfo)
 {
 	return nullptr;
 }
 
-IRHISampler* VulkanRHIModule::CreateRHISampler(IRHIDevice* pDevice, const RHISamplerCreateInfo& createInfo)
+RefCountPtr<IRHITexture> VulkanRHIModule::CreateRHITexture(IRHIDevice* pDevice, const RHITextureCreateInfo& createInfo)
 {
-	return nullptr;
-}
-
-IRHITexture* VulkanRHIModule::CreateRHITexture(IRHIDevice* pDevice, const RHITextureCreateInfo& createInfo)
-{
-	return nullptr;
+	return MakeRefCountPtr<VulkanTexture>();
 }
 
 }

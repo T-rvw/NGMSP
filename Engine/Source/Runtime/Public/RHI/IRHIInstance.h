@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+
 namespace ow
 {
 
@@ -7,7 +9,7 @@ enum class RHIBackend;
 
 class IRHIAdapter;
 
-class IRHIInstance
+class IRHIInstance : public RefCountObject
 {
 public:
 	virtual ~IRHIInstance() {}

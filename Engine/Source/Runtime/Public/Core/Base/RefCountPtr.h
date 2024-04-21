@@ -9,19 +9,6 @@ namespace ow
 {
 
 /// <summary>
-/// Interface for reference count object which wants to customize implementation.
-/// Method names are same to Windows COM so RefCountPtr<T> can replace ComPtr<T> directly. 
-/// </summary>
-class IRefCountObject
-{
-public:
-	virtual ~IRefCountObject() {}
-	virtual uint32 AddRef() const = 0;
-	virtual uint32 Release() const = 0;
-	virtual uint32 GetRefCount() const = 0;
-};
-
-/// <summary>
 /// Thread-safe reference count object which can be used to inherit conveniently.
 /// </summary>
 class RefCountObject
@@ -44,12 +31,12 @@ public:
 
 	uint32 AddRef() const
 	{
-		return m_refCount.fetch_add(1);
+		return ++m_refCount;
 	}
 
 	uint32 Release() const
 	{
-		int32 refCount = m_refCount.fetch_sub(1);
+		int32 refCount = --m_refCount;
 		if (0 == refCount)
 		{
 			delete this;
@@ -186,7 +173,7 @@ public:
 		return m_ptr;
 	}
 
-	operator T() const
+	operator T*() const
 	{
 		return m_ptr;
 	}

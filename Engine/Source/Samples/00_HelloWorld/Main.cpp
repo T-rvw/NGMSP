@@ -18,13 +18,15 @@ int main()
 	// Create graphics engine.
 	GraphicsContext graphicsContext;
 	GraphicsCreateInfo graphicsCI;
-	graphicsCI.Backend = RHIBackend::D3D12;
+	graphicsCI.Backend = RHIBackend::Vulkan;
 	graphicsCI.Features |= RHIFeatures::MeshShaders;
 	graphicsCI.Features |= RHIFeatures::RayTracing;
 	graphicsCI.Features |= RHIFeatures::WorkGraphs;
 	graphicsCI.NativeWindowHandle = mainWindow.GetHandle();
 	graphicsCI.NativeInstanceHandle = app.GetProcessInstance();
-	graphicsContext.Initialize(graphicsCI);
+	graphicsCI.BackBufferWidth = windowCI.Width;
+	graphicsCI.BackBufferHeight = windowCI.Height;
+	graphicsContext.Init(graphicsCI);
 
 	// Run
 	app.Run();

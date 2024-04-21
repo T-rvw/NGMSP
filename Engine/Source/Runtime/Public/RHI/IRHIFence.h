@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Core/HAL/BasicTypes.h>
+#include <Core/Base/RefCountPtr.h>
 
 namespace ow
 {
 
-class IRHIFence
+class IRHIFence : public RefCountObject
 {
 public:
 	virtual ~IRHIFence() {}

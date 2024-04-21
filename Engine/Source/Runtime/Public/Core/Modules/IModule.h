@@ -13,7 +13,7 @@ public:
 	{
 	}
 	
-	virtual void Initialize()
+	virtual void Init()
 	{
 	}
 
@@ -22,7 +22,7 @@ public:
 	}
 };
 
-using InitializeModuleFunc = IModule* (*)(void);
+using InitializeModuleFunc = IModule*(*)(void);
 
 struct ModuleData
 {

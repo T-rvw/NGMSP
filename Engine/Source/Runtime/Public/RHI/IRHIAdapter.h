@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/BasicTypes.h>
+#include <Core/Base/RefCountPtr.h>
 
 #include <RHI/RHITypes.h>
 
@@ -12,7 +12,7 @@ class IRHIAdapter
 public:
 	virtual ~IRHIAdapter() {}
 
-	virtual void Initialize() = 0;
+	virtual void Init() = 0;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) = 0;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) = 0;
 

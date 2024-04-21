@@ -17,13 +17,12 @@ public:
 	ModuleManagerImpl& operator=(const ModuleManagerImpl&) = delete;
 	ModuleManagerImpl(ModuleManagerImpl&&) = default;
 	ModuleManagerImpl& operator=(ModuleManagerImpl&&) = default;
-	~ModuleManagerImpl() = default;
+	~ModuleManagerImpl();
 
 	void LoadModules();
 	void UnloadModules();
 
-	ModuleData* AddModule(const char* pModuleName, const char* pModulePath);
-	ModuleData* LoadModule(const char* pModuleName, const char* pModulePath);
+	ModuleData* AddModule(const char* pModuleName, const char* pModulePath, bool autoLoad);
 	bool FindModule(const char* pModuleName) const;
 	ModuleData* GetModule(const char* pModuleName);
 	const ModuleData* GetModule(const char* pModuleName) const { return GetModule(pModuleName); }

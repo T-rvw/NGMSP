@@ -24,7 +24,7 @@ public:
 	D3D12Adapter& operator=(D3D12Adapter&&) = default;
 	virtual ~D3D12Adapter() = default;
 
-	virtual void Initialize() override;
+	virtual void Init() override;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 

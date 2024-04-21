@@ -7,7 +7,7 @@
 namespace ow
 {
 
-class VulkanBuffer : public IRHIBuffer, public RefCountObject
+class VulkanBuffer : public IRHIBuffer
 {
 public:
 	VulkanBuffer() = default;

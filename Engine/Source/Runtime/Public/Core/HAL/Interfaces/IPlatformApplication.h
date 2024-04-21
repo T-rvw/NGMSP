@@ -6,7 +6,7 @@ namespace ow
 class IPlatformApplication
 {
 public:
-	virtual void Initialize() = 0;
+	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void Shutdown() = 0;
 

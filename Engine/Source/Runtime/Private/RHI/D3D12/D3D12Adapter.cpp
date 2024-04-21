@@ -53,7 +53,7 @@ RefCountPtr<IDXGIFactory6> D3D12Adapter::GetFactory() const
 	return m_pInstance->GetHandle();
 }
 
-void D3D12Adapter::Initialize()
+void D3D12Adapter::Init()
 {
 	{
 		auto& commandQueue = m_commandQueueCIs.emplace_back();
