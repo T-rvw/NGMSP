@@ -11,14 +11,8 @@
 #include "D3D12Types.h"
 #include "D3D12Utils.h"
 
+#include <Core/Base/RefCountPtr.h>
 #include <Core/Base/TypeTraits.h>
-
-#include <wrl.h>
-
-template<typename T>
-using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-#include <cassert>
 
 // DXGI extended ASTC formats from 133 to 187.
 // But not all DDS readers support these.

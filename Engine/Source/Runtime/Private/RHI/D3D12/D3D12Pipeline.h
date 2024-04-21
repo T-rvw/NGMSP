@@ -16,8 +16,6 @@ public:
 	D3D12Pipeline(D3D12Pipeline&&) = default;
 	D3D12Pipeline& operator=(D3D12Pipeline&&) = default;
 	virtual ~D3D12Pipeline() = default;
-
-	void Init();
 };
 
 }

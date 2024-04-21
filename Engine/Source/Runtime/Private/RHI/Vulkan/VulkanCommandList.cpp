@@ -9,8 +9,4 @@ VulkanCommandList::~VulkanCommandList()
 {
 }
 
-void VulkanCommandList::Init()
-{
-}
-
 }

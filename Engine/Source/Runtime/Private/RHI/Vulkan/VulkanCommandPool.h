@@ -16,8 +16,6 @@ public:
 	VulkanCommandPool(VulkanCommandPool&&) = default;
 	VulkanCommandPool& operator=(VulkanCommandPool&&) = default;
 	virtual ~VulkanCommandPool();
-
-	virtual void Init() override;
 };
 
 }

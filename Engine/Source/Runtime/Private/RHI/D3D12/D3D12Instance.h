@@ -24,13 +24,13 @@ public:
 	virtual RHIBackend GetBackend() const override;
 	virtual void EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters) override;
 
-	ComPtr<IDXGIFactory6> GetHandle() const { return m_factory; }
+	RefCountPtr<IDXGIFactory6> GetHandle() const { return m_factory; }
 
 private:
 	void InitAdapters();
 
 private:
-	ComPtr<IDXGIFactory6> m_factory;
+	RefCountPtr<IDXGIFactory6> m_factory;
 	std::vector<D3D12Adapter> m_adapters;
 };
 

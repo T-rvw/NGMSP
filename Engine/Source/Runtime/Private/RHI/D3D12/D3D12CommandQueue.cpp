@@ -5,7 +5,7 @@
 namespace ow
 {
 
-D3D12CommandQueue::D3D12CommandQueue(ComPtr<ID3D12CommandQueue> pCommandQueue) :
+D3D12CommandQueue::D3D12CommandQueue(RefCountPtr<ID3D12CommandQueue> pCommandQueue) :
 	m_commandQueue(MoveTemp(pCommandQueue))
 {
 }

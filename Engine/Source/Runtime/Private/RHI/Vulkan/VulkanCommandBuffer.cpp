@@ -9,8 +9,4 @@ VulkanCommandBuffer::~VulkanCommandBuffer()
 {
 }
 
-void VulkanCommandBuffer::Init()
-{
-}
-
 }

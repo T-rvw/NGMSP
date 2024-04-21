@@ -9,8 +9,4 @@ VulkanBuffer::~VulkanBuffer()
 {
 }
 
-void VulkanBuffer::Init()
-{
-}
-
 }

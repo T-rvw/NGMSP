@@ -12,7 +12,7 @@ D3D12Instance::D3D12Instance(const RHIInstanceCreateInfo& createInfo)
 	// GPU validator needs to enable debug layer at first.
 	if (createInfo.Validation != RHIValidationMode::Disabled)
 	{
-		ComPtr<ID3D12Debug1> pDebugController;
+		RefCountPtr<ID3D12Debug1> pDebugController;
 		D3D12_VERIFY(D3D12GetDebugInterface(IID_PPV_ARGS(&pDebugController)));
 		assert(pDebugController);
 		pDebugController->EnableDebugLayer();
@@ -38,7 +38,7 @@ RHIBackend D3D12Instance::GetBackend() const
 void D3D12Instance::InitAdapters()
 {
 	uint32 adapterIndex = 0;
-	ComPtr<IDXGIAdapter4> pAdapter;
+	RefCountPtr<IDXGIAdapter4> pAdapter;
 	while (D3D12_SUCCEED(m_factory->EnumAdapterByGpuPreference(adapterIndex++, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(pAdapter.ReleaseAndGetAddressOf()))))
 	{
 		m_adapters.emplace_back(this, pAdapter.Get());

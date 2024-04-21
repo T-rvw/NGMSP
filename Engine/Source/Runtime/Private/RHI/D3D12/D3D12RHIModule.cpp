@@ -20,7 +20,7 @@ void D3D12RHIModule::Shutdown()
 	m_rhiCommandQueues.clear();
 
 #ifndef NDEBUG
-	std::vector<ComPtr<ID3D12DebugDevice>> debugDevices;
+	std::vector<RefCountPtr<ID3D12DebugDevice>> debugDevices;
 	for (const auto& device : m_rhiDevices)
 	{
 		device->ReportLiveObjects();

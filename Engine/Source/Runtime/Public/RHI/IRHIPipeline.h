@@ -7,8 +7,6 @@ class IRHIPipeline
 {
 public:
 	virtual ~IRHIPipeline() {}
-
-	virtual void Init() = 0;
 };
 
 }

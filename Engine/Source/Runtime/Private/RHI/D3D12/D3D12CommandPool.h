@@ -17,10 +17,8 @@ public:
 	D3D12CommandPool& operator=(D3D12CommandPool&&) = default;
 	virtual ~D3D12CommandPool() = default;
 
-	void Init();
-
 private:
-	ComPtr<ID3D12CommandAllocator> m_commandPool;
+	RefCountPtr<ID3D12CommandAllocator> m_commandPool;
 };
 
 }

@@ -9,8 +9,4 @@ VulkanCommandPool::~VulkanCommandPool()
 {
 }
 
-void VulkanCommandPool::Init()
-{
-}
-
 }

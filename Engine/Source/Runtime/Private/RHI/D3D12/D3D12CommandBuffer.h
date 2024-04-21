@@ -16,8 +16,6 @@ public:
 	D3D12CommandBuffer(D3D12CommandBuffer&&) = default;
 	D3D12CommandBuffer& operator=(D3D12CommandBuffer&&) = default;
 	virtual ~D3D12CommandBuffer() = default;
-
-	void Init();
 };
 
 }

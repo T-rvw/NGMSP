@@ -17,7 +17,7 @@ class D3D12Adapter : public IRHIAdapter
 {
 public:
 	D3D12Adapter() = delete;
-	explicit D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter4> pAdapter);
+	explicit D3D12Adapter(const D3D12Instance* pInstance, RefCountPtr<IDXGIAdapter4> pAdapter);
 	D3D12Adapter(const D3D12Adapter&) = delete;
 	D3D12Adapter& operator=(const D3D12Adapter&) = delete;
 	D3D12Adapter(D3D12Adapter&&) = default;
@@ -28,15 +28,15 @@ public:
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
 
-	ComPtr<IDXGIFactory6> GetFactory() const;
+	RefCountPtr<IDXGIFactory6> GetFactory() const;
 
 private:
 	friend class D3D12RHIModule;
 	void SetType(const DXGI_ADAPTER_DESC3& desc);
-	ComPtr<ID3D12Device> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
+	RefCountPtr<ID3D12Device> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
-	ComPtr<IDXGIAdapter4> m_adapter;
+	RefCountPtr<IDXGIAdapter4> m_adapter;
 	const D3D12Instance* m_pInstance = nullptr;
 	std::vector<RHIOutputInfo> m_outputInfos;
 	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;

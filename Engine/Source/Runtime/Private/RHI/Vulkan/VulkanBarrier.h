@@ -16,8 +16,6 @@ public:
 	VulkanBarrier(VulkanBarrier&&) = default;
 	VulkanBarrier& operator=(VulkanBarrier&&) = default;
 	virtual ~VulkanBarrier();
-
-	virtual void Init() override;
 };
 
 }

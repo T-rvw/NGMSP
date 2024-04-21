@@ -7,8 +7,6 @@
 namespace ow
 {
 
-class IRHIDevice;
-
 class IRHIAdapter
 {
 public:

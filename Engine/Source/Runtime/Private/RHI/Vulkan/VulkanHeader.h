@@ -13,6 +13,7 @@
 #include "VulkanTypes.h"
 #include "VulkanUtils.h"
 
+#include <Core/Base/RefCountPtr.h>
 #include <Core/Base/TypeTraits.h>
 
 #include <cassert>

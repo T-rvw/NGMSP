@@ -16,8 +16,6 @@ public:
 	VulkanCommandList(VulkanCommandList&&) = default;
 	VulkanCommandList& operator=(VulkanCommandList&&) = default;
 	virtual ~VulkanCommandList();
-
-	virtual void Init() override;
 };
 
 }

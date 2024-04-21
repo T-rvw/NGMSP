@@ -7,7 +7,7 @@
 namespace ow
 {
 
-D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter4> pAdapter) :
+D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, RefCountPtr<IDXGIAdapter4> pAdapter) :
 	m_pInstance(pInstance),
 	m_adapter(MoveTemp(pAdapter))
 {
@@ -27,11 +27,11 @@ D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter4>
 
 	// Query monitor outputs information.
 	uint32 outputIndex = 0;
-	ComPtr<IDXGIOutput> pOutput;
+	RefCountPtr<IDXGIOutput> pOutput;
 	while (D3D12_SUCCEED(m_adapter->EnumOutputs(outputIndex++, pOutput.ReleaseAndGetAddressOf())))
 	{
-		ComPtr<IDXGIOutput6> pOutput6;
-		D3D12_VERIFY(pOutput.As<IDXGIOutput6>(&pOutput6));
+		RefCountPtr<IDXGIOutput6> pOutput6;
+		D3D12_VERIFY(pOutput->QueryInterface(__uuidof(IDXGIOutput6), reinterpret_cast<void**>(pOutput6.ReleaseAndGetAddressOf())));
 
 		DXGI_OUTPUT_DESC1 outputDesc;
 		pOutput6->GetDesc1(&outputDesc);
@@ -48,7 +48,7 @@ D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, ComPtr<IDXGIAdapter4>
 	}
 }
 
-ComPtr<IDXGIFactory6> D3D12Adapter::GetFactory() const
+RefCountPtr<IDXGIFactory6> D3D12Adapter::GetFactory() const
 {
 	return m_pInstance->GetHandle();
 }
@@ -108,11 +108,11 @@ void D3D12Adapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueC
 	}
 }
 
-ComPtr<ID3D12Device> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI)
+RefCountPtr<ID3D12Device> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI)
 {
 	UNUSED(deviceCI);
 
-	ComPtr<ID3D12Device> pDevice;
+	RefCountPtr<ID3D12Device> pDevice;
 	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
 	assert(pDevice);
 

@@ -9,8 +9,4 @@ VulkanBarrier::~VulkanBarrier()
 {
 }
 
-void VulkanBarrier::Init()
-{
-}
-
 }

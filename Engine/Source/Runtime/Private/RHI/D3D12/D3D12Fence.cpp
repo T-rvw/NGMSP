@@ -5,7 +5,7 @@
 namespace ow
 {
 
-D3D12Fence::D3D12Fence(ComPtr<ID3D12Fence> pFence) :
+D3D12Fence::D3D12Fence(RefCountPtr<ID3D12Fence> pFence) :
 	m_fence(MoveTemp(pFence))
 {
 }

@@ -1,12 +1,9 @@
 #pragma once
 
-#include <vector>
-
 namespace ow
 {
 
 enum class RHIBackend;
-struct RHIInstanceCreateInfo;
 
 class IRHIAdapter;
 

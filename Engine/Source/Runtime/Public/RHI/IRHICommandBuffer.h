@@ -7,8 +7,6 @@ class IRHICommandBuffer
 {
 public:
 	virtual ~IRHICommandBuffer() {}
-
-	virtual void Init() = 0;
 };
 
 }

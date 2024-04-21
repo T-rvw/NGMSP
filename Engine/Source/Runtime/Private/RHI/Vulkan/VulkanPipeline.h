@@ -16,8 +16,6 @@ public:
 	VulkanPipeline(VulkanPipeline&&) = default;
 	VulkanPipeline& operator=(VulkanPipeline&&) = default;
 	virtual ~VulkanPipeline();
-
-	virtual void Init() override;
 };
 
 }

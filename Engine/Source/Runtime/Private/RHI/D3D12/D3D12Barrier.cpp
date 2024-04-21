@@ -9,8 +9,4 @@ D3D12Barrier::~D3D12Barrier()
 {
 }
 
-void D3D12Barrier::Init()
-{
-}
-
 }

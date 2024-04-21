@@ -16,8 +16,6 @@ public:
 	VulkanCommandBuffer(VulkanCommandBuffer&&) = default;
 	VulkanCommandBuffer& operator=(VulkanCommandBuffer&&) = default;
 	virtual ~VulkanCommandBuffer();
-
-	virtual void Init() override;
 };
 
 }

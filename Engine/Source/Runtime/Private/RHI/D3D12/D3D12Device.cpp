@@ -8,7 +8,7 @@
 namespace ow
 {
 
-D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, ComPtr<ID3D12Device> pDevice) :
+D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, RefCountPtr<ID3D12Device> pDevice) :
 	m_pAdapter(pAdapter),
 	m_device(MoveTemp(pDevice))
 {
@@ -18,14 +18,14 @@ D3D12Device::~D3D12Device()
 {
 }
 
-ComPtr<IDXGIFactory6> D3D12Device::GetFactory() const
+RefCountPtr<IDXGIFactory6> D3D12Device::GetFactory() const
 {
 	return m_pAdapter->GetFactory();
 }
 
-ComPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI)
+RefCountPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI)
 {
-	ComPtr<ID3D12CommandQueue> commandQueue;
+	RefCountPtr<ID3D12CommandQueue> commandQueue;
 
 	D3D12_COMMAND_QUEUE_DESC queueDesc {};
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -36,15 +36,15 @@ ComPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueue
 	return commandQueue;
 }
 
-ComPtr<ID3D12Fence> D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo) const
+RefCountPtr<ID3D12Fence> D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo) const
 {
-	ComPtr<ID3D12Fence> pFence;
+	RefCountPtr<ID3D12Fence> pFence;
 	D3D12_VERIFY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence)));
 
 	return pFence;
 }
 
-ComPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
+RefCountPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
 {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
 	swapChainDesc.Width = createInfo.BackBufferWidth;
@@ -62,7 +62,7 @@ ComPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInf
 	DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc {};
 	fullScreenDesc.Windowed = TRUE;
 	
-	ComPtr<IDXGISwapChain1> swapChain;
+	RefCountPtr<IDXGISwapChain1> swapChain;
 	int32 typeIndex = static_cast<int32>(RHICommandType::Graphics);
 	D3D12_VERIFY(GetFactory()->CreateSwapChainForHwnd(m_pCommandQueues[typeIndex]->GetHandle().Get(), (HWND)createInfo.NativeWindowHandle,
 		&swapChainDesc, &fullScreenDesc, nullptr, &swapChain));
@@ -78,8 +78,8 @@ void D3D12Device::SetCommandQueue(const D3D12CommandQueue* pCommandQueue)
 
 void D3D12Device::ReportLiveObjects()
 {
-	ComPtr<ID3D12DebugDevice> pDebugDevice;
-	D3D12_VERIFY(m_device.As(&pDebugDevice));
+	RefCountPtr<ID3D12DebugDevice> pDebugDevice;
+	D3D12_VERIFY(m_device->QueryInterface(__uuidof(ID3D12DebugDevice), reinterpret_cast<void**>(pDebugDevice.ReleaseAndGetAddressOf())));
 	pDebugDevice->ReportLiveDeviceObjects((D3D12_RLDO_FLAGS)(D3D12_RLDO_IGNORE_INTERNAL | D3D12_RLDO_DETAIL));
 }
 

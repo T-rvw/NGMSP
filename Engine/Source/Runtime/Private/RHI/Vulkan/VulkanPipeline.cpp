@@ -9,8 +9,4 @@ VulkanPipeline::~VulkanPipeline()
 {
 }
 
-void VulkanPipeline::Init()
-{
-}
-
 }
