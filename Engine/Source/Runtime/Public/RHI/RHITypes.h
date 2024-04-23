@@ -112,6 +112,20 @@ struct RHIInstanceCreateInfo
     RHIValidationMode Validation = RHIValidationMode::Disabled;
 };
 
+struct RHIBarrierCreateInfo
+{
+};
+
+struct RHICommandBufferCreateInfo
+{
+    uint32 BufferCount = 1;
+};
+
+struct RHICommandPoolCreateInfo
+{
+    uint32 QueueID = 0;
+};
+
 struct RHICommandQueueCreateInfo
 {
     RHICommandType Type = RHICommandType::Graphics;

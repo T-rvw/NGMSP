@@ -20,6 +20,19 @@ RefCountPtr<IRHIDevice> VulkanRHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, 
 	return MakeRefCountPtr<VulkanDevice>(pVulkanAdapter, vkDevice);
 }
 
+RefCountPtr<IRHICommandBuffer> VulkanRHIModule::CreateRHICommandBuffer(IRHICommandPool* pCommandPool, const RHICommandBufferCreateInfo& createInfo)
+{
+	auto* pVulkanCommandPool = static_cast<VulkanCommandPool*>(pCommandPool);
+	auto vkCommandBuffer = pVulkanCommandPool->CreateCommandBuffer(createInfo);
+	return MakeRefCountPtr<VulkanCommandBuffer>(vkCommandBuffer);
+}
+
+RefCountPtr<IRHICommandPool> VulkanRHIModule::CreateRHICommandPool(IRHIDevice* pDevice, const RHICommandPoolCreateInfo& createInfo)
+{
+	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
+	return MakeRefCountPtr<VulkanCommandPool>(pVulkanDevice, createInfo);
+}
+
 RefCountPtr<IRHICommandQueue> VulkanRHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
 {
 	auto vkCommandQueue = static_cast<VulkanDevice*>(pDevice)->CreateCommandQueue(createInfo);
@@ -38,6 +51,11 @@ RefCountPtr<IRHIFence> VulkanRHIModule::CreateRHIFence(IRHIDevice* pDevice, cons
 {
 	auto* pVulkanDevice = static_cast<VulkanDevice*>(pDevice);
 	return MakeRefCountPtr<VulkanFence>(pVulkanDevice, createInfo);
+}
+
+RefCountPtr<IRHIBarrier> VulkanRHIModule::CreateRHIBarrier(IRHIDevice* pDevice, const RHIBarrierCreateInfo& createInfo)
+{
+	return nullptr;
 }
 
 RefCountPtr<IRHISemaphore> VulkanRHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)

@@ -43,8 +43,8 @@ private:
 template<>
 struct std::hash<ow::StringID>
 {
-	uint64_t operator()(const ow::StringID& key) const
+	std::uint64_t operator()(const ow::StringID& key) const
 	{
-		return static_cast<uint32_t>(key.Value());
+		return static_cast<std::uint32_t>(key.Value());
 	}
 };

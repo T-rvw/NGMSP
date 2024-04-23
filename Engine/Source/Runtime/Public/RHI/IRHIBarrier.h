@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+
 namespace ow
 {
 
-class IRHIBarrier
+class IRHIBarrier : public RefCountObject
 {
 public:
 	virtual ~IRHIBarrier() {}

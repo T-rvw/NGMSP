@@ -5,8 +5,10 @@
 * API
 
     * Vulkan
-	
-        * [Vulkanised 2023 Tutorial: An Introduction to Vulkan](https://www.youtube.com/watch?v=e14z9oOsPu0)
+
+		* [Sig 2016 - VULKAN AND NVIDIA: THE ESSENTIALS](https://on-demand.gputechconf.com/siggraph/2016/presentation/sig1625-tristan-lorach-vulkan-nvidia-essentials.pdf)
+        
+		* [Vulkanised 2023 Tutorial: An Introduction to Vulkan](https://www.youtube.com/watch?v=e14z9oOsPu0)
 
 * Graphics
 

@@ -286,7 +286,9 @@ enum class RHIPrimitiveType
     LineList,
     LineStrip,
     TriangleList,
-    TriangleStrip
+    TriangleStrip,
+    TriangleFan,
+    PatchList
 };
 
 enum class RHIShaderType
@@ -294,6 +296,17 @@ enum class RHIShaderType
     Compute,
     Fragment,
     Vertex
+};
+
+enum class RHITextureType
+{
+    Texture1D,
+    Texture2D,
+    Texture3D,
+    TextureCube,
+    Texture1DArray,
+    Texture2DArray,
+    TextureCubeArray
 };
 
 enum class RHIValidationMode

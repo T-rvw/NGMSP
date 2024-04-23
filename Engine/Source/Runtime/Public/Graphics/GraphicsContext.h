@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Base/BitFlags.h>
+#include <Core/Base/NameOf.h>
 #include <Core/Base/RefCountPtr.h>
 #include <Core/HAL/APIDefinition.h>
 #include <RHI/RHIEnums.h>
@@ -12,6 +13,7 @@ namespace ow
 
 struct ModuleData;
 
+class IRHICommandPool;
 class IRHICommandQueue;
 class IRHIDevice;
 class IRHIFence;
@@ -48,8 +50,9 @@ private:
 	RefCountPtr<IRHIInstance> m_pRHIInstance;
 	RefCountPtr<IRHIDevice> m_pRHIDevice;
 	RefCountPtr<IRHISwapChain> m_pRHISwapChain;
-	std::vector<RefCountPtr<IRHICommandQueue>> m_rhiCommandQueues;
-	std::vector<RefCountPtr<IRHIFence>> m_rhiCommandQueueFences;
+	RefCountPtr<IRHICommandPool> m_rhiCommandPools[EnumCount<RHICommandType>()];
+	RefCountPtr<IRHICommandQueue> m_rhiCommandQueues[EnumCount<RHICommandType>()];
+	RefCountPtr<IRHIFence> m_rhiCommandQueueFences[EnumCount<RHICommandType>()];
 };
 
 }

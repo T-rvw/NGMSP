@@ -117,7 +117,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     m_swapChainImageViews.resize(swapChainImageCount, VK_NULL_HANDLE);
     for (uint32 imageIndex = 0; imageIndex < swapChainImageCount; ++imageIndex)
     {
-        VkImageViewCreateInfo imageViewCreateInfo{};
+        VkImageViewCreateInfo imageViewCreateInfo {};
         imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         imageViewCreateInfo.image = m_swapChainImages[imageIndex];
         imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;

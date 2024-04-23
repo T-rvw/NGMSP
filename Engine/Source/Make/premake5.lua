@@ -1,5 +1,4 @@
 dofile("utils.lua")
-dofile("module.lua")
 
 --------------------------------------------------------------
 -- Path
@@ -60,9 +59,14 @@ dofile("documents.lua")
 dofile("shaders.lua")
 group("")
 
+group("Modules")
+dofile("modules.lua")
+group("")
+
+group("Runtime")
+dofile("runtime.lua")
+group("")
+
 group("Samples")
 dofile("samples.lua")
 group("")
-
-dofile("runtime.lua")
---dofile("editor.lua")

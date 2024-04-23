@@ -95,18 +95,19 @@ void GraphicsContext::Init(const GraphicsCreateInfo& createInfo)
 	m_pRHIDevice = m_pRHIModule->CreateRHIDevice(pBestAdapter, deviceCI);
 
 	// Create command queues and fences.
-	constexpr int32 CommandTypeCount = EnumCount<RHICommandType>();
-	m_rhiCommandQueues.resize(CommandTypeCount);
-	m_rhiCommandQueueFences.resize(CommandTypeCount);
 	for (const auto& bestQueueCI : bestQueueCIs)
 	{
 		auto typeIndex = static_cast<uint32>(bestQueueCI->Type);
 		m_rhiCommandQueues[typeIndex] = m_pRHIModule->CreateRHICommandQueue(m_pRHIDevice, *bestQueueCI);
 
+		RHICommandPoolCreateInfo commandPoolCI;
+		commandPoolCI.QueueID = bestQueueCI->ID;
+		m_rhiCommandPools[typeIndex] = m_pRHIModule->CreateRHICommandPool(m_pRHIDevice, commandPoolCI);
+
 		RHIFenceCreateInfo fenceCI;
 		m_rhiCommandQueueFences[typeIndex] = m_pRHIModule->CreateRHIFence(m_pRHIDevice, fenceCI);
 	}
-
+	
 	// Create SwapChain to bind to native window.
 	RHISwapChainCreateInfo swapChainCI;
 	swapChainCI.NativeInstanceHandle = createInfo.NativeInstanceHandle;
