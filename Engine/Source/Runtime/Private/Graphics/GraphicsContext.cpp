@@ -95,9 +95,6 @@ void GraphicsContext::Init(const GraphicsCreateInfo& createInfo)
 	m_pRHIDevice = m_pRHIModule->CreateRHIDevice(pBestAdapter, deviceCI);
 
 	// Create command queues and fences.
-	constexpr int32 CommandTypeCount = EnumCount<RHICommandType>();
-	m_rhiCommandQueues.resize(CommandTypeCount);
-	m_rhiCommandQueueFences.resize(CommandTypeCount);
 	for (const auto& bestQueueCI : bestQueueCIs)
 	{
 		auto typeIndex = static_cast<uint32>(bestQueueCI->Type);

@@ -11,14 +11,14 @@ Module.Create("Core", function()
 	}
 
 	vpaths {
-		["Core/Public/*"] = {
+		["Public/*"] = {
 			path.join(RootPath, "Engine/Source/Runtime/Public/Core/**.*"),
 		},
-		["Core/Private/*"] = {
-			path.join(RootPath, "Engine/Source/Runtime/Private/Core/**.*"),
-		},
-		["RHI/*"] = {
+		["Public/RHI/*"] = {
 			path.join(RootPath, "Engine/Source/Runtime/Public/RHI/**.*"),
+		},
+		["Private/*"] = {
+			path.join(RootPath, "Engine/Source/Runtime/Private/Core/**.*"),
 		}
 	}
 

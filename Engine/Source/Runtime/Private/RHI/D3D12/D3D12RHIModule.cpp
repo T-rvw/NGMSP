@@ -22,6 +22,16 @@ RefCountPtr<IRHIDevice> D3D12RHIModule::CreateRHIDevice(IRHIAdapter* pAdapter, c
 	return MakeRefCountPtr<D3D12Device>(pD3D12Adapter, d3d12Device);
 }
 
+RefCountPtr<IRHICommandBuffer> D3D12RHIModule::CreateRHICommandBuffer(IRHICommandPool* pCommandPool, const RHICommandBufferCreateInfo& createInfo)
+{
+	return nullptr;
+}
+
+RefCountPtr<IRHICommandPool> D3D12RHIModule::CreateRHICommandPool(IRHIDevice* pDevice, const RHICommandPoolCreateInfo& createInfo)
+{
+	return nullptr;
+}
+
 RefCountPtr<IRHICommandQueue> D3D12RHIModule::CreateRHICommandQueue(IRHIDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
 {
 	auto* pD3D12Device = static_cast<D3D12Device*>(pDevice);
@@ -42,6 +52,11 @@ RefCountPtr<IRHIFence> D3D12RHIModule::CreateRHIFence(IRHIDevice* pDevice, const
 {
 	auto* pD3D12Device = static_cast<D3D12Device*>(pDevice);
 	return MakeRefCountPtr<D3D12Fence>(pD3D12Device, createInfo);
+}
+
+RefCountPtr<IRHIBarrier> D3D12RHIModule::CreateRHIBarrier(IRHIDevice* pDevice, const RHIBarrierCreateInfo& createInfo)
+{
+	return nullptr;
 }
 
 RefCountPtr<IRHISemaphore> D3D12RHIModule::CreateRHISemaphore(IRHIDevice* pDevice, const RHISemaphoreCreateInfo& createInfo)

@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+
 namespace ow
 {
 
-class IRHICommandPool
+class IRHICommandPool : public RefCountObject
 {
 public:
 	virtual ~IRHICommandPool() {}

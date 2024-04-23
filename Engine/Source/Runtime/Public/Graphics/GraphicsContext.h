@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Base/BitFlags.h>
+#include <Core/Base/NameOf.h>
 #include <Core/Base/RefCountPtr.h>
 #include <Core/HAL/APIDefinition.h>
 #include <RHI/RHIEnums.h>
@@ -48,8 +49,8 @@ private:
 	RefCountPtr<IRHIInstance> m_pRHIInstance;
 	RefCountPtr<IRHIDevice> m_pRHIDevice;
 	RefCountPtr<IRHISwapChain> m_pRHISwapChain;
-	std::vector<RefCountPtr<IRHICommandQueue>> m_rhiCommandQueues;
-	std::vector<RefCountPtr<IRHIFence>> m_rhiCommandQueueFences;
+	RefCountPtr<IRHICommandQueue> m_rhiCommandQueues[EnumCount<RHICommandType>()];
+	RefCountPtr<IRHIFence> m_rhiCommandQueueFences[EnumCount<RHICommandType>()];
 };
 
 }

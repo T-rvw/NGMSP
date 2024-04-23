@@ -5,6 +5,11 @@
 namespace ow
 {
 
+VulkanCommandBuffer::VulkanCommandBuffer(VkCommandBuffer commandBuffer) :
+	m_commandBuffer(commandBuffer)
+{
+}
+
 VulkanCommandBuffer::~VulkanCommandBuffer()
 {
 }
