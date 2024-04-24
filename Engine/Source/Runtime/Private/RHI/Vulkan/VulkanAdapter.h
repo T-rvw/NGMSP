@@ -67,15 +67,18 @@ public:
 	virtual void Init() override;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
+	virtual RefCountPtr<IRHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) override;
 
 	VkPhysicalDevice GetHandle() const { return m_physicalDevice; }
 	VkInstance GetInstance() const;
 
+	const std::vector<VkExtensionProperties>& GetAvailableExtensions() const { return m_availableExtensions; }
+	VulkanAdapterFeatures* GetFeatures() const { return m_adapterFeatures.get(); }
+	VulkanAdapterProperties* GetProperties() const { return m_adapterProperties.get(); }
+
 private:
-	friend class VulkanRHIModule;
 	void InitOutputInfos();
 	void InitCommandQueueCreateInfos();
-	VkDevice CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
 	const VulkanInstance* m_pInstance = nullptr;

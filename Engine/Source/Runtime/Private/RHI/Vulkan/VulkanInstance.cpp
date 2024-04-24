@@ -50,9 +50,9 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	if (!createInfo.Features.IsEnabled(RHIFeatures::Headless))
 	{
 		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_DISPLAY_EXTENSION_NAME);
-		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
-
+		
 		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_SURFACE_EXTENSION_NAME);
+		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -72,17 +72,19 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 
 	// Enable debug utils extension.
 	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
-	if (createInfo.Debug != RHIDebugMode::Disabled &&
-		VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
+	if (createInfo.Debug != RHIDebugMode::Disabled)
 	{
-		VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo{};
-		debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
-		debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
-		debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
-		debugUtilsCreateInfo.pfnUserCallback = DebugUtilsMessengerCallback;
-		optDebugUtilsCreateInfo = debugUtilsCreateInfo;
+		if (VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
+		{
+			VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo{};
+			debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+			debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
+			debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+			debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+			debugUtilsCreateInfo.messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
+			debugUtilsCreateInfo.pfnUserCallback = DebugUtilsMessengerCallback;
+			optDebugUtilsCreateInfo = debugUtilsCreateInfo;
+		}
 	}
 
 	uint32 maxAPIVersion;

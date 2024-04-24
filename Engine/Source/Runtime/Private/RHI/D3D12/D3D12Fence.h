@@ -26,11 +26,11 @@ public:
 	D3D12Fence& operator=(D3D12Fence&&) = default;
 	virtual ~D3D12Fence();
 
-	virtual uint64 Signal(uint64 fenceValue) override;
-	virtual void Wait(uint64 fenceValue) override;
-	void Wait();
-	virtual bool IsComplete(uint64 fenceValue) override;
-	virtual void Reset() override;
+	virtual uint64 Signal(uint64 fenceCount) override;
+	virtual void Wait(uint64 fenceCount) override;
+	virtual void Wait(uint64 fenceCount, uint64 timeout) override;
+	virtual bool IsComplete(uint64 fenceCount) override;
+	virtual void Reset(uint64 fenceCount) override;
 
 private:
 	RefCountPtr<ID3D12Fence> m_fence;

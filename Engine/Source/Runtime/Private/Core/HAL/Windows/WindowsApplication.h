@@ -22,6 +22,7 @@ public:
 
 	virtual void Init() override;
 	virtual void Update() override;
+	virtual bool ShouldQuit() override;
 	virtual void Shutdown() override;
 	virtual void* GetProcessInstance() const override;
 	

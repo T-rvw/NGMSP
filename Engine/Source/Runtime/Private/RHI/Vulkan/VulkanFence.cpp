@@ -10,8 +10,9 @@ namespace ow
 VulkanFence::VulkanFence(const VulkanDevice* pDevice, const RHIFenceCreateInfo& createInfo) :
 	m_pDevice(pDevice)
 {
-	VkFenceCreateInfo fenceCI{};
+	VkFenceCreateInfo fenceCI {};
 	fenceCI.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceCI.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 	VK_VERIFY(vkCreateFence(m_pDevice->GetHandle(), &fenceCI, nullptr, &m_fence));
 }
@@ -21,24 +22,29 @@ VulkanFence::~VulkanFence()
 	vkDestroyFence(m_pDevice->GetHandle(), m_fence, nullptr);
 }
 
-uint64 VulkanFence::Signal(uint64 fenceValue)
+uint64 VulkanFence::Signal(uint64 fenceCount)
 {
 	return 0;
 }
 
-void VulkanFence::Wait(uint64 timeout)
+void VulkanFence::Wait(uint64 fenceCount)
 {
-	vkWaitForFences(m_pDevice->GetHandle(), 1, &m_fence, true, timeout);
+	Wait(fenceCount, UINT64_MAX);
 }
 
-bool VulkanFence::IsComplete(uint64 fenceValue)
+void VulkanFence::Wait(uint64 fenceCount, uint64 timeout)
+{
+	vkWaitForFences(m_pDevice->GetHandle(), static_cast<uint32>(fenceCount), &m_fence, VK_TRUE, timeout);
+}
+
+bool VulkanFence::IsComplete(uint64 fenceCount)
 {
 	return true;
 }
 
-void VulkanFence::Reset()
+void VulkanFence::Reset(uint64 fenceCount)
 {
-	vkResetFences(m_pDevice->GetHandle(), 1, &m_fence);
+	vkResetFences(m_pDevice->GetHandle(), static_cast<uint32>(fenceCount), &m_fence);
 }
 
 }

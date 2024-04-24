@@ -27,13 +27,13 @@ public:
 	virtual void Init() override;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
 	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
+	virtual RefCountPtr<IRHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) override;
 
+	RefCountPtr<IDXGIAdapter4> GetHandle() const { return m_adapter; }
 	RefCountPtr<IDXGIFactory6> GetFactory() const;
 
 private:
-	friend class D3D12RHIModule;
 	void SetType(const DXGI_ADAPTER_DESC3& desc);
-	RefCountPtr<ID3D12Device5> CreateDevice(const RHIDeviceCreateInfo& deviceCI);
 
 private:
 	RefCountPtr<IDXGIAdapter4> m_adapter;

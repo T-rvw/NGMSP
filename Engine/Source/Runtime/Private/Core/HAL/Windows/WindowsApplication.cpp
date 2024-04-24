@@ -34,10 +34,11 @@ void WindowsApplication::Update()
 {
 	m_lastTime = m_currentTime;
 	m_currentTime = PlatformTime::Seconds();
+}
 
-	while (PollMessages())
-	{
-	}
+bool WindowsApplication::ShouldQuit()
+{
+	return PollMessages();
 }
 
 void WindowsApplication::Shutdown()

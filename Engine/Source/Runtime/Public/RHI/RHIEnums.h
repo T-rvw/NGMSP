@@ -91,13 +91,14 @@ enum class RHICullMode
 
 enum class RHIDebugMode
 {
-    Normal,
+    Enabled,
     Disabled
 };
 
 enum class RHIFeatures
 {
     Headless,
+    StablePower,
     MeshShaders,
     RayTracing,
     VariableRateShading,

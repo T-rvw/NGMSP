@@ -7,19 +7,18 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanCommandQueue : public IRHICommandQueue
 {
 public:
 	VulkanCommandQueue() = default;
-	explicit VulkanCommandQueue(VkQueue queue);
+	explicit VulkanCommandQueue(const VulkanDevice* pDevice, const RHICommandQueueCreateInfo& createInfo);
 	VulkanCommandQueue(const VulkanCommandQueue&) = delete;
 	VulkanCommandQueue& operator=(const VulkanCommandQueue&) = delete;
 	VulkanCommandQueue(VulkanCommandQueue&&) = default;
 	VulkanCommandQueue& operator=(VulkanCommandQueue&&) = default;
-	virtual ~VulkanCommandQueue();
-
-private:
-	friend class VulkanRHIModule;
+	virtual ~VulkanCommandQueue() = default;
 
 private:
 	VkQueue m_queue = VK_NULL_HANDLE;

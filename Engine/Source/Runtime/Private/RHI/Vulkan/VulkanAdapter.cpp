@@ -1,90 +1,7 @@
 #include "VulkanAdapter.h"
 
+#include "VulkanDevice.h"
 #include "VulkanInstance.h"
-
-namespace
-{
-
-struct VulkanAdapterRayTracing
-{
-	VulkanAdapterRayTracing()
-	{
-		ExtensionNames =
-		{
-			VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
-			VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME, // required by VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME
-			VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
-			VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME, // required by VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME
-			VK_KHR_RAY_QUERY_EXTENSION_NAME
-		};
-
-		AccelerateStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
-		RayTracingPipelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-		RayQueryFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR;
-		AccelerateStructureFeatures.pNext = &RayTracingPipelineFeatures;
-		RayTracingPipelineFeatures.pNext = &RayQueryFeatures;
-
-		AccelerateStructureProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR;
-		RayTracingPipelineProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
-		AccelerateStructureProperties.pNext = &RayTracingPipelineProperties;
-	}
-
-	void AppendFeatures(void** pNextChain)
-	{
-		*pNextChain = &RayQueryFeatures;
-		pNextChain = &RayQueryFeatures.pNext;
-	}
-
-	void AppendProperties(void** pNextChain)
-	{
-		*pNextChain = &RayTracingPipelineProperties;
-		pNextChain = &RayTracingPipelineProperties.pNext;
-	}
-
-	std::vector<const char*> ExtensionNames;
-
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR AccelerateStructureFeatures {};
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR RayTracingPipelineFeatures {};
-	VkPhysicalDeviceRayQueryFeaturesKHR RayQueryFeatures {};
-
-	VkPhysicalDeviceAccelerationStructurePropertiesKHR AccelerateStructureProperties {};
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR RayTracingPipelineProperties {};
-};
-
-struct VulkanAdapterMeshShader
-{
-	VulkanAdapterMeshShader()
-	{
-		ExtensionNames =
-		{
-			VK_EXT_MESH_SHADER_EXTENSION_NAME
-		};
-
-		MeshShaderFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT;
-
-		MeshShaderProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT;
-	}
-
-	void AppendFeatures(void** pNextChain)
-	{
-		*pNextChain = &MeshShaderFeatures;
-		pNextChain = &MeshShaderFeatures.pNext;
-	}
-
-	void AppendProperties(void** pNextChain)
-	{
-		*pNextChain = &MeshShaderProperties;
-		pNextChain = &MeshShaderProperties.pNext;
-	}
-
-	std::vector<const char*> ExtensionNames;
-
-	VkPhysicalDeviceMeshShaderFeaturesEXT MeshShaderFeatures {};
-
-	VkPhysicalDeviceMeshShaderPropertiesEXT MeshShaderProperties {};
-};
-
-}
 
 namespace ow
 {
@@ -107,7 +24,6 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	const bool isIntegratedGPU = GPUAdapterType::Integrated == m_info.Type;
 	uint64 videoMemorySize = 0;
 	uint64 systemMemorySize = 0;
-	uint64 sharedMemorySize = 0;
 	std::vector<std::vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
 	for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
 	{
@@ -127,13 +43,12 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 		}
 		else
 		{
-			sharedMemorySize += memoryHeap.size;
+			systemMemorySize += memoryHeap.size;
 		}
 	}
 
 	m_info.VideoMemorySize = videoMemorySize;
 	m_info.SystemMemorySize = systemMemorySize;
-	m_info.SharedMemorySize = sharedMemorySize;
 }
 
 VulkanAdapter::~VulkanAdapter()
@@ -161,27 +76,33 @@ void VulkanAdapter::Init()
 
 void VulkanAdapter::InitOutputInfos()
 {
+	if (!VulkanUtils::FindExtension(m_pInstance->GetAvaialableExtensions(), VK_KHR_DISPLAY_EXTENSION_NAME))
+	{
+		printf("[Warning] Failed to query output infos.\n");
+		return;
+	}
+
 	uint32 displayCount;
 	VK_VERIFY(vkGetPhysicalDeviceDisplayPropertiesKHR(m_physicalDevice, &displayCount, nullptr));
 	std::vector<VkDisplayPropertiesKHR> adapterDisplayInfos(displayCount);
 	VK_VERIFY(vkGetPhysicalDeviceDisplayPropertiesKHR(m_physicalDevice, &displayCount, adapterDisplayInfos.data()));
-
+	
 	for (uint32 displayIndex = 0; displayIndex < displayCount; ++displayIndex)
 	{
 		VkDisplayPropertiesKHR vkDisplay = adapterDisplayInfos[displayIndex];
-
+	
 		auto& outputInfo = m_outputInfos.emplace_back();
 		outputInfo.Name = vkDisplay.displayName;
-
+	
 		uint32_t modeCount;
 		VK_VERIFY(vkGetDisplayModePropertiesKHR(m_physicalDevice, vkDisplay.display, &modeCount, nullptr));
 		std::vector<VkDisplayModePropertiesKHR> adapterDisplayModeInfos(modeCount);
 		VK_VERIFY(vkGetDisplayModePropertiesKHR(m_physicalDevice, vkDisplay.display, &modeCount, adapterDisplayModeInfos.data()));
-
+	
 		for (uint32 modeIndex = 0; modeIndex < modeCount; ++modeIndex)
 		{
 			VkDisplayModePropertiesKHR vkDisplayMode = adapterDisplayModeInfos[modeIndex];
-
+	
 		}
 	}
 }
@@ -289,67 +210,9 @@ void VulkanAdapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueue
 	}
 }
 
-VkDevice VulkanAdapter::CreateLogicalDevice(const RHIDeviceCreateInfo& deviceCI)
+RefCountPtr<IRHIDevice> VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
 {
-	// Enable extra extensions/features/properties by requirement.
-	std::vector<const char*> enabledExtensions;
-	{
-		void** pFeaturesNextChain = &m_adapterFeatures->pNextChain;
-		void** pPropertiesNextChain = &m_adapterProperties->pNextChain;
-
-		auto requiredFeatrues = deviceCI.Features;
-		if (!requiredFeatrues.IsEnabled(RHIFeatures::Headless))
-		{
-			assert(VulkanUtils::EnableExtensionSafely(enabledExtensions, m_availableExtensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME));
-		}
-
-		VulkanAdapterRayTracing rayTracing;
-		if (requiredFeatrues.IsEnabled(RHIFeatures::RayTracing) &&
-			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, rayTracing.ExtensionNames))
-		{
-			rayTracing.AppendFeatures(pFeaturesNextChain);
-			rayTracing.AppendProperties(pPropertiesNextChain);
-		}
-
-		VulkanAdapterMeshShader meshShader;
-		if (requiredFeatrues.IsEnabled(RHIFeatures::MeshShaders) &&
-			VulkanUtils::EnableExtensionsSafely(enabledExtensions, m_availableExtensions, meshShader.ExtensionNames))
-		{
-			meshShader.AppendFeatures(pFeaturesNextChain);
-			meshShader.AppendProperties(pPropertiesNextChain);
-		}
-
-		vkGetPhysicalDeviceFeatures2(m_physicalDevice, &m_adapterFeatures->Features);
-		vkGetPhysicalDeviceProperties2(m_physicalDevice, &m_adapterProperties->Properties);
-	}
-
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	for (uint32 queueCIIndex = 0; queueCIIndex < deviceCI.CommandQueueCount; ++queueCIIndex)
-	{
-		const RHICommandQueueCreateInfo* commandQueueCI = deviceCI.CommandQueueCreateInfo[queueCIIndex];
-
-		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = commandQueueCI->ID;
-		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &commandQueueCI->Priority;
-	}
-
-	VkDeviceCreateInfo deviceCreateInfo {};
-	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceCreateInfo.queueCreateInfoCount = static_cast<uint32>(queueCreateInfos.size());
-	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-	deviceCreateInfo.pEnabledFeatures = nullptr;
-	deviceCreateInfo.pNext = &m_adapterFeatures->Features;
-	deviceCreateInfo.enabledExtensionCount = static_cast<uint32>(enabledExtensions.size());
-	deviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
-
-	VkDevice vkDevice;
-	VK_VERIFY(vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &vkDevice));
-	assert(vkDevice != VK_NULL_HANDLE);
-	volkLoadDevice(vkDevice);
-
-	return vkDevice;
+	return MakeRefCountPtr<VulkanDevice>(this, createInfo);
 }
 
 }

@@ -24,7 +24,7 @@
     
     * [Blog](https://devblogs.microsoft.com/directx/coming-to-directx-12-mesh-shaders-and-amplification-shaders-reinventing-the-geometry-pipeline/)
   
-  * [Mesh Shader | DirectX-Specs](https://microsoft.github.io/DirectX-Specs/d3d/MeshShader.html)
+  * [DirectX-Specs - Mesh Shader](https://microsoft.github.io/DirectX-Specs/d3d/MeshShader.html)
 
 * Metal
   

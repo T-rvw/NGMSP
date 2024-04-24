@@ -7,7 +7,6 @@
 namespace ow
 {
 
-enum class RHIBackend;
 struct RHIInstanceCreateInfo;
 
 class D3D12Instance : public IRHIInstance

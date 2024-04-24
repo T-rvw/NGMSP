@@ -23,9 +23,11 @@ public:
 	VulkanCommandPool& operator=(VulkanCommandPool&&) = default;
 	virtual ~VulkanCommandPool();
 
-	VkCommandPool GetHandle() const { return m_commandPool; }
-	VkCommandBuffer CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo);
+	virtual RefCountPtr<IRHICommandBuffer> CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) override;
 
+	const VulkanDevice* GetDevice() const { return m_pDevice; }
+	VkCommandPool GetHandle() const { return m_commandPool; }
+	
 private:
 	const VulkanDevice* m_pDevice = nullptr;
 	VkCommandPool m_commandPool = VK_NULL_HANDLE;

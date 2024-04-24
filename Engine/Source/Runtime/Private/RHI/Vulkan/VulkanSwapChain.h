@@ -21,9 +21,15 @@ public:
 	virtual ~VulkanSwapChain();
 
 private:
+	void InitBackBufferImages();
+	void InitFramebuffers(const RHISwapChainCreateInfo& createInfo);
+
+private:
 	const VulkanDevice* m_pDevice = nullptr;
 	VkSurfaceKHR m_surface = VK_NULL_HANDLE;
 	VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
+	VkRenderPass m_renderPass = VK_NULL_HANDLE;
+	std::vector<VkFramebuffer> m_framebuffers;
 	std::vector<VkImage> m_swapChainImages;
 	std::vector<VkImageView> m_swapChainImageViews;
 	VkFormat m_format = VK_FORMAT_R8G8B8A8_UNORM;

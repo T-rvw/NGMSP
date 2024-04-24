@@ -20,10 +20,13 @@ public:
 	VulkanFence& operator=(VulkanFence&&) = default;
 	virtual ~VulkanFence();
 
-	virtual uint64 Signal(uint64 fenceValue) override;
-	virtual void Wait(uint64 fenceValue) override;
-	virtual bool IsComplete(uint64 fenceValue) override;
-	virtual void Reset() override;
+	virtual uint64 Signal(uint64 fenceCount) override;
+	virtual void Wait(uint64 fenceCount) override;
+	virtual void Wait(uint64 fenceCount, uint64 timeout) override;
+	virtual bool IsComplete(uint64 fenceCount) override;
+	virtual void Reset(uint64 fenceCount) override;
+
+	VkFence GetHandle() const { return m_fence; }
 
 private:
 	const VulkanDevice* m_pDevice = nullptr;

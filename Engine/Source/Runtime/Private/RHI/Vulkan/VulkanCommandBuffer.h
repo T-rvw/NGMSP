@@ -7,11 +7,13 @@
 namespace ow
 {
 
+class VulkanCommandPool;
+
 class VulkanCommandBuffer : public IRHICommandBuffer
 {
 public:
 	VulkanCommandBuffer() = delete;
-	explicit VulkanCommandBuffer(VkCommandBuffer commandBuffer);
+	explicit VulkanCommandBuffer(const VulkanCommandPool* pCommandPool, const RHICommandBufferCreateInfo& createInfo);
 	VulkanCommandBuffer(const VulkanCommandBuffer&) = delete;
 	VulkanCommandBuffer& operator=(const VulkanCommandBuffer&) = delete;
 	VulkanCommandBuffer(VulkanCommandBuffer&&) = default;

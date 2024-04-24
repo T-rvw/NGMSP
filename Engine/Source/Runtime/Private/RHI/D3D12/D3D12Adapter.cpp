@@ -1,6 +1,7 @@
 #include "D3D12Adapter.h"
 
 #include "D3D12Instance.h"
+#include "D3D12Device.h"
 
 #include <RHI/RHITypes.h>
 
@@ -22,8 +23,7 @@ D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, RefCountPtr<IDXGIAdap
 	m_info.Vendor = GetGPUVendor(adapterDesc.VendorId);
 	m_info.DeviceID = adapterDesc.DeviceId;
 	m_info.VideoMemorySize = adapterDesc.DedicatedVideoMemory;
-	m_info.SystemMemorySize = adapterDesc.DedicatedSystemMemory;
-	m_info.SharedMemorySize = adapterDesc.SharedSystemMemory;
+	m_info.SystemMemorySize = adapterDesc.SharedSystemMemory;
 
 	// Query monitor outputs information.
 	uint32 outputIndex = 0;
@@ -108,15 +108,9 @@ void D3D12Adapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueC
 	}
 }
 
-RefCountPtr<ID3D12Device5> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& deviceCI)
+RefCountPtr<IRHIDevice> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
 {
-	UNUSED(deviceCI);
-
-	RefCountPtr<ID3D12Device5> pDevice;
-	D3D12_VERIFY(D3D12CreateDevice(m_adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&pDevice)));
-	assert(pDevice);
-
-	return pDevice;
+	return MakeRefCountPtr<D3D12Device>(this, createInfo);
 }
 
 void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC3& desc)
@@ -135,6 +129,5 @@ void D3D12Adapter::SetType(const DXGI_ADAPTER_DESC3& desc)
 		info.Type = isIntegratedAdapter ? GPUAdapterType::Integrated : GPUAdapterType::Discrete;
 	}
 }
-
 
 }

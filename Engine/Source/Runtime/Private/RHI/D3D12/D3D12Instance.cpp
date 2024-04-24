@@ -1,6 +1,7 @@
 #include "D3D12Instance.h"
 
 #include "D3D12Adapter.h"
+#include "D3D12Device.h"
 
 #include <RHI/RHITypes.h>
 

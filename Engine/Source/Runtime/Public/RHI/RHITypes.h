@@ -78,8 +78,17 @@ struct RHIAdapterInfo
     uint32 DeviceID = 0;
     uint64 VideoMemorySize = 0;
     uint64 SystemMemorySize = 0;
-    uint64 SharedMemorySize = 0;
     std::string Name = "Unknown";
+
+    void Dump() const
+    {
+        printf("[RHIAdapterInfo] Name = %s\n", Name.c_str());
+        printf("\tVendor = %s\n", EnumName(Vendor).data());
+        printf("\tVendorID = %u\n", VendorID);
+        printf("\tDeviceID = %u\n", DeviceID);
+        printf("\tVideoMemorySize = %llu MB\n", VideoMemorySize >> 20);
+        printf("\tSystemMemorySize = %llu MB\n", SystemMemorySize >> 20);
+    }
 };
 
 struct RHIOutputInfo
@@ -121,8 +130,13 @@ struct RHICommandBufferCreateInfo
     uint32 BufferCount = 1;
 };
 
+struct RHICommandListCreateInfo
+{
+};
+
 struct RHICommandPoolCreateInfo
 {
+    RHICommandType Type = RHICommandType::Graphics;
     uint32 QueueID = 0;
 };
 
@@ -145,6 +159,8 @@ struct RHICommandQueueCreateInfo
 struct RHIDeviceCreateInfo
 {
     BitFlags<RHIFeatures> Features;
+    RHIDebugMode Debug = RHIDebugMode::Disabled;
+    RHIValidationMode Validation = RHIValidationMode::Disabled;
     uint32 CommandQueueCount = 0;
     RHICommandQueueCreateInfo** CommandQueueCreateInfo = nullptr;
 };

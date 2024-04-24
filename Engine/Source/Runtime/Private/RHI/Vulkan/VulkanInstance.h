@@ -26,6 +26,8 @@ public:
 	virtual void EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters) override;
 
 	VkInstance GetHandle() const { return m_instance; }
+	const std::vector<VkExtensionProperties>& GetAvaialableExtensions() const { return m_availableExtensions; }
+	const std::vector<VkLayerProperties>& GetAvaialableLayers() const { return m_availableLayers; }
 
 private:
 	void Init();

@@ -7,15 +7,13 @@
 namespace ow
 {
 
-struct RHICommandQueueCreateInfo;
-
 class VulkanAdapter;
 
 class VulkanDevice : public IRHIDevice
 {
 public:
 	VulkanDevice() = delete;
-	explicit VulkanDevice(const VulkanAdapter* pAdapter, VkDevice device);
+	explicit VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo);
 	VulkanDevice(const VulkanDevice&) = delete;
 	VulkanDevice& operator=(const VulkanDevice&) = delete;
 	VulkanDevice(VulkanDevice&&) = default;
@@ -26,9 +24,14 @@ public:
 	VkPhysicalDevice GetAdapter() const;
 	VkInstance GetInstance() const;
 
-private:
-	friend class VulkanRHIModule;
-	VkQueue CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI) const;
+	virtual RefCountPtr<IRHISwapChain> CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHICommandPool> CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHICommandQueue> CreateCommandQueue(const RHICommandQueueCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHIBarrier> CreateBarrier(const RHIBarrierCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHIFence> CreateFence(const RHIFenceCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHISemaphore> CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHIBuffer> CreateBuffer(const RHIBufferCreateInfo& createInfo) override;
+	virtual RefCountPtr<IRHITexture> CreateTexture(const RHITextureCreateInfo& createInfo) override;
 
 private:
 	const VulkanAdapter* m_pAdapter = nullptr;

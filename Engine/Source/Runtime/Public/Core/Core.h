@@ -8,6 +8,7 @@
 #include <Core/Base/StringID.h>
 #include <Core/Base/TypeTraits.h>
 #include <Core/Modules/IModule.h>
+#include <Core/HAL/Interfaces/IApplication.h>
 #include <Core/Modules/ModuleManager.h>
 #include <Core/HAL/PlatformApplication.h>
 #include <Core/HAL/PlatformEvent.h>

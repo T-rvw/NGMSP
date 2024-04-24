@@ -7,11 +7,15 @@
 namespace ow
 {
 
+struct RHISwapChainCreateInfo;
+
+class D3D12Device;
+
 class D3D12SwapChain : public IRHISwapChain
 {
 public:
 	D3D12SwapChain() = default;
-	explicit D3D12SwapChain(RefCountPtr<IDXGISwapChain1> pSwapChain);
+	explicit D3D12SwapChain(const D3D12Device* pDevice, const RHISwapChainCreateInfo& createInfo);
 	D3D12SwapChain(const D3D12SwapChain&) = delete;
 	D3D12SwapChain& operator=(const D3D12SwapChain&) = delete;
 	D3D12SwapChain(D3D12SwapChain&&) = default;

@@ -20,46 +20,46 @@ D3D12Fence::~D3D12Fence()
 {
 }
 
-uint64 D3D12Fence::Signal(uint64 fenceValue)
+uint64 D3D12Fence::Signal(uint64 fenceCount)
 {
-	m_lastSignaled = fenceValue;
-	m_lastCompleted = fenceValue;
+	m_lastSignaled = fenceCount;
+	m_lastCompleted = fenceCount;
 	m_currentValue++;
 	return m_lastSignaled;
 }
 
-void D3D12Fence::Wait(uint64 fenceValue)
+void D3D12Fence::Wait(uint64 fenceCount)
 {
-	if (IsComplete(fenceValue))
+	Wait(fenceCount, static_cast<uint64>(INFINITY));
+}
+
+void D3D12Fence::Wait(uint64 fenceCount, uint64 timeout)
+{
+	if (IsComplete(fenceCount))
 	{
 		return;
 	}
 
 	std::lock_guard<std::mutex> lockGuard(m_fenceWait);
 	HANDLE completeEventHandle = m_completeEvent.GetHandle();
-	m_fence->SetEventOnCompletion(fenceValue, completeEventHandle);
-	WaitForSingleObject(completeEventHandle, INFINITE);
+	m_fence->SetEventOnCompletion(fenceCount, completeEventHandle);
+	WaitForSingleObject(completeEventHandle, static_cast<uint32>(timeout));
 	m_lastCompleted = m_fence->GetCompletedValue();
 }
 
-void D3D12Fence::Wait()
+bool D3D12Fence::IsComplete(uint64 fenceCount)
 {
-	Wait(m_lastSignaled);
-}
-
-bool D3D12Fence::IsComplete(uint64 fenceValue)
-{
-	if (fenceValue <= m_lastCompleted)
+	if (fenceCount <= m_lastCompleted)
 	{
 		return true;
 	}
 
 	auto completedValue = m_fence->GetCompletedValue();
 	m_lastCompleted = m_lastCompleted > completedValue ? m_lastCompleted : completedValue;
-	return fenceValue <= m_lastCompleted;
+	return fenceCount <= m_lastCompleted;
 }
 
-void D3D12Fence::Reset()
+void D3D12Fence::Reset(uint64 fenceCount)
 {
 
 }

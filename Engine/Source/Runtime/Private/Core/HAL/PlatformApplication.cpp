@@ -3,11 +3,13 @@
 #include "PlatformImplTypes.h"
 
 #include <Core/Base/TypeTraits.h>
+#include <Core/HAL/Interfaces/IApplication.h>
 
 namespace ow
 {
 
-PlatformApplication::PlatformApplication()
+PlatformApplication::PlatformApplication(IApplication* pApplication) :
+	m_pApplication(pApplication)
 {
 	m_pImpl = new PlatformApplicationImpl();
 }
@@ -40,7 +42,15 @@ void* PlatformApplication::GetProcessInstance() const
 void PlatformApplication::Run()
 {
 	m_pImpl->Init();
-	m_pImpl->Update();
+	m_pApplication->Init();
+
+	while (m_pImpl->ShouldQuit())
+	{
+		m_pImpl->Update();
+		m_pApplication->Update();
+	}
+
+	m_pApplication->Shutdown();
 	m_pImpl->Shutdown();
 }
 

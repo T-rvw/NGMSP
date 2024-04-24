@@ -1,17 +1,15 @@
 #include "VulkanCommandQueue.h"
 
+#include "VulkanDevice.h"
+
 #include <RHI/RHITypes.h>
 
 namespace ow
 {
 
-VulkanCommandQueue::VulkanCommandQueue(VkQueue queue) :
-	m_queue(queue)
+VulkanCommandQueue::VulkanCommandQueue(const VulkanDevice* pDevice, const RHICommandQueueCreateInfo& createInfo)
 {
-}
-
-VulkanCommandQueue::~VulkanCommandQueue()
-{
+	vkGetDeviceQueue(pDevice->GetHandle(), createInfo.ID, 0, &m_queue);
 }
 
 }

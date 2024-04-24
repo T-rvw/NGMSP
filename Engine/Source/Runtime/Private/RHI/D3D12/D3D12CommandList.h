@@ -16,6 +16,9 @@ public:
 	D3D12CommandList(D3D12CommandList&&) = default;
 	D3D12CommandList& operator=(D3D12CommandList&&) = default;
 	virtual ~D3D12CommandList() = default;
+
+private:
+	RefCountPtr<ID3D12CommandList> m_commandList;
 };
 
 }

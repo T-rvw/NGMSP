@@ -1,21 +1,70 @@
 #include "D3D12Device.h"
 
 #include "D3D12Adapter.h"
+#include "D3D12Barrier.h"
+#include "D3D12Buffer.h"
+#include "D3D12CommandPool.h"
 #include "D3D12CommandQueue.h"
+#include "D3D12Fence.h"
+#include "D3D12Semaphore.h"
+#include "D3D12SwapChain.h"
+#include "D3D12Texture.h"
 
 #include <RHI/RHITypes.h>
 
 namespace ow
 {
 
-D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, RefCountPtr<ID3D12Device5> pDevice) :
-	m_pAdapter(pAdapter),
-	m_device(MoveTemp(pDevice))
+D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, const RHIDeviceCreateInfo& createInfo) :
+	m_pAdapter(pAdapter)
 {
-}
+	constexpr D3D_FEATURE_LEVEL FeatureLevelsRange[] =
+	{
+		D3D_FEATURE_LEVEL_12_2,
+		D3D_FEATURE_LEVEL_12_1,
+		D3D_FEATURE_LEVEL_12_0,
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0
+	};
+	constexpr uint32 FeatureLevelsCount = sizeof(FeatureLevelsRange) / sizeof(D3D_FEATURE_LEVEL);
+	constexpr D3D_FEATURE_LEVEL MinFeatureLevel = FeatureLevelsRange[FeatureLevelsCount - 1];
 
-D3D12Device::~D3D12Device()
-{
+	RefCountPtr<ID3D12Device5> pDevice;
+	D3D12_VERIFY(D3D12CreateDevice(m_pAdapter->GetHandle(), MinFeatureLevel, IID_PPV_ARGS(&pDevice)));
+	D3D12_FEATURE_DATA_FEATURE_LEVELS featureDatas{};
+	featureDatas.pFeatureLevelsRequested = FeatureLevelsRange;
+	featureDatas.NumFeatureLevels = FeatureLevelsCount;
+	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureDatas, sizeof(D3D12_FEATURE_DATA_FEATURE_LEVELS)));
+	D3D12_VERIFY(D3D12CreateDevice(m_pAdapter->GetHandle(), featureDatas.MaxSupportedFeatureLevel, IID_PPV_ARGS(pDevice.ReleaseAndGetAddressOf())));
+	assert(pDevice);
+
+	if (createInfo.Validation != RHIValidationMode::Disabled)
+	{
+		RefCountPtr<ID3D12InfoQueue1> pInfoQueue;
+		if (D3D12_SUCCEED(pDevice->QueryInterface(IID_PPV_ARGS(pInfoQueue.GetAddressOf()))))
+		{
+			D3D12_VERIFY(pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE));
+			D3D12_VERIFY(pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE));
+			D3D12_VERIFY(pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE));
+
+			auto MessageCallback = [](D3D12_MESSAGE_CATEGORY Category, D3D12_MESSAGE_SEVERITY Severity,
+				D3D12_MESSAGE_ID ID, LPCSTR pDescription, void* pContext)
+				{
+					printf("D3D12 Validation Layer: %s\n", pDescription);
+				};
+
+			DWORD callbackCookie = 0;
+			D3D12_VERIFY(pInfoQueue->RegisterMessageCallback(MessageCallback, D3D12_MESSAGE_CALLBACK_FLAG_NONE, nullptr, &callbackCookie));
+		}
+	}
+
+	if (createInfo.Features.IsEnabled(RHIFeatures::StablePower))
+	{
+		D3D12_VERIFY(D3D12EnableExperimentalFeatures(0, nullptr, nullptr, nullptr));
+		D3D12_VERIFY(pDevice->SetStablePowerState(TRUE));
+	}
+
+	m_device = MoveTemp(pDevice);
 }
 
 RefCountPtr<IDXGIFactory6> D3D12Device::GetFactory() const
@@ -23,43 +72,50 @@ RefCountPtr<IDXGIFactory6> D3D12Device::GetFactory() const
 	return m_pAdapter->GetFactory();
 }
 
-RefCountPtr<ID3D12CommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& commandQueueCI)
+RefCountPtr<IRHISwapChain> D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo)
 {
-	RefCountPtr<ID3D12CommandQueue> commandQueue;
-
-	D3D12_COMMAND_QUEUE_DESC queueDesc {};
-	queueDesc.Type = D3D12Types::ToD3D12(commandQueueCI.Type);
-	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	queueDesc.Priority = static_cast<int32>(commandQueueCI.Priority);
-	D3D12_VERIFY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)));
-
-	return commandQueue;
+	return MakeRefCountPtr<D3D12SwapChain>(this, createInfo);
 }
 
-RefCountPtr<IDXGISwapChain1> D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo) const
+RefCountPtr<IRHICommandPool> D3D12Device::CreateCommandPool(const RHICommandPoolCreateInfo& createInfo)
 {
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
-	swapChainDesc.Width = createInfo.BackBufferWidth;
-	swapChainDesc.Height = createInfo.BackBufferHeight;
-	swapChainDesc.Format = D3D12Types::ToD3D12(createInfo.Format);
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = createInfo.BackBufferCount;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
-	
-	DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc {};
-	fullScreenDesc.Windowed = TRUE;
-	
-	RefCountPtr<IDXGISwapChain1> swapChain;
-	int32 typeIndex = static_cast<int32>(RHICommandType::Graphics);
-	D3D12_VERIFY(GetFactory()->CreateSwapChainForHwnd(m_pCommandQueues[typeIndex]->GetHandle().Get(), (HWND)createInfo.NativeWindowHandle,
-		&swapChainDesc, &fullScreenDesc, nullptr, &swapChain));
+	return nullptr;
+}
 
-	return swapChain;
+RefCountPtr<IRHICommandQueue> D3D12Device::CreateCommandQueue(const RHICommandQueueCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12CommandQueue>(this, createInfo);;
+}
+
+RefCountPtr<IRHIBarrier> D3D12Device::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
+{
+	return nullptr;
+}
+
+RefCountPtr<IRHIFence> D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12Fence>(this, createInfo);
+}
+
+RefCountPtr<IRHISemaphore> D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
+{
+	return nullptr;
+}
+
+RefCountPtr<IRHIBuffer> D3D12Device::CreateBuffer(const RHIBufferCreateInfo& createInfo)
+{
+	return nullptr;
+}
+
+RefCountPtr<IRHITexture> D3D12Device::CreateTexture(const RHITextureCreateInfo& createInfo)
+{
+	return nullptr;
+}
+
+const D3D12CommandQueue* D3D12Device::GetCommandQueue(RHICommandType commandType) const
+{
+	int32 typeIndex = static_cast<int32>(commandType);
+	return m_pCommandQueues[typeIndex];
 }
 
 void D3D12Device::SetCommandQueue(const D3D12CommandQueue* pCommandQueue)

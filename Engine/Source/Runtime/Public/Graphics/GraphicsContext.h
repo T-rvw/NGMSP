@@ -11,8 +11,7 @@
 namespace ow
 {
 
-struct ModuleData;
-
+class IRHICommandBuffer;
 class IRHICommandPool;
 class IRHICommandQueue;
 class IRHIDevice;
@@ -21,11 +20,11 @@ class IRHIInstance;
 class IRHIModule;
 class IRHISwapChain;
 
-struct RHIInstanceCreateInfo;
-
 struct GraphicsCreateInfo
 {
 	RHIBackend Backend = RHIBackend::Vulkan;
+	RHIDebugMode Debug = RHIDebugMode::Disabled;
+	RHIValidationMode Validation = RHIValidationMode::Disabled;
 	BitFlags<RHIFeatures> Features;
 	void* NativeInstanceHandle = nullptr;
 	void* NativeWindowHandle = nullptr;
@@ -46,13 +45,16 @@ public:
 	GFX_API void Init(const GraphicsCreateInfo& createInfo);
 
 private:
+	static constexpr int FrameCount = 2;
 	RefCountPtr<IRHIModule> m_pRHIModule;
 	RefCountPtr<IRHIInstance> m_pRHIInstance;
 	RefCountPtr<IRHIDevice> m_pRHIDevice;
 	RefCountPtr<IRHISwapChain> m_pRHISwapChain;
-	RefCountPtr<IRHICommandPool> m_rhiCommandPools[EnumCount<RHICommandType>()];
-	RefCountPtr<IRHICommandQueue> m_rhiCommandQueues[EnumCount<RHICommandType>()];
-	RefCountPtr<IRHIFence> m_rhiCommandQueueFences[EnumCount<RHICommandType>()];
+	RefCountPtr<IRHICommandBuffer> m_pRHICommandBuffer;
+	RefCountPtr<IRHIFence> m_pRHIFrameFences[FrameCount];
+	RefCountPtr<IRHICommandPool> m_pRHICommandPools[EnumCount<RHICommandType>()];
+	RefCountPtr<IRHICommandQueue> m_pRHICommandQueues[EnumCount<RHICommandType>()];
+	RefCountPtr<IRHIFence> m_pRHICommandQueueFences[EnumCount<RHICommandType>()];
 };
 
 }
