@@ -21,6 +21,28 @@ enum class GPUAdapterType
     CPU
 };
 
+enum class RHIAddressMode
+{
+    Repeat,
+    RepeatMirrored,
+    ClampToEdge,
+    ClampToBorder,
+    MirrorClampToEdge
+};
+
+enum class RHIAttachmentLoadOperation
+{
+    DontCare,
+    Clear,
+    Load
+};
+
+enum class RHIAttachmentStoreOperation
+{
+    DontCare,
+    Store
+};
+
 enum class RHIBackend
 {
     D3D12,
@@ -33,10 +55,10 @@ enum class RHIBlendOperation
     Subtract,
     RevSubtract,
     Min,
-    Max,
+    Max
 };
 
-enum class RHIBlendType
+enum class RHIBlendFactor
 {
     Zero,
     One,
@@ -54,7 +76,20 @@ enum class RHIBlendType
     Src1Color,
     InvSrc1Color,
     Src1Alpha,
-    InvSrc1Alpha,
+    InvSrc1Alpha
+};
+
+enum class RHIBufferUsage
+{
+    VertexBuffer,
+    IndexBuffer,
+    UniformBuffer,
+    StorageBuffer,
+    IndirectBuffer,
+    TransferSource,
+    TransferTarget,
+    TransformFeedbackBuffer,
+    TransformFeedbackCounterBuffer
 };
 
 enum class RHIColorSpace
@@ -112,10 +147,23 @@ enum class RHIFenceType
     CrossAdapter
 };
 
-enum class RHIFillMode
+enum class RHIFrontFace
+{
+    Clockwise,
+    CounterClockwise
+};
+
+enum class RHIPolygonMode
 {
     Wireframe,
     Solid
+};
+
+enum class RHIFilter
+{
+    Linear,
+    Nearst,
+    Cubic
 };
 
 enum class RHIFormat
@@ -272,7 +320,13 @@ enum class RHIFormat
     ASTC_12x12_UNORM,
     ASTC_12x12_UNORM_SRGB,
     ASTC_12x12_FLOAT,
-    ASTC_12x12_TYPELESS,
+    ASTC_12x12_TYPELESS
+};
+
+enum class RHIMipmapMode
+{
+    Linear,
+    Nearst
 };
 
 enum class RHIPresentMode
@@ -281,7 +335,7 @@ enum class RHIPresentMode
     Intermediate
 };
 
-enum class RHIPrimitiveType
+enum class RHIPrimitiveTopology
 {
     PointList,
     LineList,
@@ -290,6 +344,21 @@ enum class RHIPrimitiveType
     TriangleStrip,
     TriangleFan,
     PatchList
+};
+
+enum class RHIShaderStage
+{
+    Vertex,
+    Fragment,
+    Compute,
+    RayGen,
+    AnyHit,
+    ClosestHit,
+    Miss,
+    Intersection,
+    Callable,
+    Mesh,
+    Task
 };
 
 enum class RHIShaderType
@@ -304,10 +373,18 @@ enum class RHITextureType
     Texture1D,
     Texture2D,
     Texture3D,
-    TextureCube,
     Texture1DArray,
     Texture2DArray,
+    TextureCube,
     TextureCubeArray
+};
+
+enum class RHITextureUsage
+{
+    SampledTexture,
+    StorageTexture,
+    TransferSource,
+    TransferTarget
 };
 
 enum class RHIValidationMode
@@ -315,6 +392,12 @@ enum class RHIValidationMode
     CPUOnly,
     GPU,
     Disabled
+};
+
+enum class RHIVertexInputRate
+{
+    Instance,
+    Vertex
 };
 
 }

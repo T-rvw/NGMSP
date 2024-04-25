@@ -7,15 +7,23 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanBuffer : public IRHIBuffer
 {
 public:
-	VulkanBuffer() = default;
+	VulkanBuffer() = delete;
+	explicit VulkanBuffer(const VulkanDevice* pDevice, const RHIBufferCreateInfo& createInfo);
 	VulkanBuffer(const VulkanBuffer&) = delete;
 	VulkanBuffer& operator=(const VulkanBuffer&) = delete;
 	VulkanBuffer(VulkanBuffer&&) = default;
 	VulkanBuffer& operator=(VulkanBuffer&&) = default;
 	virtual ~VulkanBuffer();
+
+private:
+	const VulkanDevice* m_pDevice = nullptr;
+	VkBuffer m_buffer = VK_NULL_HANDLE;
+	VkBufferView m_bufferView = VK_NULL_HANDLE;
 };
 
 }

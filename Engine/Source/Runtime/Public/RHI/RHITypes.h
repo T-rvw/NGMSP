@@ -114,24 +114,18 @@ struct RHIOutputInfo
     }
 };
 
-struct RHIInstanceCreateInfo
-{
-    BitFlags<RHIFeatures> Features;
-    RHIDebugMode Debug = RHIDebugMode::Disabled;
-    RHIValidationMode Validation = RHIValidationMode::Disabled;
-};
-
 struct RHIBarrierCreateInfo
 {
+};
+
+struct RHIBufferCreateInfo
+{
+
 };
 
 struct RHICommandBufferCreateInfo
 {
     uint32 BufferCount = 1;
-};
-
-struct RHICommandListCreateInfo
-{
 };
 
 struct RHICommandPoolCreateInfo
@@ -165,6 +159,33 @@ struct RHIDeviceCreateInfo
     RHICommandQueueCreateInfo** CommandQueueCreateInfo = nullptr;
 };
 
+struct RHIFenceCreateInfo
+{
+    RHIFenceType FenceType = RHIFenceType::Default;
+    uint64 InitialValue = 0;
+};
+
+struct RHIInstanceCreateInfo
+{
+    BitFlags<RHIFeatures> Features;
+    RHIDebugMode Debug = RHIDebugMode::Disabled;
+    RHIValidationMode Validation = RHIValidationMode::Disabled;
+};
+
+struct RHISamplerCreateInfo
+{
+
+};
+
+struct RHISemaphoreCreateInfo
+{
+
+};
+
+struct RHIShaderCreateInfo
+{
+};
+
 struct RHISwapChainCreateInfo
 {
     void* NativeInstanceHandle = nullptr;
@@ -177,28 +198,7 @@ struct RHISwapChainCreateInfo
     RHIPresentMode PresentMode = RHIPresentMode::VSync;
 };
 
-struct RHIFenceCreateInfo
-{
-    RHIFenceType FenceType = RHIFenceType::Default;
-    uint64 InitialValue = 0;
-};
-
-struct RHISemaphoreCreateInfo
-{
-
-};
-
-struct RHIBufferCreateInfo
-{
-
-};
-
 struct RHITextureCreateInfo
-{
-
-};
-
-struct RHISamplerCreateInfo
 {
 
 };

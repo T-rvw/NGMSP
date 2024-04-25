@@ -5,4 +5,12 @@
 namespace ow
 {
 
+void D3D12CommandBuffer::Begin()
+{
+}
+
+void D3D12CommandBuffer::End()
+{
+}
+
 }

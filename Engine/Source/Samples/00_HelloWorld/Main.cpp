@@ -1,56 +1,55 @@
-#include <Engine.h>
-#include <Graphics/GraphicsContext.h>
+#include "SampleApp.h"
 
-#include <Core/HAL/Interfaces/IApplication.h>
+#include <Core/Core.h>
+#include <RHI/RHI.h>
 
-class SampleApp : public ow::IApplication
+using namespace ow;
+
+class HelloWorldSample : public SampleBase
 {
 public:
-	virtual void Init() override
+	using SampleBase::SampleBase;
+
+	virtual ~HelloWorldSample()
 	{
+	}
+
+	virtual void Init(void* pNativeWindow) override
+	{
+		SampleBase::Init(pNativeWindow);
 	}
 
 	virtual void Shutdown() override
 	{
 	}
+	
+	virtual void Update(double deltaTime) override
+	{
+		SampleBase::Update(deltaTime);
+	}
 
-	virtual void Update() override
+	void Setup()
 	{
 	}
+
+	void Render()
+	{
+	}
+
+private:
+
+
+	// Resources
+
 };
 
 int main()
 {
-	using namespace ow;
-
-	// Create application and main window.
-	SampleApp sampleApp;
-	PlatformApplication app(&sampleApp);
-
-	WindowCreateInfo windowCI;
-	PlatformWindow mainWindow;
-	windowCI.Title = "00_HelloWorld";
-	windowCI.Width = 1280;
-	windowCI.Height = 720;
-	mainWindow.Init(windowCI);
-
-	// Create graphics engine.
-	GraphicsContext graphicsContext;
-	GraphicsCreateInfo graphicsCI;
-	graphicsCI.Backend = RHIBackend::Vulkan;
-	graphicsCI.Debug = RHIDebugMode::Enabled;
-	graphicsCI.Validation = RHIValidationMode::GPU;
-	graphicsCI.Features |= RHIFeatures::MeshShaders;
-	graphicsCI.Features |= RHIFeatures::RayTracing;
-	graphicsCI.Features |= RHIFeatures::WorkGraphs;
-	graphicsCI.NativeWindowHandle = mainWindow.GetHandle();
-	graphicsCI.NativeInstanceHandle = app.GetProcessInstance();
-	graphicsCI.BackBufferWidth = windowCI.Width;
-	graphicsCI.BackBufferHeight = windowCI.Height;
-	graphicsContext.Init(graphicsCI);
-
-	// Run
-	app.Run();
-
-	return 0;
+	SampleCreateInfo sampleCI;
+	sampleCI.Backend = RHIBackend::Vulkan;
+	sampleCI.Title = "00_HelloWorld";
+	sampleCI.Width = 1280;
+	sampleCI.Height = 720;
+	auto sample = std::make_unique<HelloWorldSample>(sampleCI);
+	return SampleApp(sample.get()).Run();
 }

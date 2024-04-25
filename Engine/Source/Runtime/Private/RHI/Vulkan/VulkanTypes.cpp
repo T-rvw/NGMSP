@@ -8,29 +8,61 @@ GPUAdapterType VulkanTypes::ToRHI(VkPhysicalDeviceType vkType)
     switch (vkType)
     {
     case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-    {
         return GPUAdapterType::Discrete;
-        break;
-    }
     case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-    {
         return GPUAdapterType::Integrated;
-        break;
-    }
     case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-    {
         return GPUAdapterType::Virtual;
-        break;
-    }
     case VK_PHYSICAL_DEVICE_TYPE_CPU:
     default:
-    {
         return GPUAdapterType::CPU;
-        break;
     }
-    }
+}
 
-    return GPUAdapterType::CPU;
+VkSamplerAddressMode VulkanTypes::ToVK(RHIAddressMode rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIAddressMode::Repeat:
+        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    case RHIAddressMode::RepeatMirrored:
+        return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+    case RHIAddressMode::ClampToEdge:
+        return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    case RHIAddressMode::ClampToBorder:
+        return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+    case RHIAddressMode::MirrorClampToEdge:
+        return VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE;
+    default:
+        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    }
+}
+
+VkBufferUsageFlags VulkanTypes::ToVK(RHIBufferUsage rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIBufferUsage::VertexBuffer:
+        return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    case RHIBufferUsage::IndexBuffer:
+        return VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+    case RHIBufferUsage::UniformBuffer:
+        return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+    case RHIBufferUsage::StorageBuffer:
+        return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+    case RHIBufferUsage::IndirectBuffer:
+        return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+    case RHIBufferUsage::TransferSource:
+        return VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    case RHIBufferUsage::TransferTarget:
+        return VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+    case RHIBufferUsage::TransformFeedbackBuffer:
+        return VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT;
+    case RHIBufferUsage::TransformFeedbackCounterBuffer:
+        return VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT;
+    default:
+        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    }
 }
 
 VkColorSpaceKHR VulkanTypes::ToVK(RHIColorSpace rhiType)
@@ -65,6 +97,36 @@ VkColorSpaceKHR VulkanTypes::ToVK(RHIColorSpace rhiType)
         return VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT;
     default:
         return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+    }
+}
+
+VkCullModeFlagBits VulkanTypes::ToVK(RHICullMode rhiType)
+{
+    switch (rhiType)
+    {
+    case RHICullMode::None:
+        return VK_CULL_MODE_NONE;
+    case RHICullMode::Front:
+        return VK_CULL_MODE_FRONT_BIT;
+    case RHICullMode::Back:
+        return VK_CULL_MODE_BACK_BIT;
+    default:
+        return VK_CULL_MODE_NONE;
+    }
+}
+
+VkFilter VulkanTypes::ToVK(RHIFilter rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIFilter::Linear:
+        return VK_FILTER_LINEAR;
+    case RHIFilter::Nearst:
+        return VK_FILTER_NEAREST;
+    case RHIFilter::Cubic:
+        return VK_FILTER_CUBIC_IMG;
+    default:
+        return VK_FILTER_LINEAR;
     }
 }
 
@@ -286,8 +348,140 @@ VkFormat VulkanTypes::ToVK(RHIFormat rhiType)
         return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
     case RHIFormat::Unknown:
     default:
-        assert("Unknow Vulkan format.");
         return VK_FORMAT_UNDEFINED;
+    }
+}
+
+VkFrontFace VulkanTypes::ToVK(RHIFrontFace rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIFrontFace::Clockwise:
+        return VK_FRONT_FACE_CLOCKWISE;
+    case RHIFrontFace::CounterClockwise:
+        return VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    default:
+        return VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    }
+}
+
+VkSamplerMipmapMode VulkanTypes::ToVK(RHIMipmapMode rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIMipmapMode::Linear:
+        return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    case RHIMipmapMode::Nearst:
+        return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+    default:
+        return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    }
+}
+
+VkPolygonMode VulkanTypes::ToVK(RHIPolygonMode rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIPolygonMode::Solid:
+        return VK_POLYGON_MODE_FILL;
+    case RHIPolygonMode::Wireframe:
+        return VK_POLYGON_MODE_LINE;
+    default:
+        return VK_POLYGON_MODE_FILL;
+    }
+}
+
+VkPrimitiveTopology VulkanTypes::ToVK(RHIPrimitiveTopology rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIPrimitiveTopology::PointList:
+        return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+    case RHIPrimitiveTopology::LineList:
+        return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+    case RHIPrimitiveTopology::LineStrip:
+        return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+    case RHIPrimitiveTopology::TriangleList:
+        return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    case RHIPrimitiveTopology::TriangleStrip:
+        return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+    case RHIPrimitiveTopology::TriangleFan:
+        return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
+    case RHIPrimitiveTopology::PatchList:
+        return VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+    default:
+        return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    }
+}
+
+VkShaderStageFlagBits VulkanTypes::ToVK(RHIShaderStage rhiType)
+{
+    switch (rhiType)
+    {
+    case RHIShaderStage::Vertex:
+        return VK_SHADER_STAGE_VERTEX_BIT;
+    case RHIShaderStage::Fragment:
+        return VK_SHADER_STAGE_FRAGMENT_BIT;
+    case RHIShaderStage::Compute:
+        return VK_SHADER_STAGE_COMPUTE_BIT;
+    case RHIShaderStage::RayGen:
+        return VK_SHADER_STAGE_RAYGEN_BIT_KHR;
+    case RHIShaderStage::AnyHit:
+        return VK_SHADER_STAGE_ANY_HIT_BIT_KHR;
+    case RHIShaderStage::ClosestHit:
+        return VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
+    case RHIShaderStage::Miss:
+        return VK_SHADER_STAGE_MISS_BIT_KHR;
+    case RHIShaderStage::Intersection:
+        return VK_SHADER_STAGE_INTERSECTION_BIT_KHR;
+    case RHIShaderStage::Callable:
+        return VK_SHADER_STAGE_CALLABLE_BIT_KHR;
+    case RHIShaderStage::Mesh:
+        return VK_SHADER_STAGE_MESH_BIT_EXT;
+    case RHIShaderStage::Task:
+        return VK_SHADER_STAGE_TASK_BIT_EXT;
+    default:
+        return VK_SHADER_STAGE_ALL_GRAPHICS;
+    }
+}
+
+VkImageViewType VulkanTypes::ToVK(RHITextureType rhiType)
+{
+    switch (rhiType)
+    {
+    case RHITextureType::Texture1D:
+        return VK_IMAGE_VIEW_TYPE_1D;
+    case RHITextureType::Texture2D:
+        return VK_IMAGE_VIEW_TYPE_2D;
+    case RHITextureType::Texture3D:
+        return VK_IMAGE_VIEW_TYPE_3D;
+    case RHITextureType::Texture1DArray:
+        return VK_IMAGE_VIEW_TYPE_1D_ARRAY;
+    case RHITextureType::Texture2DArray:
+        return VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+    case RHITextureType::TextureCube:
+        return VK_IMAGE_VIEW_TYPE_CUBE;
+    case RHITextureType::TextureCubeArray:
+        return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+    default:
+        return VK_IMAGE_VIEW_TYPE_2D;
+    }
+}
+
+VkImageUsageFlags VulkanTypes::ToVK(RHITextureUsage rhiType)
+{
+    switch (rhiType)
+    {
+    case RHITextureUsage::SampledTexture:
+        return VK_IMAGE_USAGE_SAMPLED_BIT;
+    case RHITextureUsage::StorageTexture:
+        return VK_IMAGE_USAGE_STORAGE_BIT;
+    case RHITextureUsage::TransferSource:
+        return VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    case RHITextureUsage::TransferTarget:
+        return VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    default:
+        return VK_IMAGE_VIEW_TYPE_2D;
     }
 }
 

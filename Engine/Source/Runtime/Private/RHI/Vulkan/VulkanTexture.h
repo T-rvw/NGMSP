@@ -7,11 +7,13 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanTexture : public IRHITexture
 {
 public:
 	VulkanTexture() = default;
-	explicit VulkanTexture(VkDevice device, VkImage image, VkImageView imageView);
+	explicit VulkanTexture(const VulkanDevice* pDevice, const RHITextureCreateInfo& createInfo);
 	VulkanTexture(const VulkanTexture&) = delete;
 	VulkanTexture& operator=(const VulkanTexture&) = delete;
 	VulkanTexture(VulkanTexture&&) = default;
@@ -19,7 +21,7 @@ public:
 	virtual ~VulkanTexture();
 
 private:
-	VkDevice m_device = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice = nullptr;
 	VkImage m_image = VK_NULL_HANDLE;
 	VkImageView m_imageView = VK_NULL_HANDLE;
 };

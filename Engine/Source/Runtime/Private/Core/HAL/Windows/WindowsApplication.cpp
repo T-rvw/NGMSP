@@ -2,8 +2,6 @@
 
 #include "WindowsWindow.h"
 
-#include <Core/HAL/PlatformTime.h>
-
 #include <cassert>
 
 namespace ow
@@ -25,39 +23,9 @@ WindowsApplication::WindowsApplication()
 	RegisterWindowClass(s_pProcessInstance, NULL);
 }
 
-void WindowsApplication::Init()
-{
-	PlatformTime::Init();
-}
-
-void WindowsApplication::Update()
-{
-	m_lastTime = m_currentTime;
-	m_currentTime = PlatformTime::Seconds();
-}
-
-bool WindowsApplication::ShouldQuit()
-{
-	return PollMessages();
-}
-
-void WindowsApplication::Shutdown()
-{
-}
-
-void* WindowsApplication::GetProcessInstance() const
-{
-	return s_pProcessInstance;
-}
-
-double WindowsApplication::GetDeltaTime() const
-{
-	return m_currentTime - m_lastTime;
-}
-
 bool WindowsApplication::PollMessages()
 {
-	MSG msg {};
+	MSG msg{};
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
 		::TranslateMessage(&msg);
@@ -70,6 +38,11 @@ bool WindowsApplication::PollMessages()
 	}
 
 	return true;
+}
+
+void* WindowsApplication::GetProcessInstance() const
+{
+	return s_pProcessInstance;
 }
 
 LRESULT WindowsApplication::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)

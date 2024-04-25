@@ -11,21 +11,21 @@ namespace ow
 
 struct RHIBarrierCreateInfo;
 struct RHIBufferCreateInfo;
-struct RHICommandListCreateInfo;
 struct RHICommandPoolCreateInfo;
 struct RHICommandQueueCreateInfo;
 struct RHIFenceCreateInfo;
 struct RHISemaphoreCreateInfo;
+struct RHIShaderCreateInfo;
 struct RHISwapChainCreateInfo;
 struct RHITextureCreateInfo;
 
 class IRHIBarrier;
 class IRHIBuffer;
-class IRHICommandList;
 class IRHICommandPool;
 class IRHICommandQueue;
 class IRHIFence;
 class IRHISemaphore;
+class IRHIShader;
 class IRHISwapChain;
 class IRHITexture;
 

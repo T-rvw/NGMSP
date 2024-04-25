@@ -5,6 +5,10 @@
 namespace ow
 {
 
+VulkanBarrier::VulkanBarrier(const VulkanDevice* pDevice, const RHIBarrierCreateInfo& createInfo)
+{
+}
+
 VulkanBarrier::~VulkanBarrier()
 {
 }

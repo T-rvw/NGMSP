@@ -5,10 +5,10 @@
 namespace ow
 {
 
-class IRHICommandList : public RefCountObject
+class IRHIShader : public RefCountObject
 {
 public:
-	virtual ~IRHICommandList() {}
+	virtual ~IRHIShader() {}
 };
 
 }

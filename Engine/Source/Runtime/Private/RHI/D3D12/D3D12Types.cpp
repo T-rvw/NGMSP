@@ -55,43 +55,43 @@ D3D12_BLEND_OP D3D12Types::ToD3D12(RHIBlendOperation rhiType)
     }
 }
 
-D3D12_BLEND D3D12Types::ToD3D12(RHIBlendType rhiType)
+D3D12_BLEND D3D12Types::ToD3D12(RHIBlendFactor rhiType)
 {
     switch (rhiType)
     {
-    case RHIBlendType::Zero:
+    case RHIBlendFactor::Zero:
         return D3D12_BLEND_ZERO;
-    case RHIBlendType::One:
+    case RHIBlendFactor::One:
         return D3D12_BLEND_ONE;
-    case RHIBlendType::SrcColor:
+    case RHIBlendFactor::SrcColor:
         return D3D12_BLEND_SRC_COLOR;
-    case RHIBlendType::InvSrcColor:
+    case RHIBlendFactor::InvSrcColor:
         return D3D12_BLEND_INV_SRC_COLOR;
-    case RHIBlendType::SrcAlpha:
+    case RHIBlendFactor::SrcAlpha:
         return D3D12_BLEND_SRC_ALPHA;
-    case RHIBlendType::InvSrcAlpha:
+    case RHIBlendFactor::InvSrcAlpha:
         return D3D12_BLEND_INV_SRC_ALPHA;
-    case RHIBlendType::DestAlpha:
+    case RHIBlendFactor::DestAlpha:
         return D3D12_BLEND_DEST_ALPHA;
-    case RHIBlendType::InvDestAlpha:
+    case RHIBlendFactor::InvDestAlpha:
         return D3D12_BLEND_INV_DEST_ALPHA;
-    case RHIBlendType::DestColor:
+    case RHIBlendFactor::DestColor:
         return D3D12_BLEND_DEST_COLOR;
-    case RHIBlendType::InvDestColor:
+    case RHIBlendFactor::InvDestColor:
         return D3D12_BLEND_INV_DEST_COLOR;
-    case RHIBlendType::SrcAlphaSat:
+    case RHIBlendFactor::SrcAlphaSat:
         return D3D12_BLEND_SRC_ALPHA_SAT;
-    case RHIBlendType::BlendFactor:
+    case RHIBlendFactor::BlendFactor:
         return D3D12_BLEND_BLEND_FACTOR;
-    case RHIBlendType::InvBlendFactor:
+    case RHIBlendFactor::InvBlendFactor:
         return D3D12_BLEND_INV_BLEND_FACTOR;
-    case RHIBlendType::Src1Color:
+    case RHIBlendFactor::Src1Color:
         return D3D12_BLEND_SRC1_COLOR;
-    case RHIBlendType::InvSrc1Color:
+    case RHIBlendFactor::InvSrc1Color:
         return D3D12_BLEND_INV_SRC1_COLOR;
-    case RHIBlendType::Src1Alpha:
+    case RHIBlendFactor::Src1Alpha:
         return D3D12_BLEND_SRC1_ALPHA;
-    case RHIBlendType::InvSrc1Alpha:
+    case RHIBlendFactor::InvSrc1Alpha:
         return D3D12_BLEND_INV_SRC1_ALPHA;
     default:
         return D3D12_BLEND_ZERO;

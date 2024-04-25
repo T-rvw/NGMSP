@@ -5,7 +5,6 @@
 namespace ow
 {
 
-class IApplication;
 class IPlatformApplication;
 
 /// <summary>
@@ -15,20 +14,17 @@ class IPlatformApplication;
 class CORE_API PlatformApplication
 {
 public:
-	PlatformApplication() = delete;
-	explicit PlatformApplication(IApplication* pApplication);
+	PlatformApplication();
 	PlatformApplication(const PlatformApplication&) = delete;
 	PlatformApplication& operator=(const PlatformApplication&) = delete;
 	PlatformApplication(PlatformApplication&& other);
 	PlatformApplication& operator=(PlatformApplication&& other);
 	~PlatformApplication();
 
-	void Init(IApplication* pApplication);
+	bool PollMessages();
 	void* GetProcessInstance() const;
-	void Run();
 
 private:
-	IApplication* m_pApplication = nullptr;
 	IPlatformApplication* m_pImpl = nullptr;
 };
 

@@ -45,6 +45,16 @@ Project.Location = function(outputPath)
 	targetdir("%{prj.location}/Binaries/%{cfg.buildcfg}_%{cfg.architecture}")
 end
 
+Project.StaticRuntime = function(flag)
+	-- Dll contains its own copy of the C Runtime and heap manager in /MT[d]. 
+	staticruntime(flag)
+	filter { "configurations:Debug" }
+		runtime("Debug")
+	filter { "configurations:Release" }
+		runtime("Release")
+	filter {}
+end
+
 --------------------------------------------------------------
 -- Module
 --------------------------------------------------------------
@@ -55,6 +65,7 @@ Module.Create = function(moduleName, moduleCallback)
 
 		Project.CppLanguage()
 		Project.Location(path.join(BuildOutputPath, "Engine"))
+		Project.StaticRuntime("on")
 
 		defines {
 			"ENGINE_BUILD_SHARED",
@@ -66,14 +77,6 @@ Module.Create = function(moduleName, moduleCallback)
 			ThirdPartySourcePath
 		}
 
-		-- Dll contains its own copy of the C Runtime and heap manager in /MT[d]. 
-		staticruntime "on"
-		filter { "configurations:Debug" }
-			runtime "Debug"
-		filter { "configurations:Release" }
-			runtime "Release"
-		filter {}
-	
 		-- Disable these options can reduce the size of compiled binaries.
 		justmycode("Off")
 		editAndContinue("Off")

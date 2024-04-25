@@ -197,7 +197,7 @@ RefCountPtr<IRHICommandQueue> VulkanDevice::CreateCommandQueue(const RHICommandQ
 
 RefCountPtr<IRHIBarrier> VulkanDevice::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
 {
-	return nullptr;
+	return MakeRefCountPtr<VulkanBarrier>(this, createInfo);
 }
 
 RefCountPtr<IRHIFence> VulkanDevice::CreateFence(const RHIFenceCreateInfo& createInfo)
@@ -207,17 +207,17 @@ RefCountPtr<IRHIFence> VulkanDevice::CreateFence(const RHIFenceCreateInfo& creat
 
 RefCountPtr<IRHISemaphore> VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
 {
-	return nullptr;
+	return MakeRefCountPtr<VulkanSemaphore>(this, createInfo);
 }
 
 RefCountPtr<IRHIBuffer> VulkanDevice::CreateBuffer(const RHIBufferCreateInfo& createInfo)
 {
-	return nullptr;
+	return MakeRefCountPtr<VulkanBuffer>(this, createInfo);
 }
 
 RefCountPtr<IRHITexture> VulkanDevice::CreateTexture(const RHITextureCreateInfo& createInfo)
 {
-	return nullptr;
+	return MakeRefCountPtr<VulkanTexture>(this, createInfo);
 }
 
 }

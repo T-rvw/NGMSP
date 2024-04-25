@@ -7,10 +7,13 @@
 namespace ow
 {
 
+class VulkanDevice;
+
 class VulkanBarrier : public IRHIBarrier
 {
 public:
-	VulkanBarrier() = default;
+	VulkanBarrier() = delete;
+	explicit VulkanBarrier(const VulkanDevice* pDevice, const RHIBarrierCreateInfo& createInfo);
 	VulkanBarrier(const VulkanBarrier&) = delete;
 	VulkanBarrier& operator=(const VulkanBarrier&) = delete;
 	VulkanBarrier(VulkanBarrier&&) = default;

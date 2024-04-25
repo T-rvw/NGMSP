@@ -20,7 +20,11 @@ public:
 	VulkanCommandBuffer& operator=(VulkanCommandBuffer&&) = default;
 	virtual ~VulkanCommandBuffer();
 
+	virtual void Begin() override;
+	virtual void End() override;
+
 	VkCommandBuffer GetHandle() const { return m_commandBuffer; }
+	const VkCommandBuffer* GetAddressOf() const { return &m_commandBuffer; }
 
 private:
 	VkCommandBuffer m_commandBuffer = VK_NULL_HANDLE;

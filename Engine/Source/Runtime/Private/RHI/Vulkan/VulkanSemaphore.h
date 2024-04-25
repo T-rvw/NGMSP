@@ -20,6 +20,9 @@ public:
 	VulkanSemaphore& operator=(VulkanSemaphore&&) = default;
 	virtual ~VulkanSemaphore();
 
+	VkSemaphore GetHandle() const { return m_semaphore; }
+	const VkSemaphore* GetAddressOf() const { return &m_semaphore; }
+
 private:
 	const VulkanDevice* m_pDevice = nullptr;
 	VkSemaphore m_semaphore = VK_NULL_HANDLE;

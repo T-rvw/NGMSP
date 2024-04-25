@@ -20,8 +20,14 @@ public:
 	VulkanCommandQueue& operator=(VulkanCommandQueue&&) = default;
 	virtual ~VulkanCommandQueue() = default;
 
+	virtual void Submit(IRHIFence* pFence) override;
+	virtual void Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence) override;
+	virtual void Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore) override;
+
+	VkQueue GetHandle() const { return m_commandQueue; }
+
 private:
-	VkQueue m_queue = VK_NULL_HANDLE;
+	VkQueue m_commandQueue = VK_NULL_HANDLE;
 };
 
 }

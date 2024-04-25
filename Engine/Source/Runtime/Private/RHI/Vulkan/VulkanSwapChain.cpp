@@ -1,6 +1,9 @@
 #include "VulkanSwapChain.h"
 
+#include "VulkanCommandBuffer.h"
+#include "VulkanCommandQueue.h"
 #include "VulkanDevice.h"
+#include "VulkanSemaphore.h"
 #include "VulkanTexture.h"
 
 #include <RHI/IRHITexture.h>
@@ -30,9 +33,8 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     assert(createInfo.BackBufferCount >= surfaceCapabilities.minImageCount);
     assert(0 == surfaceCapabilities.maxImageCount || createInfo.BackBufferCount < surfaceCapabilities.maxImageCount);
 
-    VkExtent2D swapChainSize;
-    swapChainSize.width = createInfo.BackBufferWidth;
-    swapChainSize.height = createInfo.BackBufferHeight;
+    m_swapChainExtent.width = createInfo.BackBufferWidth;
+    m_swapChainExtent.height = createInfo.BackBufferHeight;
     const bool supportTransformIdentify = surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
     auto surfaceTransformFlags = supportTransformIdentify ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR : surfaceCapabilities.currentTransform;
 
@@ -58,8 +60,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         }
     }
 
-    VkFormat swapChainFormat = VulkanTypes::ToVK(createInfo.Format);
-    VkColorSpaceKHR swapChainColorSpace;
+    m_swapChainFormat.format = VulkanTypes::ToVK(createInfo.Format);
     {
         uint32_t surfaceFormatCount;
         VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(pDevice->GetAdapter(), m_surface, &surfaceFormatCount, nullptr));
@@ -70,21 +71,20 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         bool findExpectedFormat = false;
         for (const auto& surfaceFormat : surfaceFormats)
         {
-            if (swapChainFormat != VK_FORMAT_UNDEFINED &&
-                swapChainFormat == surfaceFormat.format)
+            if (m_swapChainFormat.format != VK_FORMAT_UNDEFINED &&
+                m_swapChainFormat.format == surfaceFormat.format)
             {
                 findExpectedFormat = true;
-                swapChainColorSpace = surfaceFormat.colorSpace;
+                m_swapChainFormat.colorSpace = surfaceFormat.colorSpace;
                 break;
             }
         }
 
         if (!findExpectedFormat)
         {
-            swapChainFormat = surfaceFormats.front().format;
-            swapChainColorSpace = surfaceFormats.front().colorSpace;
+            m_swapChainFormat = surfaceFormats.front();
         }
-        assert(swapChainFormat != VK_FORMAT_UNDEFINED);
+        assert(m_swapChainFormat.format != VK_FORMAT_UNDEFINED);
     }
     
     VkSwapchainCreateInfoKHR swapChainCreateInfo {};
@@ -93,19 +93,18 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     swapChainCreateInfo.minImageCount = createInfo.BackBufferCount;
     swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     swapChainCreateInfo.preTransform = surfaceTransformFlags;
-    swapChainCreateInfo.imageColorSpace = swapChainColorSpace;
-    swapChainCreateInfo.imageFormat = swapChainFormat;
+    swapChainCreateInfo.imageColorSpace = m_swapChainFormat.colorSpace;
+    swapChainCreateInfo.imageFormat = m_swapChainFormat.format;
     swapChainCreateInfo.pQueueFamilyIndices = nullptr;
     swapChainCreateInfo.queueFamilyIndexCount = 0;
     swapChainCreateInfo.clipped = VK_TRUE;
     swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
     swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    swapChainCreateInfo.imageExtent = swapChainSize;
+    swapChainCreateInfo.imageExtent = m_swapChainExtent;
     swapChainCreateInfo.imageArrayLayers = 1;
     swapChainCreateInfo.presentMode = swapChainPresentMode;
 
     VK_VERIFY(vkCreateSwapchainKHR(m_pDevice->GetHandle(), &swapChainCreateInfo, nullptr, &m_swapChain));
-    m_format = swapChainFormat;
 
     InitBackBufferImages();
     InitFramebuffers(createInfo);
@@ -145,7 +144,7 @@ void VulkanSwapChain::InitBackBufferImages()
         imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         imageViewCreateInfo.image = m_swapChainImages[imageIndex];
         imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        imageViewCreateInfo.format = m_format;
+        imageViewCreateInfo.format = m_swapChainFormat.format;
         imageViewCreateInfo.subresourceRange.levelCount = 1;
         imageViewCreateInfo.subresourceRange.layerCount = 1;
         imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -157,7 +156,7 @@ void VulkanSwapChain::InitFramebuffers(const RHISwapChainCreateInfo& createInfo)
 {
     VkAttachmentDescription attachmentDescription = {};
     attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-    attachmentDescription.format = m_format;
+    attachmentDescription.format = m_swapChainFormat.format;
     attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -198,6 +197,58 @@ void VulkanSwapChain::InitFramebuffers(const RHISwapChainCreateInfo& createInfo)
 
         VK_VERIFY(vkCreateFramebuffer(m_pDevice->GetHandle(), &framebufferCreateInfo, nullptr, &m_framebuffers[frameIndex]));
     }
+}
+
+uint32 VulkanSwapChain::GetCurrentBackBufferIndex() const
+{
+    return m_currentBackBufferIndex;
+}
+
+void VulkanSwapChain::AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore)
+{
+    auto* pVulkanCommandSemaphore = static_cast<VulkanSemaphore*>(pSemaphore);
+    VK_VERIFY(vkAcquireNextImageKHR(m_pDevice->GetHandle(), m_swapChain, UINT64_MAX, pVulkanCommandSemaphore->GetHandle(), VK_NULL_HANDLE, &m_currentBackBufferIndex));
+}
+
+void VulkanSwapChain::BeginRenderPass(IRHICommandBuffer* pCommandBuffer)
+{
+    VkClearValue clearValue{};
+    clearValue.color.float32[0] = 0.042f;
+    clearValue.color.float32[1] = 0.042f;
+    clearValue.color.float32[2] = 0.042f;
+    clearValue.color.float32[3] = 1.0f;
+
+    VkRenderPassBeginInfo renderPassBeginInfo {};
+    renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassBeginInfo.framebuffer = m_framebuffers[m_currentBackBufferIndex];
+    renderPassBeginInfo.renderArea.extent = m_swapChainExtent;
+    renderPassBeginInfo.renderPass = m_renderPass;
+    renderPassBeginInfo.pClearValues = &clearValue;
+    renderPassBeginInfo.clearValueCount = 1;
+
+    auto* pVulkanCommandBuffer = static_cast<VulkanCommandBuffer*>(pCommandBuffer);
+    vkCmdBeginRenderPass(pVulkanCommandBuffer->GetHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void VulkanSwapChain::EndRenderPass(IRHICommandBuffer* pCommandBuffer)
+{
+    auto* pVulkanCommandBuffer = static_cast<VulkanCommandBuffer*>(pCommandBuffer);
+    vkCmdEndRenderPass(pVulkanCommandBuffer->GetHandle());
+}
+
+void VulkanSwapChain::Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore)
+{
+    auto* pVulkanSemaphore = static_cast<VulkanSemaphore*>(pSemaphore);
+    auto* pVulkanCommandQueue = static_cast<VulkanCommandQueue*>(pCommandQueue);
+
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = pVulkanSemaphore->GetAddressOf();
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = &m_swapChain;
+    presentInfo.pImageIndices = &m_currentBackBufferIndex;
+    VK_VERIFY(vkQueuePresentKHR(pVulkanCommandQueue->GetHandle(), &presentInfo));
 }
 
 }

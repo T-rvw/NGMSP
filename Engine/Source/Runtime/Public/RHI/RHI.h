@@ -4,7 +4,7 @@
 #include <RHI/IRHIBarrier.h>
 #include <RHI/IRHIBuffer.h>
 #include <RHI/IRHICommandBuffer.h>
-#include <RHI/IRHICommandList.h>
+#include <RHI/IRHIShader.h>
 #include <RHI/IRHICommandPool.h>
 #include <RHI/IRHICommandQueue.h>
 #include <RHI/IRHIDevice.h>

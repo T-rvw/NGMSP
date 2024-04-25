@@ -17,4 +17,16 @@ D3D12CommandQueue::D3D12CommandQueue(const D3D12Device* pDevice, const RHIComman
 	D3D12_VERIFY(pDevice->GetHandle()->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 }
 
+void D3D12CommandQueue::Submit(IRHIFence* pFence)
+{
+}
+
+void D3D12CommandQueue::Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence)
+{
+}
+
+void D3D12CommandQueue::Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore)
+{
+}
+
 }

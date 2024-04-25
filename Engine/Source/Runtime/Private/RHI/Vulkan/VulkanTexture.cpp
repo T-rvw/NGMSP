@@ -1,21 +1,21 @@
 #include "VulkanTexture.h"
 
+#include "VulkanDevice.h"
+
 #include <RHI/RHITypes.h>
 
 namespace ow
 {
 
-VulkanTexture::VulkanTexture(VkDevice device, VkImage image, VkImageView imageView) :
-	m_device(device),
-	m_image(image),
-	m_imageView(imageView)
+VulkanTexture::VulkanTexture(const VulkanDevice* pDevice, const RHITextureCreateInfo& createInfo) :
+	m_pDevice(pDevice)
 {
 }
 
 VulkanTexture::~VulkanTexture()
 {
-	vkDestroyImageView(m_device, m_imageView, nullptr);
-	//vkDestroyImage(m_device, m_image, nullptr);
+	vkDestroyImageView(m_pDevice->GetHandle(), m_imageView, nullptr);
+	vkDestroyImage(m_pDevice->GetHandle(), m_image, nullptr);
 }
 
 }

@@ -22,6 +22,12 @@ public:
 	D3D12SwapChain& operator=(D3D12SwapChain&&) = default;
 	virtual ~D3D12SwapChain();
 
+	virtual uint32 GetCurrentBackBufferIndex() const override;
+	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
+	virtual void BeginRenderPass(IRHICommandBuffer* pCommandBuffer) override;
+	virtual void EndRenderPass(IRHICommandBuffer* pCommandBuffer) override;
+	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) override;
+
 private:
 	RefCountPtr<IDXGISwapChain1> m_swapChain;
 };

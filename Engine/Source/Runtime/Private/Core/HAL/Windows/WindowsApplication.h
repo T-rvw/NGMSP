@@ -20,21 +20,12 @@ public:
 	WindowsApplication& operator=(WindowsApplication&&) = default;
 	virtual ~WindowsApplication() = default;
 
-	virtual void Init() override;
-	virtual void Update() override;
-	virtual bool ShouldQuit() override;
-	virtual void Shutdown() override;
+	virtual bool PollMessages() override;
 	virtual void* GetProcessInstance() const override;
 	
 private:
-	bool PollMessages();
 	LRESULT WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam);
 	void RegisterWindowClass(HINSTANCE instance, HICON icon);
-	double GetDeltaTime() const;
-
-private:
-	double m_currentTime;
-	double m_lastTime;
 };
 
 }

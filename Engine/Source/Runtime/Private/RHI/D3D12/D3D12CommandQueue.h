@@ -22,6 +22,10 @@ public:
 	D3D12CommandQueue& operator=(D3D12CommandQueue&&) = default;
 	virtual ~D3D12CommandQueue() = default;
 
+	virtual void Submit(IRHIFence* pFence) override;
+	virtual void Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence) override;
+	virtual void Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore) override;
+
 	RefCountPtr<ID3D12CommandQueue> GetHandle() const { return m_commandQueue; }
 
 private:
