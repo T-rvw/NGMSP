@@ -16,8 +16,6 @@ public:
 
 	virtual uint32 GetCurrentBackBufferIndex() const = 0;
 	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) = 0;
-	virtual void BeginRenderPass(IRHICommandBuffer* pCommandBuffer) = 0;
-	virtual void EndRenderPass(IRHICommandBuffer* pCommandBuffer) = 0;
 	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) = 0; 
 };
 

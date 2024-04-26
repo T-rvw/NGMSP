@@ -25,7 +25,6 @@ void DeviceContext::Update()
 {
 	auto& graphicsCommandQueue = m_pCommandQueues[static_cast<uint32>(RHICommandType::Graphics)];
 
-	// Update swapchain back buffers.
 	uint32 currentBackBufferIndex = m_pSwapChain->GetCurrentBackBufferIndex();
 	m_pSwapChain->AcquireNextBackBufferTexture(m_acquireImageSemaphores[currentBackBufferIndex]);
 	auto& frameFence = m_pFrameFences[currentBackBufferIndex];
@@ -34,8 +33,8 @@ void DeviceContext::Update()
 	frameFence->Reset(1);
 
 	frameCommandBuffer->Begin();
-	m_pSwapChain->BeginRenderPass(frameCommandBuffer);
-	m_pSwapChain->EndRenderPass(frameCommandBuffer);
+	frameCommandBuffer->BeginRenderPass(m_pSwapChain);
+	frameCommandBuffer->EndRenderPass();
 	frameCommandBuffer->End();
 
 	graphicsCommandQueue->Submit(frameCommandBuffer, nullptr, m_acquireImageSemaphores[currentBackBufferIndex], m_renderCompleteSemaphores[currentBackBufferIndex]);

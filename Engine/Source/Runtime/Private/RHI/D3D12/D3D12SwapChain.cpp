@@ -44,14 +44,6 @@ void D3D12SwapChain::AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore)
 {
 }
 
-void D3D12SwapChain::BeginRenderPass(IRHICommandBuffer* pCommandBuffer)
-{
-}
-
-void D3D12SwapChain::EndRenderPass(IRHICommandBuffer* pCommandBuffer)
-{
-}
-
 void D3D12SwapChain::Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore)
 {
 }

@@ -210,32 +210,6 @@ void VulkanSwapChain::AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore)
     VK_VERIFY(vkAcquireNextImageKHR(m_pDevice->GetHandle(), m_swapChain, UINT64_MAX, pVulkanCommandSemaphore->GetHandle(), VK_NULL_HANDLE, &m_currentBackBufferIndex));
 }
 
-void VulkanSwapChain::BeginRenderPass(IRHICommandBuffer* pCommandBuffer)
-{
-    VkClearValue clearValue{};
-    clearValue.color.float32[0] = 0.042f;
-    clearValue.color.float32[1] = 0.042f;
-    clearValue.color.float32[2] = 0.042f;
-    clearValue.color.float32[3] = 1.0f;
-
-    VkRenderPassBeginInfo renderPassBeginInfo {};
-    renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.framebuffer = m_framebuffers[m_currentBackBufferIndex];
-    renderPassBeginInfo.renderArea.extent = m_swapChainExtent;
-    renderPassBeginInfo.renderPass = m_renderPass;
-    renderPassBeginInfo.pClearValues = &clearValue;
-    renderPassBeginInfo.clearValueCount = 1;
-
-    auto* pVulkanCommandBuffer = static_cast<VulkanCommandBuffer*>(pCommandBuffer);
-    vkCmdBeginRenderPass(pVulkanCommandBuffer->GetHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-}
-
-void VulkanSwapChain::EndRenderPass(IRHICommandBuffer* pCommandBuffer)
-{
-    auto* pVulkanCommandBuffer = static_cast<VulkanCommandBuffer*>(pCommandBuffer);
-    vkCmdEndRenderPass(pVulkanCommandBuffer->GetHandle());
-}
-
 void VulkanSwapChain::Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore)
 {
     auto* pVulkanSemaphore = static_cast<VulkanSemaphore*>(pSemaphore);

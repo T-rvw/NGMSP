@@ -22,12 +22,13 @@ public:
 
 	virtual uint32 GetCurrentBackBufferIndex() const override;
 	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
-	virtual void BeginRenderPass(IRHICommandBuffer* pCommandBuffer) override;
-	virtual void EndRenderPass(IRHICommandBuffer* pCommandBuffer) override;
 	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) override;
 
 	VkSwapchainKHR GetHandle() const { return m_swapChain; }
 	const VkSwapchainKHR* GetAddressOf() const { return &m_swapChain; }
+	VkRenderPass GetRenderPass() const { return m_renderPass; }
+	VkFramebuffer GetFrameBuffer(uint32 index) const { return m_framebuffers[index]; }
+	VkExtent2D GetSwapChainExtent() const { return m_swapChainExtent; }
 
 private:
 	void InitBackBufferImages();

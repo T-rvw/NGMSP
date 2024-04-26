@@ -20,6 +20,9 @@ public:
 	VulkanBuffer& operator=(VulkanBuffer&&) = default;
 	virtual ~VulkanBuffer();
 
+	VkBuffer GetHandle() const { return m_buffer; }
+	const VkBuffer* GetAddressOf() const { return &m_buffer; }
+
 private:
 	const VulkanDevice* m_pDevice = nullptr;
 	VkBuffer m_buffer = VK_NULL_HANDLE;

@@ -24,8 +24,6 @@ public:
 
 	virtual uint32 GetCurrentBackBufferIndex() const override;
 	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
-	virtual void BeginRenderPass(IRHICommandBuffer* pCommandBuffer) override;
-	virtual void EndRenderPass(IRHICommandBuffer* pCommandBuffer) override;
 	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) override;
 
 private:
