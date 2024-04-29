@@ -4,6 +4,8 @@
 
 #include <RHI//IRHIAdapter.h>
 
+#include <optional>
+
 namespace ow
 {
 
@@ -64,30 +66,32 @@ public:
 	VulkanAdapter& operator=(VulkanAdapter&&) = default;
 	virtual ~VulkanAdapter();
 
-	virtual void Init() override;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
-	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
-	virtual RefCountPtr<IRHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) override;
+	virtual DeviceHandle CreateDevice(const RHIDeviceCreateInfo& createInfo) override;
 
 	VkPhysicalDevice GetHandle() const { return m_physicalDevice; }
 	VkInstance GetInstance() const;
 
-	const std::vector<VkExtensionProperties>& GetAvailableExtensions() const { return m_availableExtensions; }
+	const RHICommandQueueCreateInfo& GetCommandQueueCreateInfo(RHICommandType commandType) const { return m_commandQueueCIs[static_cast<uint32>(commandType)]; }
+	const Vector<VkExtensionProperties>& GetAvailableExtensions() const { return m_availableExtensions; }
 	VulkanAdapterFeatures* GetFeatures() const { return m_adapterFeatures.get(); }
 	VulkanAdapterProperties* GetProperties() const { return m_adapterProperties.get(); }
 
 private:
 	void InitOutputInfos();
 	void InitCommandQueueCreateInfos();
+	std::optional<int32> FindSuitableCommandQueue(RHICommandType commandType, const Vector<RHICommandQueueCreateInfo>& createInfos);
+	void FindSuitableCommandQueues(Vector<RHICommandQueueCreateInfo>&& createInfos);
 
 private:
-	const VulkanInstance* m_pInstance = nullptr;
-	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	std::vector<VkExtensionProperties> m_availableExtensions;
+	const VulkanInstance* m_pInstance;
+
+	VkPhysicalDevice m_physicalDevice;
+	Vector<VkExtensionProperties> m_availableExtensions;
 	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
 	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;
-	std::vector<RHIOutputInfo> m_outputInfos;
-	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
+	Vector<RHIOutputInfo> m_outputInfos;
+	RHICommandQueueCreateInfo m_commandQueueCIs[EnumCount<RHICommandType>()];
 };
 
 }

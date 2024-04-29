@@ -23,7 +23,7 @@ VulkanCommandPool::~VulkanCommandPool()
 	vkDestroyCommandPool(m_pDevice->GetHandle(), m_commandPool, nullptr);
 }
 
-RefCountPtr<IRHICommandBuffer> VulkanCommandPool::CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo)
+CommandBufferHandle VulkanCommandPool::CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanCommandBuffer>(this, createInfo);
 }

@@ -22,7 +22,9 @@ public:
 	D3D12CommandPool& operator=(D3D12CommandPool&&) = default;
 	virtual ~D3D12CommandPool() = default;
 
-	virtual RefCountPtr<IRHICommandBuffer> CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) override;
+	virtual CommandBufferHandle CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) override;
+
+	RefCountPtr<ID3D12CommandAllocator> GetHandle() const { return m_commandPool; }
 
 private:
 	RefCountPtr<ID3D12CommandAllocator> m_commandPool;

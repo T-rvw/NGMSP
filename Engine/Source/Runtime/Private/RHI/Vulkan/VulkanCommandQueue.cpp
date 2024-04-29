@@ -43,7 +43,7 @@ void VulkanCommandQueue::Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pF
 
     const VkPipelineStageFlags waitDstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-    VkSubmitInfo submitInfo{};
+    VkSubmitInfo submitInfo {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = pVulkanWaitSemaphore->GetAddressOf();

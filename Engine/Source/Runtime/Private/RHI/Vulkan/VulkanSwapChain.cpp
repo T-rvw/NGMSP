@@ -14,6 +14,8 @@ namespace ow
 VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChainCreateInfo& createInfo) :
     m_pDevice(pDevice)
 {
+    m_pCommandQueue = static_cast<VulkanCommandQueue*>(m_pDevice->GetCommandQueue(RHICommandType::Graphics).Get());
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo {};
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -44,7 +46,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         uint32 presentModeCount;
         VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(pDevice->GetAdapter(), m_surface, &presentModeCount, nullptr));
 
-        std::vector<VkPresentModeKHR> presentModes(presentModeCount);
+        Vector<VkPresentModeKHR> presentModes(presentModeCount);
         VK_VERIFY(vkGetPhysicalDeviceSurfacePresentModesKHR(pDevice->GetAdapter(), m_surface, &presentModeCount, presentModes.data()));
 
         if (RHIPresentMode::Intermediate == createInfo.PresentMode)
@@ -65,7 +67,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         uint32_t surfaceFormatCount;
         VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(pDevice->GetAdapter(), m_surface, &surfaceFormatCount, nullptr));
 
-        std::vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
+        Vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
         VK_VERIFY(vkGetPhysicalDeviceSurfaceFormatsKHR(pDevice->GetAdapter(), m_surface, &surfaceFormatCount, surfaceFormats.data()));
 
         bool findExpectedFormat = false;
@@ -103,7 +105,6 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     swapChainCreateInfo.imageExtent = m_swapChainExtent;
     swapChainCreateInfo.imageArrayLayers = 1;
     swapChainCreateInfo.presentMode = swapChainPresentMode;
-
     VK_VERIFY(vkCreateSwapchainKHR(m_pDevice->GetHandle(), &swapChainCreateInfo, nullptr, &m_swapChain));
 
     InitBackBufferImages();
@@ -199,9 +200,9 @@ void VulkanSwapChain::InitFramebuffers(const RHISwapChainCreateInfo& createInfo)
     }
 }
 
-uint32 VulkanSwapChain::GetCurrentBackBufferIndex() const
+uint32 VulkanSwapChain::GetBackBufferCount() const
 {
-    return m_currentBackBufferIndex;
+    return static_cast<uint32>(m_swapChainImages.size());
 }
 
 void VulkanSwapChain::AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore)
@@ -210,10 +211,9 @@ void VulkanSwapChain::AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore)
     VK_VERIFY(vkAcquireNextImageKHR(m_pDevice->GetHandle(), m_swapChain, UINT64_MAX, pVulkanCommandSemaphore->GetHandle(), VK_NULL_HANDLE, &m_currentBackBufferIndex));
 }
 
-void VulkanSwapChain::Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore)
+void VulkanSwapChain::Present(IRHISemaphore* pSemaphore)
 {
     auto* pVulkanSemaphore = static_cast<VulkanSemaphore*>(pSemaphore);
-    auto* pVulkanCommandQueue = static_cast<VulkanCommandQueue*>(pCommandQueue);
 
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -222,7 +222,7 @@ void VulkanSwapChain::Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pS
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &m_swapChain;
     presentInfo.pImageIndices = &m_currentBackBufferIndex;
-    VK_VERIFY(vkQueuePresentKHR(pVulkanCommandQueue->GetHandle(), &presentInfo));
+    VK_VERIFY(vkQueuePresentKHR(m_pCommandQueue->GetHandle(), &presentInfo));
 }
 
 }

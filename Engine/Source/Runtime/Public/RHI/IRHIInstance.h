@@ -1,13 +1,9 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
-
-enum class RHIBackend;
-
-class IRHIAdapter;
 
 class IRHIInstance : public RefCountObject
 {

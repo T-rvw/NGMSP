@@ -13,7 +13,7 @@ D3D12CommandQueue::D3D12CommandQueue(const D3D12Device* pDevice, const RHIComman
 	queueDesc.Type = D3D12Types::ToD3D12(createInfo.Type);
 	queueDesc.NodeMask = 0;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	queueDesc.Priority = static_cast<int32>(createInfo.Priority);
+	queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	D3D12_VERIFY(pDevice->GetHandle()->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 }
 

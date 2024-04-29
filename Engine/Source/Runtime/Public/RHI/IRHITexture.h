@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
@@ -10,12 +10,5 @@ class IRHITexture : public RefCountObject
 public:
 	virtual ~IRHITexture() {}
 };
-
-class IRHISampler : public RefCountObject
-{
-public:
-	virtual ~IRHISampler() {}
-};
-
 
 }

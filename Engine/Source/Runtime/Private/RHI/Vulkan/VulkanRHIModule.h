@@ -8,7 +8,7 @@ namespace ow
 class VulkanRHIModule : public IRHIModule
 {
 public:
-	virtual RefCountPtr<IRHIInstance> CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) override;
+	virtual InstanceHandle CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) override;
 };
 
 }

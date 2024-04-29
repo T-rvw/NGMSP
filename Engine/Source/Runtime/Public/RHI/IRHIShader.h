@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {

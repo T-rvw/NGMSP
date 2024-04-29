@@ -37,8 +37,6 @@ public:
 	}
 
 private:
-
-
 	// Resources
 
 };

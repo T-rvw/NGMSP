@@ -7,12 +7,13 @@
 namespace ow
 {
 
+class VulkanCommandQueue;
 class VulkanDevice;
 
 class VulkanSwapChain : public IRHISwapChain
 {
 public:
-	VulkanSwapChain() = default;
+	VulkanSwapChain() = delete;
 	explicit VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChainCreateInfo& createInfo);
 	VulkanSwapChain(const VulkanSwapChain&) = delete;
 	VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;
@@ -20,9 +21,9 @@ public:
 	VulkanSwapChain& operator=(VulkanSwapChain&&) = default;
 	virtual ~VulkanSwapChain();
 
-	virtual uint32 GetCurrentBackBufferIndex() const override;
+	virtual uint32 GetBackBufferCount() const override;
 	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
-	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) override;
+	virtual void Present(IRHISemaphore* pSemaphore) override;
 
 	VkSwapchainKHR GetHandle() const { return m_swapChain; }
 	const VkSwapchainKHR* GetAddressOf() const { return &m_swapChain; }
@@ -35,18 +36,18 @@ private:
 	void InitFramebuffers(const RHISwapChainCreateInfo& createInfo);
 
 private:
-	const VulkanDevice* m_pDevice = nullptr;
+	const VulkanDevice* m_pDevice;
+	const VulkanCommandQueue* m_pCommandQueue;
 
-	uint32 m_currentBackBufferIndex = 0;
-	VkSurfaceKHR m_surface = VK_NULL_HANDLE;
+	VkSurfaceKHR m_surface;
 	VkExtent2D m_swapChainExtent;
 	VkSurfaceFormatKHR m_swapChainFormat;
-	VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
-	std::vector<VkFramebuffer> m_framebuffers;
-	std::vector<VkImage> m_swapChainImages;
-	std::vector<VkImageView> m_swapChainImageViews;
+	VkSwapchainKHR m_swapChain;
+	Vector<VkFramebuffer> m_framebuffers;
+	Vector<VkImage> m_swapChainImages;
+	Vector<VkImageView> m_swapChainImageViews;
 	
-	VkRenderPass m_renderPass = VK_NULL_HANDLE;
+	VkRenderPass m_renderPass;
 };
 
 }

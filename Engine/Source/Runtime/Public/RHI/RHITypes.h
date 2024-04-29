@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Core/Base/NameOf.h>
-#include <Core/Base/BitFlags.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
 #include <RHI/RHIEnums.h>
@@ -120,7 +119,10 @@ struct RHIBarrierCreateInfo
 
 struct RHIBufferCreateInfo
 {
-
+    uint32 SizeInBytes;
+    uint32 Stride;
+    uint32 Count;
+    RHIBufferUsage Usage;
 };
 
 struct RHICommandBufferCreateInfo
@@ -152,11 +154,10 @@ struct RHICommandQueueCreateInfo
 
 struct RHIDeviceCreateInfo
 {
-    BitFlags<RHIFeatures> Features;
     RHIDebugMode Debug = RHIDebugMode::Disabled;
     RHIValidationMode Validation = RHIValidationMode::Disabled;
-    uint32 CommandQueueCount = 0;
-    RHICommandQueueCreateInfo** CommandQueueCreateInfo = nullptr;
+    RHIFeatureFlags Features;
+    RHICommandTypeFlags CommandQueueTypes;
 };
 
 struct RHIFenceCreateInfo
@@ -167,7 +168,7 @@ struct RHIFenceCreateInfo
 
 struct RHIInstanceCreateInfo
 {
-    BitFlags<RHIFeatures> Features;
+    RHIFeatureFlags Features;
     RHIDebugMode Debug = RHIDebugMode::Disabled;
     RHIValidationMode Validation = RHIValidationMode::Disabled;
 };

@@ -2,9 +2,8 @@
 
 #include "D3D12Header.h"
 
+#include <Core/Base/Vector.h>
 #include <RHI/IRHIAdapter.h>
-
-#include <vector>
 
 namespace ow
 {
@@ -24,10 +23,8 @@ public:
 	D3D12Adapter& operator=(D3D12Adapter&&) = default;
 	virtual ~D3D12Adapter() = default;
 
-	virtual void Init() override;
 	virtual void EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos) override;
-	virtual void EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs) override;
-	virtual RefCountPtr<IRHIDevice> CreateDevice(const RHIDeviceCreateInfo& createInfo) override;
+	virtual DeviceHandle CreateDevice(const RHIDeviceCreateInfo& createInfo) override;
 
 	RefCountPtr<IDXGIAdapter4> GetHandle() const { return m_adapter; }
 	RefCountPtr<IDXGIFactory6> GetFactory() const;
@@ -37,9 +34,8 @@ private:
 
 private:
 	RefCountPtr<IDXGIAdapter4> m_adapter;
-	const D3D12Instance* m_pInstance = nullptr;
-	std::vector<RHIOutputInfo> m_outputInfos;
-	std::vector<RHICommandQueueCreateInfo> m_commandQueueCIs;
+	const D3D12Instance* m_pInstance;
+	Vector<RHIOutputInfo> m_outputInfos;
 };
 
 }

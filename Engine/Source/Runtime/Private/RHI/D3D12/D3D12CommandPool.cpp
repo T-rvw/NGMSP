@@ -13,7 +13,7 @@ D3D12CommandPool::D3D12CommandPool(const D3D12Device* pDevice, const RHICommandP
 	D3D12_VERIFY(pDevice->GetHandle()->CreateCommandAllocator(D3D12Types::ToD3D12(createInfo.Type), IID_PPV_ARGS(&m_commandPool)));
 }
 
-RefCountPtr<IRHICommandBuffer> D3D12CommandPool::CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo)
+CommandBufferHandle D3D12CommandPool::CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo)
 {
 	return nullptr;
 }

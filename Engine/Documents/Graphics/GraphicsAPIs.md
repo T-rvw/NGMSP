@@ -32,6 +32,8 @@
 
 	* [Compare API differences](https://alain.xyz/blog/comparison-of-modern-graphics-apis)
 
+	* [Sig 2015 - An Overview of Next-Generation Graphics APIs](https://nextgenapis.realtimerendering.com/)
+
 	* [GDC 2016 - D3D12 and Vulkan: Lessons learned](https://gpuopen.com/wp-content/uploads/2016/03/d3d12_vulkan_lessons_learned.pdf)
 
 * Synchronization

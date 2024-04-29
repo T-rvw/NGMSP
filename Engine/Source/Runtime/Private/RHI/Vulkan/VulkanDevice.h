@@ -8,6 +8,7 @@ namespace ow
 {
 
 class VulkanAdapter;
+class VulkanCommandQueue;
 
 class VulkanDevice : public IRHIDevice
 {
@@ -24,18 +25,20 @@ public:
 	VkPhysicalDevice GetAdapter() const;
 	VkInstance GetInstance() const;
 
-	virtual RefCountPtr<IRHISwapChain> CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHICommandPool> CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHICommandQueue> CreateCommandQueue(const RHICommandQueueCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHIBarrier> CreateBarrier(const RHIBarrierCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHIFence> CreateFence(const RHIFenceCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHISemaphore> CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHIBuffer> CreateBuffer(const RHIBufferCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHITexture> CreateTexture(const RHITextureCreateInfo& createInfo) override;
-
+	virtual BarrierHandle CreateBarrier(const RHIBarrierCreateInfo& createInfo) override;
+	virtual BufferHandle CreateBuffer(const RHIBufferCreateInfo& createInfo) override;
+	virtual FenceHandle CreateFence(const RHIFenceCreateInfo& createInfo) override;
+	virtual CommandPoolHandle CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) override;
+	virtual SemaphoreHandle CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
+	virtual SwapChainHandle CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
+	virtual TextureHandle CreateTexture(const RHITextureCreateInfo& createInfo) override;
+	virtual CommandQueueHandle GetCommandQueue(RHICommandType commandType) const;
+	
 private:
-	const VulkanAdapter* m_pAdapter = nullptr;
-	VkDevice m_device = VK_NULL_HANDLE;
+	const VulkanAdapter* m_pAdapter;
+	VkDevice m_device;
+
+	RefCountPtr<VulkanCommandQueue> m_commandQueues[EnumCount<RHICommandType>()];
 };
 
 }

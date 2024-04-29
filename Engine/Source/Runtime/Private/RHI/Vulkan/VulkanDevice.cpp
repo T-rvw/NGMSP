@@ -14,6 +14,9 @@
 #include <RHI/IRHICommandQueue.h>
 #include <RHI/IRHIInstance.h>
 
+namespace ow
+{
+
 namespace
 {
 
@@ -53,7 +56,7 @@ struct VulkanAdapterRayTracing
 		pNextChain = &RayTracingPipelineProperties.pNext;
 	}
 
-	std::vector<const char*> ExtensionNames;
+	Vector<const char*> ExtensionNames;
 
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR AccelerateStructureFeatures{};
 	VkPhysicalDeviceRayTracingPipelineFeaturesKHR RayTracingPipelineFeatures{};
@@ -89,7 +92,7 @@ struct VulkanAdapterMeshShader
 		pNextChain = &MeshShaderProperties.pNext;
 	}
 
-	std::vector<const char*> ExtensionNames;
+	Vector<const char*> ExtensionNames;
 
 	VkPhysicalDeviceMeshShaderFeaturesEXT MeshShaderFeatures{};
 
@@ -98,9 +101,6 @@ struct VulkanAdapterMeshShader
 
 }
 
-namespace ow
-{
-
 VulkanDevice::VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateInfo& createInfo) :
 	m_pAdapter(pAdapter)
 {
@@ -108,7 +108,7 @@ VulkanDevice::VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateI
 	auto* adapterProperties = m_pAdapter->GetProperties();
 
 	// Enable extra extensions/features/properties by requirement.
-	std::vector<const char*> enabledExtensions;
+	Vector<const char*> enabledExtensions;
 	{
 		void** pFeaturesNextChain = &adapterFeatures->pNextChain;
 		void** pPropertiesNextChain = &adapterProperties->pNextChain;
@@ -139,16 +139,22 @@ VulkanDevice::VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateI
 		vkGetPhysicalDeviceProperties2(m_pAdapter->GetHandle(), &adapterProperties->Properties);
 	}
 
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	for (uint32 queueCIIndex = 0; queueCIIndex < createInfo.CommandQueueCount; ++queueCIIndex)
+	Vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+	uint32 commandTypeCount = EnumCount<RHICommandType>();
+	for (uint32 typeIndex = 0; typeIndex < commandTypeCount; ++typeIndex)
 	{
-		const RHICommandQueueCreateInfo* commandQueueCI = createInfo.CommandQueueCreateInfo[queueCIIndex];
+		auto commandType = static_cast<RHICommandType>(typeIndex);
+		if (!createInfo.CommandQueueTypes.IsEnabled(commandType))
+		{
+			continue;
+		}
 
+		const RHICommandQueueCreateInfo& commandQueueCI = m_pAdapter->GetCommandQueueCreateInfo(commandType);
 		VkDeviceQueueCreateInfo& queueCreateInfo = queueCreateInfos.emplace_back();
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = commandQueueCI->ID;
+		queueCreateInfo.queueFamilyIndex = commandQueueCI.ID;
 		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &commandQueueCI->Priority;
+		queueCreateInfo.pQueuePriorities = &commandQueueCI.Priority;
 	}
 
 	VkDeviceCreateInfo deviceCreateInfo{};
@@ -180,42 +186,43 @@ VkInstance VulkanDevice::GetInstance() const
 	return m_pAdapter->GetInstance();
 }
 
-RefCountPtr<IRHISwapChain> VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo)
+CommandQueueHandle VulkanDevice::GetCommandQueue(RHICommandType commandType) const
+{
+	int32 typeIndex = static_cast<int32>(commandType);
+	return m_commandQueues[typeIndex];
+}
+
+SwapChainHandle VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanSwapChain>(this, createInfo);
 }
 
-RefCountPtr<IRHICommandPool> VulkanDevice::CreateCommandPool(const RHICommandPoolCreateInfo& createInfo)
+CommandPoolHandle VulkanDevice::CreateCommandPool(const RHICommandPoolCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanCommandPool>(this, createInfo);
 }
 
-RefCountPtr<IRHICommandQueue> VulkanDevice::CreateCommandQueue(const RHICommandQueueCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<VulkanCommandQueue>(this, createInfo);
-}
-
-RefCountPtr<IRHIBarrier> VulkanDevice::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
+BarrierHandle VulkanDevice::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanBarrier>(this, createInfo);
 }
 
-RefCountPtr<IRHIFence> VulkanDevice::CreateFence(const RHIFenceCreateInfo& createInfo)
+FenceHandle VulkanDevice::CreateFence(const RHIFenceCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanFence>(this, createInfo);
 }
 
-RefCountPtr<IRHISemaphore> VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
+SemaphoreHandle VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanSemaphore>(this, createInfo);
 }
 
-RefCountPtr<IRHIBuffer> VulkanDevice::CreateBuffer(const RHIBufferCreateInfo& createInfo)
+BufferHandle VulkanDevice::CreateBuffer(const RHIBufferCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanBuffer>(this, createInfo);
 }
 
-RefCountPtr<IRHITexture> VulkanDevice::CreateTexture(const RHITextureCreateInfo& createInfo)
+TextureHandle VulkanDevice::CreateTexture(const RHITextureCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanTexture>(this, createInfo);
 }

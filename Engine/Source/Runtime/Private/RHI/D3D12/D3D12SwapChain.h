@@ -9,6 +9,7 @@ namespace ow
 
 struct RHISwapChainCreateInfo;
 
+class D3D12CommandQueue;
 class D3D12Device;
 
 class D3D12SwapChain : public IRHISwapChain
@@ -22,12 +23,17 @@ public:
 	D3D12SwapChain& operator=(D3D12SwapChain&&) = default;
 	virtual ~D3D12SwapChain();
 
-	virtual uint32 GetCurrentBackBufferIndex() const override;
+	virtual uint32 GetBackBufferCount() const override;
 	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
-	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) override;
+	virtual void Present(IRHISemaphore* pSemaphore) override;
 
 private:
-	RefCountPtr<IDXGISwapChain1> m_swapChain;
+	const D3D12Device* m_pDevice;
+	const D3D12CommandQueue* m_pCommandQueue;
+
+	uint32 m_enableVSync;
+	RefCountPtr<IDXGISwapChain4> m_swapChain;
+	Vector<RefCountPtr<ID3D12Resource>> m_swapChainImages;
 };
 
 }

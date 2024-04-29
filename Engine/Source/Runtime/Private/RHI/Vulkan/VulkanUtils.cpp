@@ -5,7 +5,7 @@
 namespace ow
 {
 
-bool VulkanUtils::FindExtension(const std::vector<VkExtensionProperties>& extensions, const char* pRequireExtension)
+bool VulkanUtils::FindExtension(const Vector<VkExtensionProperties>& extensions, const char* pRequireExtension)
 {
 	for (const auto& extension : extensions)
 	{
@@ -18,7 +18,7 @@ bool VulkanUtils::FindExtension(const std::vector<VkExtensionProperties>& extens
 	return false;
 }
 
-bool VulkanUtils::FindExtensions(const std::vector<VkExtensionProperties>& extensions, const std::vector<const char*>& requireExtensions)
+bool VulkanUtils::FindExtensions(const Vector<VkExtensionProperties>& extensions, const Vector<const char*>& requireExtensions)
 {
 	for (const auto& requireExtension : requireExtensions)
 	{
@@ -31,7 +31,7 @@ bool VulkanUtils::FindExtensions(const std::vector<VkExtensionProperties>& exten
 	return true;
 }
 
-bool VulkanUtils::EnableExtensionSafely(std::vector<const char*>& extensions, const std::vector<VkExtensionProperties>& availableExtensions, const char* pRequireExtension)
+bool VulkanUtils::EnableExtensionSafely(Vector<const char*>& extensions, const Vector<VkExtensionProperties>& availableExtensions, const char* pRequireExtension)
 {
 	if (!VulkanUtils::FindExtension(availableExtensions, pRequireExtension))
 	{
@@ -42,7 +42,7 @@ bool VulkanUtils::EnableExtensionSafely(std::vector<const char*>& extensions, co
 	return true;
 }
 
-bool VulkanUtils::EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<VkExtensionProperties>& availableExtensions, const std::vector<const char*>& requireExtensions)
+bool VulkanUtils::EnableExtensionsSafely(Vector<const char*>& extensions, const Vector<VkExtensionProperties>& availableExtensions, const Vector<const char*>& requireExtensions)
 {
 	if (!VulkanUtils::FindExtensions(availableExtensions, requireExtensions))
 	{
@@ -57,7 +57,7 @@ bool VulkanUtils::EnableExtensionsSafely(std::vector<const char*>& extensions, c
 	return true;
 }
 
-bool VulkanUtils::FindLayer(const std::vector<VkLayerProperties>& layers, const char* pRequireLayer)
+bool VulkanUtils::FindLayer(const Vector<VkLayerProperties>& layers, const char* pRequireLayer)
 {
 	for (const auto& layer : layers)
 	{
@@ -70,7 +70,7 @@ bool VulkanUtils::FindLayer(const std::vector<VkLayerProperties>& layers, const 
 	return false;
 }
 
-bool VulkanUtils::FindLayers(const std::vector<VkLayerProperties>& layers, const std::vector<const char*>& requireLayers)
+bool VulkanUtils::FindLayers(const Vector<VkLayerProperties>& layers, const Vector<const char*>& requireLayers)
 {
 	for (const auto& requireLayer : requireLayers)
 	{
@@ -83,7 +83,7 @@ bool VulkanUtils::FindLayers(const std::vector<VkLayerProperties>& layers, const
 	return true;
 }
 
-bool VulkanUtils::EnableLayersSafely(std::vector<const char*>& layers, const std::vector<VkLayerProperties>& availableLayers, const char* pRequireLayer)
+bool VulkanUtils::EnableLayersSafely(Vector<const char*>& layers, const Vector<VkLayerProperties>& availableLayers, const char* pRequireLayer)
 {
 	if (!VulkanUtils::FindLayer(availableLayers, pRequireLayer))
 	{

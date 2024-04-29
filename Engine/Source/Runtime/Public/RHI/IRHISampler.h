@@ -5,10 +5,10 @@
 namespace ow
 {
 
-class IRHISemaphore : public RefCountObject
+class IRHISampler : public RefCountObject
 {
 public:
-	virtual ~IRHISemaphore() {}
+	virtual ~IRHISampler() {}
 };
 
 }

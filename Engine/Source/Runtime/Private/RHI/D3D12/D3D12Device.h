@@ -26,25 +26,24 @@ public:
 
 	RefCountPtr<ID3D12Device5> GetHandle() const { return m_device; }
 	RefCountPtr<IDXGIFactory6> GetFactory() const;
-	const D3D12CommandQueue* GetCommandQueue(RHICommandType commandType) const;
 
-	virtual RefCountPtr<IRHISwapChain> CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHICommandPool> CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHICommandQueue> CreateCommandQueue(const RHICommandQueueCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHIBarrier> CreateBarrier(const RHIBarrierCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHIFence> CreateFence(const RHIFenceCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHISemaphore> CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHIBuffer> CreateBuffer(const RHIBufferCreateInfo& createInfo) override;
-	virtual RefCountPtr<IRHITexture> CreateTexture(const RHITextureCreateInfo& createInfo) override;
-
+	virtual BarrierHandle CreateBarrier(const RHIBarrierCreateInfo& createInfo) override;
+	virtual BufferHandle CreateBuffer(const RHIBufferCreateInfo& createInfo) override;
+	virtual FenceHandle CreateFence(const RHIFenceCreateInfo& createInfo) override;
+	virtual CommandPoolHandle CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) override;
+	virtual SemaphoreHandle CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
+	virtual SwapChainHandle CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
+	virtual TextureHandle CreateTexture(const RHITextureCreateInfo& createInfo) override;
+	virtual CommandQueueHandle GetCommandQueue(RHICommandType commandType) const;
+	
 private:
-	void SetCommandQueue(const D3D12CommandQueue* pCommandQueue);
 	void ReportLiveObjects();
 
 private:
+	const D3D12Adapter* m_pAdapter;
+
 	RefCountPtr<ID3D12Device5> m_device;
-	const D3D12CommandQueue* m_pCommandQueues[EnumCount<RHICommandType>()];
-	const D3D12Adapter* m_pAdapter = nullptr;
+	RefCountPtr<D3D12CommandQueue> m_commandQueues[EnumCount<RHICommandType>()];
 };
 
 }

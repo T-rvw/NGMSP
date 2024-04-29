@@ -1,22 +1,23 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
-
-class IRHICommandBuffer;
-class IRHICommandQueue;
-class IRHISemaphore;
 
 class IRHISwapChain : public RefCountObject
 {
 public:
 	virtual ~IRHISwapChain() {}
 
-	virtual uint32 GetCurrentBackBufferIndex() const = 0;
+	uint32 GetCurrentBackBufferIndex() const { return m_currentBackBufferIndex; }
+
+	virtual uint32 GetBackBufferCount() const = 0;
 	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) = 0;
-	virtual void Present(IRHICommandQueue* pCommandQueue, IRHISemaphore* pSemaphore) = 0; 
+	virtual void Present(IRHISemaphore* pSemaphore) = 0;
+
+protected:
+	uint32 m_currentBackBufferIndex = 0;
 };
 
 }

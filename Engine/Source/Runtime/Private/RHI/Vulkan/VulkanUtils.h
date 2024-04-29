@@ -1,8 +1,7 @@
 #pragma once
 
+#include <Core/Base/Vector.h>
 #include <RHI/RHIEnums.h>
-
-#include <vector>
 
 enum VkPhysicalDeviceType;
 struct VkExtensionProperties;
@@ -14,14 +13,14 @@ namespace ow
 class VulkanUtils
 {
 public:
-	static bool FindExtension(const std::vector<VkExtensionProperties>& extensions, const char* pRequireExtension);
-	static bool FindExtensions(const std::vector<VkExtensionProperties>& extensions, const std::vector<const char*>& requireExtensions);
-	static bool EnableExtensionSafely(std::vector<const char*>& extensions, const std::vector<VkExtensionProperties>& availableExtensions, const char* pRequireExtension);
-	static bool EnableExtensionsSafely(std::vector<const char*>& extensions, const std::vector<VkExtensionProperties>& availableExtensions, const std::vector<const char*>& requireExtensions);
+	static bool FindExtension(const Vector<VkExtensionProperties>& extensions, const char* pRequireExtension);
+	static bool FindExtensions(const Vector<VkExtensionProperties>& extensions, const Vector<const char*>& requireExtensions);
+	static bool EnableExtensionSafely(Vector<const char*>& extensions, const Vector<VkExtensionProperties>& availableExtensions, const char* pRequireExtension);
+	static bool EnableExtensionsSafely(Vector<const char*>& extensions, const Vector<VkExtensionProperties>& availableExtensions, const Vector<const char*>& requireExtensions);
 	
-	static bool FindLayer(const std::vector<VkLayerProperties>& layers, const char* pRequireLayer);
-	static bool FindLayers(const std::vector<VkLayerProperties>& layers, const std::vector<const char*>& requireLayers);
-	static bool EnableLayersSafely(std::vector<const char*>& layers, const std::vector<VkLayerProperties>& availableLayers, const char* pRequireLayer);
+	static bool FindLayer(const Vector<VkLayerProperties>& layers, const char* pRequireLayer);
+	static bool FindLayers(const Vector<VkLayerProperties>& layers, const Vector<const char*>& requireLayers);
+	static bool EnableLayersSafely(Vector<const char*>& layers, const Vector<VkLayerProperties>& availableLayers, const char* pRequireLayer);
 };
 
 }

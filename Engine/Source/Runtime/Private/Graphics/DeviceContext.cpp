@@ -38,7 +38,7 @@ void DeviceContext::Update()
 	frameCommandBuffer->End();
 
 	graphicsCommandQueue->Submit(frameCommandBuffer, nullptr, m_acquireImageSemaphores[currentBackBufferIndex], m_renderCompleteSemaphores[currentBackBufferIndex]);
-	m_pSwapChain->Present(graphicsCommandQueue, m_renderCompleteSemaphores[currentBackBufferIndex]);
+	m_pSwapChain->Present(m_renderCompleteSemaphores[currentBackBufferIndex]);
 	graphicsCommandQueue->Submit(frameFence);
 
 	for (uint32 frameIndex = 0; frameIndex < BackBufferCount; ++frameIndex)
@@ -88,7 +88,7 @@ void DeviceContext::CreateLogicalDevice()
 	// Query all RHI adapters.
 	uint32 adapterCount;
 	m_pInstance->EnumerateAdapters(adapterCount, nullptr);
-	std::vector<IRHIAdapter*> rhiAdapters(adapterCount);
+	Vector<IRHIAdapter*> rhiAdapters(adapterCount);
 	m_pInstance->EnumerateAdapters(adapterCount, rhiAdapters.data());
 
 	for (const auto* rhiAdapter : rhiAdapters)
@@ -97,67 +97,50 @@ void DeviceContext::CreateLogicalDevice()
 	}
 
 	// Find a proper GPU to create logical device.
-	auto optAdapterIndex = FindBestRHIAdapter(rhiAdapters);
+	auto optAdapterIndex = FindSuitableAdapter(rhiAdapters);
 	assert(optAdapterIndex.has_value());
 	int32 adapterIndex = optAdapterIndex.value();
 	auto& pBestAdapter = rhiAdapters[adapterIndex];
 	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());
-	pBestAdapter->Init();
 
 	// Query display output info.
 	uint32 adapterOutputCount;
 	pBestAdapter->EnumerateOutputs(adapterOutputCount, nullptr);
-	std::vector<RHIOutputInfo*> outputInfos(adapterOutputCount);
+	Vector<RHIOutputInfo*> outputInfos(adapterOutputCount);
 	pBestAdapter->EnumerateOutputs(adapterOutputCount, outputInfos.data());
 	for (const auto* outputInfo : outputInfos)
 	{
 		outputInfo->Dump();
 	}
-
-	// Query command queue info to create device.
-	printf("\n");
-	uint32 commandQueueCICount;
-	pBestAdapter->EnumerateCommandQueues(commandQueueCICount, nullptr);
-	std::vector<RHICommandQueueCreateInfo*> commandQueueCIs(commandQueueCICount);
-	pBestAdapter->EnumerateCommandQueues(commandQueueCICount, commandQueueCIs.data());
-	for (const auto& queueCI : commandQueueCIs)
-	{
-		queueCI->Dump();
-	}
-
-	std::vector<RHICommandType> expectQueueTypes{ RHICommandType::Graphics, RHICommandType::Compute, RHICommandType::Copy };
-	std::vector<RHICommandQueueCreateInfo*> bestQueueCIs = FindBestCommandQueues(expectQueueTypes, commandQueueCIs);
-	for (const auto& bestQueueCI : bestQueueCIs)
-	{
-		printf("Select %s command queue : %u\n", EnumName(bestQueueCI->Type).data(), bestQueueCI->ID);
-	}
-
+	
+	// Create logical device and required command queues.
 	RHIDeviceCreateInfo deviceCI;
 	deviceCI.Features = m_features;
+	deviceCI.CommandQueueTypes.Enable(RHICommandType::Graphics);
+	deviceCI.CommandQueueTypes.Enable(RHICommandType::Compute);
+	deviceCI.CommandQueueTypes.Enable(RHICommandType::Copy);
 	deviceCI.Debug = m_debugMode;
 	deviceCI.Validation = m_validationMode;
-	deviceCI.CommandQueueCount = static_cast<uint32>(bestQueueCIs.size());
-	deviceCI.CommandQueueCreateInfo = bestQueueCIs.data();
 	m_pDevice = pBestAdapter->CreateDevice(deviceCI);
 
-	CreateCommandQueues(bestQueueCIs);
+	//CreateCommandQueues(bestQueueCIs);
 }
 
-void DeviceContext::CreateCommandQueues(const std::vector<RHICommandQueueCreateInfo*>& queueCIs)
+void DeviceContext::CreateCommandQueues(const Vector<RHICommandQueueCreateInfo*>& queueCIs)
 {
-	for (const auto& queueCI : queueCIs)
-	{
-		auto typeIndex = static_cast<uint32>(queueCI->Type);
-		m_pCommandQueues[typeIndex] = m_pDevice->CreateCommandQueue(*queueCI);
-
-		RHICommandPoolCreateInfo commandPoolCI;
-		commandPoolCI.Type = queueCI->Type;
-		commandPoolCI.QueueID = queueCI->ID;
-		m_pCommandPools[typeIndex] = m_pDevice->CreateCommandPool(commandPoolCI);
-
-		RHIFenceCreateInfo fenceCI;
-		m_pCommandQueueFences[typeIndex] = m_pDevice->CreateFence(fenceCI);
-	}
+	//for (const auto& queueCI : queueCIs)
+	//{
+	//	auto typeIndex = static_cast<uint32>(queueCI->Type);
+	//	m_pCommandQueues[typeIndex] = m_pDevice->CreateCommandQueue(*queueCI);
+	//
+	//	RHICommandPoolCreateInfo commandPoolCI;
+	//	commandPoolCI.Type = queueCI->Type;
+	//	commandPoolCI.QueueID = queueCI->ID;
+	//	m_pCommandPools[typeIndex] = m_pDevice->CreateCommandPool(commandPoolCI);
+	//
+	//	RHIFenceCreateInfo fenceCI;
+	//	m_pCommandQueueFences[typeIndex] = m_pDevice->CreateFence(fenceCI);
+	//}
 }
 
 void DeviceContext::CreateSwapChain(void* pNativeWindow, uint32 width, uint32 height)
@@ -202,7 +185,7 @@ void DeviceContext::CreateSwapChain(void* pNativeWindow, uint32 width, uint32 he
 	m_pFrameFences[0]->Wait(1);
 }
 
-std::optional<int32> DeviceContext::FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters)
+std::optional<int32> DeviceContext::FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters)
 {
 	std::optional<int32> bestAdapterIndex;
 	uint64 bestScore = 0;
@@ -231,54 +214,6 @@ std::optional<int32> DeviceContext::FindBestRHIAdapter(const std::vector<IRHIAda
 	}
 
 	return bestAdapterIndex;
-}
-
-std::optional<int32> DeviceContext::FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
-{
-	std::optional<int32> bestCIIndex;
-	float bestScore = -1.0f;
-	for (int32 ciIndex = 0, ciCount = static_cast<int32>(createInfos.size()); ciIndex < ciCount; ++ciIndex)
-	{
-		const auto& createInfo = createInfos[ciIndex];
-		if (commandType == createInfo->Type)
-		{
-			float score = 0.0f;
-			if (createInfo->IsDedicated)
-			{
-				score += 1U << 31;
-			}
-			score += createInfo->Priority;
-
-			if (score > bestScore)
-			{
-				bestCIIndex = ciIndex;
-				bestScore = score;
-			}
-		}
-	}
-
-	return bestCIIndex;
-}
-
-std::vector<RHICommandQueueCreateInfo*> DeviceContext::FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo*>& createInfos)
-{
-	std::vector<RHICommandQueueCreateInfo*> bestCommandQueueCIs;
-
-	std::unordered_set<int32> queueIndexes;
-	for (auto commandType : commandTypes)
-	{
-		if (auto optIndex = FindBestCommandQueue(commandType, createInfos); optIndex.has_value())
-		{
-			queueIndexes.insert(optIndex.value());
-		}
-	}
-
-	for (auto queueIndex : queueIndexes)
-	{
-		bestCommandQueueCIs.push_back(createInfos[queueIndex]);
-	}
-
-	return bestCommandQueueCIs;
 }
 
 }

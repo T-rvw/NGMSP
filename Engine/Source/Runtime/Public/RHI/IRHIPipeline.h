@@ -1,5 +1,7 @@
 #pragma once
 
+#include <RHI/RHIFoward.h>
+
 namespace ow
 {
 

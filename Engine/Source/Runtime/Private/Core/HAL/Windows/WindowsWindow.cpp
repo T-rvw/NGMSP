@@ -1,5 +1,6 @@
 #include "WindowsWindow.h"
 
+#include <Core/Base/Vector.h>
 #include <Core/HAL/PlatformTypes.h>
 
 #include <cassert>
@@ -23,7 +24,7 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 	int32 windowLeft = (::GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
 	int32 windowTop = (::GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
 
-	std::vector<TCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
+	Vector<TCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
 	m_handle = ::CreateWindowEx(NULL, WindowsWindow::WindowClassName, title.data(), windowStyle,
 		windowLeft, windowTop,
 		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,

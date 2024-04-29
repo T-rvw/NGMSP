@@ -1,21 +1,17 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
 #include <Core/Modules/IModule.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
-
-struct RHIInstanceCreateInfo;
-
-class IRHIInstance;
 
 class IRHIModule : public IModule, public RefCountObject
 {
 public:
 	virtual ~IRHIModule() {}
 
-	virtual RefCountPtr<IRHIInstance> CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) = 0;
+	virtual InstanceHandle CreateRHIInstance(const RHIInstanceCreateInfo& createInfo) = 0;
 };
 
 }

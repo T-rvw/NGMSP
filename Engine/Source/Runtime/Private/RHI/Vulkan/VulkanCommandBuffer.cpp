@@ -28,6 +28,7 @@ void VulkanCommandBuffer::Begin()
 {
 	VkCommandBufferBeginInfo beginInfo {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	VK_VERIFY(vkBeginCommandBuffer(m_commandBuffer, &beginInfo));
 }
 
@@ -82,8 +83,25 @@ void VulkanCommandBuffer::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 bind
 {
 	auto* pVulkanVertexBuffer = static_cast<VulkanBuffer*>(pVertexBuffer);
 
-	VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(m_commandBuffer, bindingStart, 1, pVulkanVertexBuffer->GetAddressOf(), &offset);
+	VkDeviceSize offset[] = { 0 };
+	vkCmdBindVertexBuffers(m_commandBuffer, bindingStart, 1, pVulkanVertexBuffer->GetAddressOf(), offset);
+}
+
+void VulkanCommandBuffer::SetVertexBuffers(const Vector<IRHIBuffer*>& vertexBuffers, uint32 bindingStart)
+{
+	constexpr uint64 MaxVertexBufferCount = 4;
+	assert(vertexBuffers.size() <= MaxVertexBufferCount);
+
+	uint32 bufferCount = 0;
+	VkBuffer buffer[MaxVertexBufferCount];
+	for (auto* pVertexBuffer : vertexBuffers)
+	{
+		buffer[bufferCount] = static_cast<VulkanBuffer*>(pVertexBuffer)->GetHandle();
+		++bufferCount;
+	}
+
+	VkDeviceSize offset[] = { 0 };
+	vkCmdBindVertexBuffers(m_commandBuffer, bindingStart, bufferCount, buffer, offset);
 }
 
 void VulkanCommandBuffer::SetIndexBuffer(IRHIBuffer* pIndexBuffer, bool useUInt16)
@@ -93,14 +111,24 @@ void VulkanCommandBuffer::SetIndexBuffer(IRHIBuffer* pIndexBuffer, bool useUInt1
 	vkCmdBindIndexBuffer(m_commandBuffer, pVulkanIndexBuffer->GetHandle(), 0, useUInt16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 }
 
-void VulkanCommandBuffer::Draw(uint32 vertexCount, uint32 vertexStart, uint32 instanceCount, uint32 instanceStart)
+void VulkanCommandBuffer::Draw(uint32 vertexCount, uint32 vertexStart)
 {
-
+	vkCmdDraw(m_commandBuffer, vertexCount, 1, vertexStart, 0);
 }
 
-void VulkanCommandBuffer::DrawIndexed(uint32 indexCount, uint32 indexStart, uint32_t vertexOffset, uint32 instanceCount, uint32 instanceStart)
+void VulkanCommandBuffer::DrawInstanced(uint32 vertexCount, uint32 vertexStart, uint32 instanceCount, uint32 instanceStart)
 {
+	vkCmdDraw(m_commandBuffer, vertexCount, instanceCount, vertexStart, instanceStart);
+}
 
+void VulkanCommandBuffer::DrawIndexed(uint32 indexCount, uint32 indexStart, uint32_t vertexOffset)
+{
+	vkCmdDrawIndexed(m_commandBuffer, indexCount, 1, indexStart, vertexOffset, 0);
+}
+
+void VulkanCommandBuffer::DrawIndexedInstanced(uint32 indexCount, uint32 instanceCount, uint32 indexStart, uint32 instanceStart, uint32_t vertexOffset)
+{
+	vkCmdDrawIndexed(m_commandBuffer, indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
 }
 
 }

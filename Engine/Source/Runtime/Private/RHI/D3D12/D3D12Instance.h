@@ -2,6 +2,7 @@
 
 #include "D3D12Adapter.h"
 
+#include <Core/Base/Vector.h>
 #include <RHI/IRHIInstance.h>
 
 namespace ow
@@ -30,7 +31,7 @@ private:
 
 private:
 	RefCountPtr<IDXGIFactory6> m_factory;
-	std::vector<D3D12Adapter> m_adapters;
+	Vector<D3D12Adapter> m_adapters;
 };
 
 }

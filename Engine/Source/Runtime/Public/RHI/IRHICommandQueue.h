@@ -1,16 +1,9 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
-
-#include <RHI/RHIEnums.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
-
-class IRHICommandBuffer;
-class IRHIFence;
-class IRHISemaphore;
-class IRHISwapChain;
 
 class IRHICommandQueue : public RefCountObject
 {

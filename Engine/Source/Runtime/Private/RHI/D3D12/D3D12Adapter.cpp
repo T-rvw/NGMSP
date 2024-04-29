@@ -31,7 +31,7 @@ D3D12Adapter::D3D12Adapter(const D3D12Instance* pInstance, RefCountPtr<IDXGIAdap
 	while (D3D12_SUCCEED(m_adapter->EnumOutputs(outputIndex++, pOutput.ReleaseAndGetAddressOf())))
 	{
 		RefCountPtr<IDXGIOutput6> pOutput6;
-		D3D12_VERIFY(pOutput->QueryInterface(__uuidof(IDXGIOutput6), reinterpret_cast<void**>(pOutput6.ReleaseAndGetAddressOf())));
+		D3D12_VERIFY(D3D12Utils::As<IDXGIOutput6>(pOutput, &pOutput6));
 
 		DXGI_OUTPUT_DESC1 outputDesc;
 		pOutput6->GetDesc1(&outputDesc);
@@ -53,33 +53,6 @@ RefCountPtr<IDXGIFactory6> D3D12Adapter::GetFactory() const
 	return m_pInstance->GetHandle();
 }
 
-void D3D12Adapter::Init()
-{
-	{
-		auto& commandQueue = m_commandQueueCIs.emplace_back();
-		commandQueue.Type = RHICommandType::Graphics;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
-	}
-
-	{
-		auto& commandQueue = m_commandQueueCIs.emplace_back();
-		commandQueue.Type = RHICommandType::Compute;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
-	}
-
-	{
-		auto& commandQueue = m_commandQueueCIs.emplace_back();
-		commandQueue.Type = RHICommandType::Copy;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
-	}
-
-	{
-		auto& commandQueue = m_commandQueueCIs.emplace_back();
-		commandQueue.Type = RHICommandType::VideoDecode;
-		commandQueue.Priority = static_cast<float>(D3D12_COMMAND_QUEUE_PRIORITY_NORMAL);
-	}
-}
-
 void D3D12Adapter::EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos)
 {
 	if (!pOutputInfos)
@@ -94,21 +67,7 @@ void D3D12Adapter::EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutput
 	}
 }
 
-void D3D12Adapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
-{
-	if (!pCommandQueueCIs)
-	{
-		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
-		return;
-	}
-
-	for (uint32 queueIndex = 0; queueIndex < queueCICount; ++queueIndex)
-	{
-		pCommandQueueCIs[queueIndex] = &m_commandQueueCIs[queueIndex];
-	}
-}
-
-RefCountPtr<IRHIDevice> D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
+DeviceHandle D3D12Adapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Device>(this, createInfo);
 }

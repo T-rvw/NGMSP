@@ -36,14 +36,14 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	Init();
 
 	// Enable instance layers.
-	std::vector<const char*> instanceLayers;
+	Vector<const char*> instanceLayers;
 	if (createInfo.Validation != RHIValidationMode::Disabled)
 	{
 		VulkanUtils::EnableLayersSafely(instanceLayers, m_availableLayers, "VK_LAYER_KHRONOS_validation");
 	}
 
 	// Enable instance extensions.
-	std::vector<const char*> instanceExtensions;
+	Vector<const char*> instanceExtensions;
 	VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
 	// Enable surface extension.
@@ -150,7 +150,7 @@ void VulkanInstance::InitAdapters()
 	uint32 adapterCount;
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &adapterCount, nullptr));
 
-	std::vector<VkPhysicalDevice> physicalDevices(adapterCount);
+	Vector<VkPhysicalDevice> physicalDevices(adapterCount);
 	VK_VERIFY(vkEnumeratePhysicalDevices(m_instance, &adapterCount, physicalDevices.data()));
 
 	for (uint32 adapterIndex = 0; adapterIndex < adapterCount; ++adapterIndex)

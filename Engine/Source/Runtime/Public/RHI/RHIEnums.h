@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/Base/BitFlags.h>
+
 namespace ow
 {
 
@@ -116,6 +118,7 @@ enum class RHICommandType
     Copy,
     VideoDecode
 };
+using RHICommandTypeFlags = BitFlags<RHICommandType>;
 
 enum class RHICullMode
 {
@@ -139,6 +142,7 @@ enum class RHIFeatures
     VariableRateShading,
     WorkGraphs
 };
+using RHIFeatureFlags = BitFlags<RHIFeatures>;
 
 enum class RHIFenceType
 {

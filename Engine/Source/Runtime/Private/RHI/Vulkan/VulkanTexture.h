@@ -21,9 +21,9 @@ public:
 	virtual ~VulkanTexture();
 
 private:
-	const VulkanDevice* m_pDevice = nullptr;
-	VkImage m_image = VK_NULL_HANDLE;
-	VkImageView m_imageView = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice;
+	VkImage m_image;
+	VkImageView m_imageView;
 };
 
 }

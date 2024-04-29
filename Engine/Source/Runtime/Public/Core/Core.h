@@ -7,6 +7,7 @@
 #include <Core/Base/RefCountPtr.h>
 #include <Core/Base/StringID.h>
 #include <Core/Base/TypeTraits.h>
+#include <Core/Base/Vector.h>
 #include <Core/Modules/IModule.h>
 #include <Core/Modules/ModuleManager.h>
 #include <Core/HAL/PlatformApplication.h>

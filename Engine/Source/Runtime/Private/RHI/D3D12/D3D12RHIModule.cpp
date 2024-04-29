@@ -12,7 +12,7 @@ C_ABI RHI_API IModule* InitializeModule()
 	return new D3D12RHIModule();
 }
 
-RefCountPtr<IRHIInstance> D3D12RHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
+InstanceHandle D3D12RHIModule::CreateRHIInstance(const RHIInstanceCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Instance>(createInfo);
 }

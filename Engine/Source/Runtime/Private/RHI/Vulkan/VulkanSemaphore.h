@@ -24,8 +24,8 @@ public:
 	const VkSemaphore* GetAddressOf() const { return &m_semaphore; }
 
 private:
-	const VulkanDevice* m_pDevice = nullptr;
-	VkSemaphore m_semaphore = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice;
+	VkSemaphore m_semaphore;
 };
 
 }

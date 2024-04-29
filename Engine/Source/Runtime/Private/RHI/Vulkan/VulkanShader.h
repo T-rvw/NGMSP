@@ -21,7 +21,7 @@ public:
 	virtual ~VulkanShader();
 
 private:
-	const VulkanDevice* m_pDevice = nullptr;
+	const VulkanDevice* m_pDevice;
 	VkShaderModule m_shaderModule;
 };
 

@@ -26,19 +26,19 @@ public:
 	virtual void EnumerateAdapters(uint32& adapterCount, IRHIAdapter** pAdapters) override;
 
 	VkInstance GetHandle() const { return m_instance; }
-	const std::vector<VkExtensionProperties>& GetAvaialableExtensions() const { return m_availableExtensions; }
-	const std::vector<VkLayerProperties>& GetAvaialableLayers() const { return m_availableLayers; }
+	const Vector<VkExtensionProperties>& GetAvaialableExtensions() const { return m_availableExtensions; }
+	const Vector<VkLayerProperties>& GetAvaialableLayers() const { return m_availableLayers; }
 
 private:
 	void Init();
 	void InitAdapters();
 
 private:
-	VkInstance m_instance = VK_NULL_HANDLE;
-	VkDebugUtilsMessengerEXT m_debugUtilsMessenger = VK_NULL_HANDLE;
-	std::vector<VkExtensionProperties> m_availableExtensions;
-	std::vector<VkLayerProperties> m_availableLayers;
-	std::vector<VulkanAdapter> m_adapters;
+	VkInstance m_instance;
+	VkDebugUtilsMessengerEXT m_debugUtilsMessenger;
+	Vector<VkExtensionProperties> m_availableExtensions;
+	Vector<VkLayerProperties> m_availableLayers;
+	Vector<VulkanAdapter> m_adapters;
 };
 
 }

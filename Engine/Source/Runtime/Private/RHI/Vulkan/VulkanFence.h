@@ -29,8 +29,8 @@ public:
 	VkFence GetHandle() const { return m_fence; }
 
 private:
-	const VulkanDevice* m_pDevice = nullptr;
-	VkFence m_fence = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice;
+	VkFence m_fence;
 };
 
 }

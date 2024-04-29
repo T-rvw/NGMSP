@@ -1,20 +1,16 @@
 #pragma once
 
-#include <Core/Base/RefCountPtr.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
-
-struct RHICommandBufferCreateInfo;
-
-class IRHICommandBuffer;
 
 class IRHICommandPool : public RefCountObject
 {
 public:
 	virtual ~IRHICommandPool() {}
 
-	virtual RefCountPtr<IRHICommandBuffer> CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) = 0;
+	virtual CommandBufferHandle CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) = 0;
 };
 
 }

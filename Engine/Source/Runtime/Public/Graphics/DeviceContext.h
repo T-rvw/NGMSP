@@ -4,7 +4,6 @@
 #include <RHI/RHI.h>
 
 #include <optional>
-#include <vector>
 
 namespace ow
 {
@@ -26,35 +25,33 @@ private:
 	void LoadRHIModule(RHIBackend backend);
 	void CreateRHIInstance();
 	void CreateLogicalDevice();
-	void CreateCommandQueues(const std::vector<RHICommandQueueCreateInfo*>& queueCIs);
+	void CreateCommandQueues(const Vector<RHICommandQueueCreateInfo*>& queueCIs);
 	void CreateSwapChain(void* pNativeWindow, uint32 width, uint32 height);
 
 private:
-	std::optional<int32> FindBestRHIAdapter(const std::vector<IRHIAdapter*>& adapters);
-	std::optional<int32> FindBestCommandQueue(RHICommandType commandType, const std::vector<RHICommandQueueCreateInfo*>& createInfos);
-	std::vector<RHICommandQueueCreateInfo*> FindBestCommandQueues(const std::vector<RHICommandType>& commandTypes, const std::vector<RHICommandQueueCreateInfo*>& createInfos);
+	std::optional<int32> FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters);
 
 private:
 	static constexpr int32 RHICommandTypeCount = EnumCount<RHICommandType>();
 	static constexpr int32 BackBufferCount = 2;
 	
-	BitFlags<RHIFeatures> m_features;
+	RHIFeatureFlags m_features;
 	RHIDebugMode m_debugMode = RHIDebugMode::Enabled;
 	RHIValidationMode m_validationMode = RHIValidationMode::GPU;
 
-	RefCountPtr<IRHIModule> m_pRHIModule;
-	RefCountPtr<IRHIInstance> m_pInstance;
-	RefCountPtr<IRHIDevice> m_pDevice;
-	RefCountPtr<IRHISwapChain> m_pSwapChain;
-	RefCountPtr<IRHICommandPool> m_pCommandPools[RHICommandTypeCount];
-	RefCountPtr<IRHICommandQueue> m_pCommandQueues[RHICommandTypeCount];
-	RefCountPtr<IRHIFence> m_pCommandQueueFences[RHICommandTypeCount];
+	ModuleHandle m_pRHIModule;
+	InstanceHandle m_pInstance;
+	DeviceHandle m_pDevice;
+	SwapChainHandle m_pSwapChain;
+	CommandPoolHandle m_pCommandPools[RHICommandTypeCount];
+	CommandQueueHandle m_pCommandQueues[RHICommandTypeCount];
+	FenceHandle m_pCommandQueueFences[RHICommandTypeCount];
 
-	RefCountPtr<IRHICommandBuffer> m_pSetupCommandBuffer;
-	RefCountPtr<IRHICommandBuffer> m_pCommandBuffers[BackBufferCount];
-	RefCountPtr<IRHIFence> m_pFrameFences[BackBufferCount];
-	RefCountPtr<IRHISemaphore> m_acquireImageSemaphores[BackBufferCount];
-	RefCountPtr<IRHISemaphore> m_renderCompleteSemaphores[BackBufferCount];
+	CommandBufferHandle m_pSetupCommandBuffer;
+	CommandBufferHandle m_pCommandBuffers[BackBufferCount];
+	FenceHandle m_pFrameFences[BackBufferCount];
+	SemaphoreHandle m_acquireImageSemaphores[BackBufferCount];
+	SemaphoreHandle m_renderCompleteSemaphores[BackBufferCount];
 };
 
 }

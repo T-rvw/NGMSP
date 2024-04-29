@@ -27,7 +27,7 @@ public:
 	VkQueue GetHandle() const { return m_commandQueue; }
 
 private:
-	VkQueue m_commandQueue = VK_NULL_HANDLE;
+	VkQueue m_commandQueue;
 };
 
 }

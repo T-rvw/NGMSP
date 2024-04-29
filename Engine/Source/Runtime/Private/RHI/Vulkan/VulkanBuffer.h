@@ -24,9 +24,8 @@ public:
 	const VkBuffer* GetAddressOf() const { return &m_buffer; }
 
 private:
-	const VulkanDevice* m_pDevice = nullptr;
-	VkBuffer m_buffer = VK_NULL_HANDLE;
-	VkBufferView m_bufferView = VK_NULL_HANDLE;
+	const VulkanDevice* m_pDevice;
+	VkBuffer m_buffer;
 };
 
 }

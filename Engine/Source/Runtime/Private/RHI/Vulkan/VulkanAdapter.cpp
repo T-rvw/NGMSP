@@ -3,6 +3,8 @@
 #include "VulkanDevice.h"
 #include "VulkanInstance.h"
 
+#include <unordered_set>
+
 namespace ow
 {
 
@@ -24,7 +26,7 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	const bool isIntegratedGPU = GPUAdapterType::Integrated == m_info.Type;
 	uint64 videoMemorySize = 0;
 	uint64 systemMemorySize = 0;
-	std::vector<std::vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
+	Vector<Vector<const VkMemoryType*>> memoryHeapTypes(memoryProperties.memoryHeapCount);
 	for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
 	{
 		const VkMemoryType& memoryType = memoryProperties.memoryTypes[memoryTypeIndex];
@@ -49,6 +51,17 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 
 	m_info.VideoMemorySize = videoMemorySize;
 	m_info.SystemMemorySize = systemMemorySize;
+
+	uint32 extensionCount;
+	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));
+	m_availableExtensions.resize(extensionCount);
+	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_availableExtensions.data()));
+
+	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
+	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
+
+	InitOutputInfos();
+	InitCommandQueueCreateInfos();
 }
 
 VulkanAdapter::~VulkanAdapter()
@@ -58,20 +71,6 @@ VulkanAdapter::~VulkanAdapter()
 VkInstance VulkanAdapter::GetInstance() const
 {
 	return m_pInstance->GetHandle();
-}
-
-void VulkanAdapter::Init()
-{
-	uint32 extensionCount;
-	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr));
-	m_availableExtensions.resize(extensionCount);
-	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_availableExtensions.data()));
-
-	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
-	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
-	
-	InitOutputInfos();
-	InitCommandQueueCreateInfos();
 }
 
 void VulkanAdapter::InitOutputInfos()
@@ -84,7 +83,7 @@ void VulkanAdapter::InitOutputInfos()
 
 	uint32 displayCount;
 	VK_VERIFY(vkGetPhysicalDeviceDisplayPropertiesKHR(m_physicalDevice, &displayCount, nullptr));
-	std::vector<VkDisplayPropertiesKHR> adapterDisplayInfos(displayCount);
+	Vector<VkDisplayPropertiesKHR> adapterDisplayInfos(displayCount);
 	VK_VERIFY(vkGetPhysicalDeviceDisplayPropertiesKHR(m_physicalDevice, &displayCount, adapterDisplayInfos.data()));
 	
 	for (uint32 displayIndex = 0; displayIndex < displayCount; ++displayIndex)
@@ -96,7 +95,7 @@ void VulkanAdapter::InitOutputInfos()
 	
 		uint32_t modeCount;
 		VK_VERIFY(vkGetDisplayModePropertiesKHR(m_physicalDevice, vkDisplay.display, &modeCount, nullptr));
-		std::vector<VkDisplayModePropertiesKHR> adapterDisplayModeInfos(modeCount);
+		Vector<VkDisplayModePropertiesKHR> adapterDisplayModeInfos(modeCount);
 		VK_VERIFY(vkGetDisplayModePropertiesKHR(m_physicalDevice, vkDisplay.display, &modeCount, adapterDisplayModeInfos.data()));
 	
 		for (uint32 modeIndex = 0; modeIndex < modeCount; ++modeIndex)
@@ -110,11 +109,12 @@ void VulkanAdapter::InitOutputInfos()
 void VulkanAdapter::InitCommandQueueCreateInfos()
 {
 	uint32 queueFamilyCount;
-	std::vector<VkQueueFamilyProperties2> adapterQueueFamilies;
+	Vector<VkQueueFamilyProperties2> adapterQueueFamilies;
 	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, nullptr);
 	adapterQueueFamilies.resize(queueFamilyCount, { VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2 });
 	vkGetPhysicalDeviceQueueFamilyProperties2(m_physicalDevice, &queueFamilyCount, adapterQueueFamilies.data());
 
+	Vector<RHICommandQueueCreateInfo> commandQueueCIs;
 	for (uint32 queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; ++queueFamilyIndex)
 	{
 		const auto& queueFamily = adapterQueueFamilies[queueFamilyIndex];
@@ -124,7 +124,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 			continue;
 		}
 
-		uint32 rhiQueueStartIndex = static_cast<uint32>(m_commandQueueCIs.size());
+		uint32 rhiQueueStartIndex = static_cast<uint32>(commandQueueCIs.size());
 		uint32 rhiQueueEndIndex = rhiQueueStartIndex;
 		bool supportGraphics = queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT;
 		bool supportCompute = queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT;
@@ -132,7 +132,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		bool supportVideoDecode = queueFamilyProperties.queueFlags & VK_QUEUE_VIDEO_DECODE_BIT_KHR;
 		if (supportGraphics)
 		{
-			auto& createInfo = m_commandQueueCIs.emplace_back();
+			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::Graphics;
 			createInfo.ID = queueFamilyIndex;
 			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
@@ -143,7 +143,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 
 		if (supportCompute)
 		{
-			auto& createInfo = m_commandQueueCIs.emplace_back();
+			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::Compute;
 			createInfo.ID = queueFamilyIndex;
 			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
@@ -154,7 +154,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 
 		if (supportTransfer)
 		{
-			auto& createInfo = m_commandQueueCIs.emplace_back();
+			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::Copy;
 			createInfo.ID = queueFamilyIndex;
 			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
@@ -165,7 +165,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 
 		if (supportVideoDecode)
 		{
-			auto& createInfo = m_commandQueueCIs.emplace_back();
+			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::VideoDecode;
 			createInfo.ID = queueFamilyIndex;
 			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
@@ -177,9 +177,11 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		uint32 rhiQueueCount = rhiQueueEndIndex - rhiQueueStartIndex;
 		for (uint32 queueIndex = rhiQueueStartIndex; queueIndex < rhiQueueEndIndex; ++queueIndex)
 		{
-			m_commandQueueCIs[queueIndex].IsDedicated = rhiQueueCount == 1;
+			commandQueueCIs[queueIndex].IsDedicated = rhiQueueCount == 1;
 		}
 	}
+
+	FindSuitableCommandQueues(MoveTemp(commandQueueCIs));
 }
 
 void VulkanAdapter::EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutputInfos)
@@ -196,23 +198,57 @@ void VulkanAdapter::EnumerateOutputs(uint32& outputCount, RHIOutputInfo** pOutpu
 	}
 }
 
-void VulkanAdapter::EnumerateCommandQueues(uint32& queueCICount, RHICommandQueueCreateInfo** pCommandQueueCIs)
-{
-	if (!pCommandQueueCIs)
-	{
-		queueCICount = static_cast<uint32>(m_commandQueueCIs.size());
-		return;
-	}
-
-	for (uint32 queueIndex = 0; queueIndex < queueCICount; ++queueIndex)
-	{
-		pCommandQueueCIs[queueIndex] = &m_commandQueueCIs[queueIndex];
-	}
-}
-
-RefCountPtr<IRHIDevice> VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
+DeviceHandle VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanDevice>(this, createInfo);
+}
+
+std::optional<int32> VulkanAdapter::FindSuitableCommandQueue(RHICommandType commandType, const Vector<RHICommandQueueCreateInfo>& createInfos)
+{
+	std::optional<int32> bestCIIndex;
+	float bestScore = -1.0f;
+	for (int32 ciIndex = 0, ciCount = static_cast<int32>(createInfos.size()); ciIndex < ciCount; ++ciIndex)
+	{
+		const auto& createInfo = createInfos[ciIndex];
+		if (commandType == createInfo.Type)
+		{
+			float score = 0.0f;
+			if (createInfo.IsDedicated)
+			{
+				score += 1U << 31;
+			}
+			score += createInfo.Priority;
+
+			if (score > bestScore)
+			{
+				bestCIIndex = ciIndex;
+				bestScore = score;
+			}
+		}
+	}
+
+	return bestCIIndex;
+}
+
+void VulkanAdapter::FindSuitableCommandQueues(Vector<RHICommandQueueCreateInfo>&& createInfos)
+{
+	std::unordered_set<int32> queueIndexes;
+
+	uint32 typeCount = EnumCount<RHICommandType>();
+	for (uint32 typeIndex = 0; typeIndex < typeCount; ++typeIndex)
+	{
+		auto commandType = static_cast<RHICommandType>(typeIndex);
+		if (auto optIndex = FindSuitableCommandQueue(commandType, createInfos); optIndex.has_value())
+		{
+			queueIndexes.insert(optIndex.value());
+		}
+	}
+
+	for (auto queueIndex : queueIndexes)
+	{
+		uint32 tyoeIndex = static_cast<uint32>(createInfos[queueIndex].Type);
+		m_commandQueueCIs[tyoeIndex] = createInfos[queueIndex];
+	}
 }
 
 }
