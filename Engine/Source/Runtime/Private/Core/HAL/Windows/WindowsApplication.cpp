@@ -25,7 +25,7 @@ WindowsApplication::WindowsApplication()
 
 bool WindowsApplication::PollMessages()
 {
-	MSG msg{};
+	MSG msg = {};
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
 		::TranslateMessage(&msg);

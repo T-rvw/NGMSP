@@ -24,16 +24,15 @@ public:
 	virtual ~D3D12SwapChain();
 
 	virtual uint32 GetBackBufferCount() const override;
-	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
+	virtual void AcquireNextTexture(IRHISemaphore* pSemaphore) override;
 	virtual void Present(IRHISemaphore* pSemaphore) override;
 
 private:
 	const D3D12Device* m_pDevice;
 	const D3D12CommandQueue* m_pCommandQueue;
-
-	uint32 m_enableVSync;
+	bool m_enableVSync;
 	RefCountPtr<IDXGISwapChain4> m_swapChain;
-	Vector<RefCountPtr<ID3D12Resource>> m_swapChainImages;
+	Vector<RefCountPtr<ID3D12Resource>> m_backBuffers;
 };
 
 }

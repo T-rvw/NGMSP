@@ -14,7 +14,6 @@ VulkanTexture::VulkanTexture(const VulkanDevice* pDevice, const RHITextureCreate
 
 VulkanTexture::~VulkanTexture()
 {
-	vkDestroyImageView(m_pDevice->GetHandle(), m_imageView, nullptr);
 	vkDestroyImage(m_pDevice->GetHandle(), m_image, nullptr);
 }
 

@@ -11,8 +11,8 @@ public:
 	virtual ~IRHICommandQueue() {}
 	
 	virtual void Submit(IRHIFence* pFence) = 0;
-	virtual void Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence) = 0;
-	virtual void Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore) = 0;
+	virtual void Submit(IRHICommandList* pCommandBuffer, IRHIFence* pFence) = 0;
+	virtual void Submit(IRHICommandList* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore) = 0;
 
 	RHICommandType GetType() const { return m_commandQueueType; }
 

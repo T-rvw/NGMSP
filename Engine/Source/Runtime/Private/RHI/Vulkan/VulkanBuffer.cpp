@@ -10,7 +10,7 @@ namespace ow
 VulkanBuffer::VulkanBuffer(const VulkanDevice* pDevice, const RHIBufferCreateInfo& createInfo) :
 	m_pDevice(pDevice)
 {
-    VkBufferCreateInfo bufferCI {};
+    VkBufferCreateInfo bufferCI = {};
     bufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferCI.size = static_cast<VkDeviceSize>(createInfo.SizeInBytes);
     bufferCI.usage = VulkanTypes::ToVK(createInfo.Usage);

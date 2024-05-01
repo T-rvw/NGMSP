@@ -10,7 +10,7 @@ namespace ow
 VulkanSemaphore::VulkanSemaphore(const VulkanDevice* pDevice, const RHISemaphoreCreateInfo& createInfo) :
 	m_pDevice(pDevice)
 {
-	VkSemaphoreCreateInfo semaphoreCI {};
+	VkSemaphoreCreateInfo semaphoreCI = {};
 	semaphoreCI.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
 	vkCreateSemaphore(m_pDevice->GetHandle(), &semaphoreCI, nullptr, &m_semaphore);

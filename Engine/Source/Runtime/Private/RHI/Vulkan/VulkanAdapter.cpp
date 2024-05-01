@@ -12,7 +12,7 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	m_pInstance(m_pInstance),
 	m_physicalDevice(physicalDevice)
 {
-	VkPhysicalDeviceProperties properties {};
+	VkPhysicalDeviceProperties properties = {};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
 	m_info.Type = VulkanTypes::ToRHI(properties.deviceType);
@@ -20,7 +20,7 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	m_info.Vendor = GetGPUVendor(properties.vendorID);
 	m_info.DeviceID = properties.deviceID;
 
-	VkPhysicalDeviceMemoryProperties memoryProperties {};
+	VkPhysicalDeviceMemoryProperties memoryProperties = {};
 	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
 	const bool isIntegratedGPU = GPUAdapterType::Integrated == m_info.Type;
@@ -134,7 +134,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		{
 			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::Graphics;
-			createInfo.ID = queueFamilyIndex;
+			createInfo.FamilyIndex = queueFamilyIndex;
 			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
 			createInfo.Priority += supportTransfer ? -0.1f : 0.0f;
 			createInfo.Priority += supportVideoDecode ? -0.1f : 0.0f;
@@ -145,7 +145,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		{
 			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::Compute;
-			createInfo.ID = queueFamilyIndex;
+			createInfo.FamilyIndex = queueFamilyIndex;
 			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
 			createInfo.Priority += supportTransfer ? -0.1f : 0.0f;
 			createInfo.Priority += supportVideoDecode ? -0.1f : 0.0f;
@@ -156,7 +156,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		{
 			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::Copy;
-			createInfo.ID = queueFamilyIndex;
+			createInfo.FamilyIndex = queueFamilyIndex;
 			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
 			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
 			createInfo.Priority += supportVideoDecode ? -0.1f : 0.0f;
@@ -167,7 +167,7 @@ void VulkanAdapter::InitCommandQueueCreateInfos()
 		{
 			auto& createInfo = commandQueueCIs.emplace_back();
 			createInfo.Type = RHICommandType::VideoDecode;
-			createInfo.ID = queueFamilyIndex;
+			createInfo.FamilyIndex = queueFamilyIndex;
 			createInfo.Priority += supportGraphics ? -0.1f : 0.0f;
 			createInfo.Priority += supportCompute ? -0.1f : 0.0f;
 			createInfo.Priority += supportTransfer ? -0.1f : 0.0f;
@@ -234,7 +234,7 @@ void VulkanAdapter::FindSuitableCommandQueues(Vector<RHICommandQueueCreateInfo>&
 {
 	std::unordered_set<int32> queueIndexes;
 
-	uint32 typeCount = EnumCount<RHICommandType>();
+	constexpr uint32 typeCount = EnumCount<RHICommandType>();
 	for (uint32 typeIndex = 0; typeIndex < typeCount; ++typeIndex)
 	{
 		auto commandType = static_cast<RHICommandType>(typeIndex);

@@ -13,7 +13,7 @@ public:
 	uint32 GetCurrentBackBufferIndex() const { return m_currentBackBufferIndex; }
 
 	virtual uint32 GetBackBufferCount() const = 0;
-	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) = 0;
+	virtual void AcquireNextTexture(IRHISemaphore* pSemaphore) = 0;
 	virtual void Present(IRHISemaphore* pSemaphore) = 0;
 
 protected:

@@ -33,9 +33,10 @@ private:
 	void SetType(const DXGI_ADAPTER_DESC3& desc);
 
 private:
-	RefCountPtr<IDXGIAdapter4> m_adapter;
 	const D3D12Instance* m_pInstance;
 	Vector<RHIOutputInfo> m_outputInfos;
+
+	RefCountPtr<IDXGIAdapter4> m_adapter;
 };
 
 }

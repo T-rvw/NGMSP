@@ -25,7 +25,6 @@ private:
 	void LoadRHIModule(RHIBackend backend);
 	void CreateRHIInstance();
 	void CreateLogicalDevice();
-	void CreateCommandQueues(const Vector<RHICommandQueueCreateInfo*>& queueCIs);
 	void CreateSwapChain(void* pNativeWindow, uint32 width, uint32 height);
 
 private:
@@ -39,17 +38,17 @@ private:
 	RHIDebugMode m_debugMode = RHIDebugMode::Enabled;
 	RHIValidationMode m_validationMode = RHIValidationMode::GPU;
 
-	ModuleHandle m_pRHIModule;
-	InstanceHandle m_pInstance;
-	DeviceHandle m_pDevice;
-	SwapChainHandle m_pSwapChain;
-	CommandPoolHandle m_pCommandPools[RHICommandTypeCount];
-	CommandQueueHandle m_pCommandQueues[RHICommandTypeCount];
-	FenceHandle m_pCommandQueueFences[RHICommandTypeCount];
+	ModuleHandle m_rhiModule;
+	InstanceHandle m_instance;
+	DeviceHandle m_device;
+	SwapChainHandle m_swapChain;
+	CommandPoolHandle m_commandPools[RHICommandTypeCount];
+	CommandQueueHandle m_commandQueues[RHICommandTypeCount];
+	FenceHandle m_commandQueueFences[RHICommandTypeCount];
 
-	CommandBufferHandle m_pSetupCommandBuffer;
-	CommandBufferHandle m_pCommandBuffers[BackBufferCount];
-	FenceHandle m_pFrameFences[BackBufferCount];
+	CommandListHandle m_setupCommandBuffer;
+	CommandListHandle m_commandBuffers[BackBufferCount];
+	FenceHandle m_frameFences[BackBufferCount];
 	SemaphoreHandle m_acquireImageSemaphores[BackBufferCount];
 	SemaphoreHandle m_renderCompleteSemaphores[BackBufferCount];
 };

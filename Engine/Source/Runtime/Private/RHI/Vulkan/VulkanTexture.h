@@ -23,7 +23,6 @@ public:
 private:
 	const VulkanDevice* m_pDevice;
 	VkImage m_image;
-	VkImageView m_imageView;
 };
 
 }

@@ -7,7 +7,7 @@
 namespace ow
 {
 
-struct RHICommandBufferCreateInfo;
+struct RHICommandListCreateInfo;
 struct RHICommandPoolCreateInfo;
 
 class VulkanDevice;
@@ -23,7 +23,7 @@ public:
 	VulkanCommandPool& operator=(VulkanCommandPool&&) = default;
 	virtual ~VulkanCommandPool();
 
-	virtual CommandBufferHandle CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) override;
+	virtual CommandListHandle CreateCommandList(const RHICommandListCreateInfo& createInfo) override;
 
 	const VulkanDevice* GetDevice() const { return m_pDevice; }
 	VkCommandPool GetHandle() const { return m_commandPool; }

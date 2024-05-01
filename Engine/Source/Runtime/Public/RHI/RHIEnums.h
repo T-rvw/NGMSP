@@ -369,7 +369,9 @@ enum class RHIShaderType
 {
     Compute,
     Fragment,
-    Vertex
+    Mesh,
+    Task,
+    Vertex,
 };
 
 enum class RHITextureType

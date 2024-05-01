@@ -1,24 +1,26 @@
 #pragma once
 
-#include "VulkanHeader.h"
+#include "D3D12Header.h"
 
-#include <RHI//IRHICommandBuffer.h>
+#include <RHI/IRHICommandList.h>
 
 namespace ow
 {
 
-class VulkanCommandPool;
+struct RHICommandListCreateInfo;
 
-class VulkanCommandBuffer : public IRHICommandBuffer
+class D3D12CommandPool;
+
+class D3D12CommandList : public IRHICommandList
 {
 public:
-	VulkanCommandBuffer() = delete;
-	explicit VulkanCommandBuffer(const VulkanCommandPool* pCommandPool, const RHICommandBufferCreateInfo& createInfo);
-	VulkanCommandBuffer(const VulkanCommandBuffer&) = delete;
-	VulkanCommandBuffer& operator=(const VulkanCommandBuffer&) = delete;
-	VulkanCommandBuffer(VulkanCommandBuffer&&) = default;
-	VulkanCommandBuffer& operator=(VulkanCommandBuffer&&) = default;
-	virtual ~VulkanCommandBuffer();
+	D3D12CommandList() = default;
+	explicit D3D12CommandList(const D3D12CommandPool* pCommandPool, const RHICommandListCreateInfo& createInfo);
+	D3D12CommandList(const D3D12CommandList&) = delete;
+	D3D12CommandList& operator=(const D3D12CommandList&) = delete;
+	D3D12CommandList(D3D12CommandList&&) = default;
+	D3D12CommandList& operator=(D3D12CommandList&&) = default;
+	virtual ~D3D12CommandList() = default;
 
 	virtual void Begin() override;
 	virtual void End() override;
@@ -38,11 +40,9 @@ public:
 	virtual void DrawIndexed(uint32 indexCount, uint32 indexStart = 0, uint32_t vertexOffset = 0) override;
 	virtual void DrawIndexedInstanced(uint32 indexCount, uint32 instanceCount = 1, uint32 indexStart = 0, uint32 instanceStart = 0, uint32_t vertexOffset = 0) override;
 
-	VkCommandBuffer GetHandle() const { return m_commandBuffer; }
-	const VkCommandBuffer* GetAddressOf() const { return &m_commandBuffer; }
-
 private:
-	VkCommandBuffer m_commandBuffer;
+	const D3D12CommandPool* m_pCommandPool;
+	RefCountPtr<ID3D12GraphicsCommandList6> m_commandList;
 };
 
 }

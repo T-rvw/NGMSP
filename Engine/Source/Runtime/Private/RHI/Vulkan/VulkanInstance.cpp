@@ -76,7 +76,7 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	{
 		if (VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
 		{
-			VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo{};
+			VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = {};
 			debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 			debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
 			debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
@@ -90,11 +90,11 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	uint32 maxAPIVersion;
 	vkEnumerateInstanceVersion(&maxAPIVersion);
 
-	VkApplicationInfo applicationInfo{};
+	VkApplicationInfo applicationInfo = {};
 	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	applicationInfo.apiVersion = maxAPIVersion;
 
-	VkInstanceCreateInfo instanceCreateInfo{};
+	VkInstanceCreateInfo instanceCreateInfo = {};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.ppEnabledExtensionNames = instanceExtensions.data();
 	instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());

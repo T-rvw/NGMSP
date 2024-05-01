@@ -10,7 +10,7 @@ class IRHICommandPool : public RefCountObject
 public:
 	virtual ~IRHICommandPool() {}
 
-	virtual CommandBufferHandle CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) = 0;
+	virtual CommandListHandle CreateCommandList(const RHICommandListCreateInfo& createInfo) = 0;
 };
 
 }

@@ -17,3 +17,7 @@
 * NVIDIA
   
   * [Turing](https://developer.nvidia.com/blog/introduction-turing-mesh-shaders/)
+
+* Samsung
+
+  * [GPU Framebuffer Memory: Understanding Tiling](https://developer.samsung.com/galaxy-gamedev/resources/articles/gpu-framebuffer.html) 

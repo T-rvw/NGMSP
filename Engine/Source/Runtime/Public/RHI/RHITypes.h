@@ -125,7 +125,7 @@ struct RHIBufferCreateInfo
     RHIBufferUsage Usage;
 };
 
-struct RHICommandBufferCreateInfo
+struct RHICommandListCreateInfo
 {
     uint32 BufferCount = 1;
 };
@@ -133,23 +133,15 @@ struct RHICommandBufferCreateInfo
 struct RHICommandPoolCreateInfo
 {
     RHICommandType Type = RHICommandType::Graphics;
-    uint32 QueueID = 0;
 };
 
 struct RHICommandQueueCreateInfo
 {
     RHICommandType Type = RHICommandType::Graphics;
-    uint32 ID = 0;
+    uint32 FamilyIndex = 0;
+    uint32 QueueIndex = 0;
     float Priority = 1.0f;
     bool IsDedicated = false;
-
-    void Dump() const
-    {
-        printf("[RHICommandQueueCreateInfo] ID = %u\n", ID);
-        printf("\tType = %s\n", EnumName(Type).data());
-        printf("\tIsDedicated = %d\n", IsDedicated);
-        printf("\tPriority = %f\n", Priority);
-    }
 };
 
 struct RHIDeviceCreateInfo
@@ -171,6 +163,31 @@ struct RHIInstanceCreateInfo
     RHIFeatureFlags Features;
     RHIDebugMode Debug = RHIDebugMode::Disabled;
     RHIValidationMode Validation = RHIValidationMode::Disabled;
+};
+
+struct RHIPipelineLayoutCreateInfo
+{
+};
+
+struct RHIComputePipelineStateCreateInfo
+{
+
+};
+
+struct RHIGraphicsPipelineStateCreateInfo
+{
+    // Input Assembly
+    RHIPrimitiveTopology Topology = RHIPrimitiveTopology::TriangleList;
+
+    // Rasterization
+    RHIPolygonMode PolygonMode = RHIPolygonMode::Solid;
+    RHICullMode CullMode = RHICullMode::Back;
+    RHIFrontFace FrontFace = RHIFrontFace::Clockwise;
+};
+
+struct RHIRaytracingPipelineStateCreateInfo
+{
+
 };
 
 struct RHISamplerCreateInfo

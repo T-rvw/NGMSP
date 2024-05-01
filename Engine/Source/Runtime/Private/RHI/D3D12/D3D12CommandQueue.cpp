@@ -9,7 +9,7 @@ namespace ow
 
 D3D12CommandQueue::D3D12CommandQueue(const D3D12Device* pDevice, const RHICommandQueueCreateInfo& createInfo)
 {
-	D3D12_COMMAND_QUEUE_DESC queueDesc{};
+	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12Types::ToD3D12(createInfo.Type);
 	queueDesc.NodeMask = 0;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -21,11 +21,11 @@ void D3D12CommandQueue::Submit(IRHIFence* pFence)
 {
 }
 
-void D3D12CommandQueue::Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence)
+void D3D12CommandQueue::Submit(IRHICommandList* pCommandBuffer, IRHIFence* pFence)
 {
 }
 
-void D3D12CommandQueue::Submit(IRHICommandBuffer* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore)
+void D3D12CommandQueue::Submit(IRHICommandList* pCommandBuffer, IRHIFence* pFence, IRHISemaphore* pWaitSemaphore, IRHISemaphore* pSignalSemaphore)
 {
 }
 

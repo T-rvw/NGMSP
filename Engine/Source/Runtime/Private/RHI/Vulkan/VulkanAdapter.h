@@ -24,10 +24,10 @@ struct VulkanAdapterFeatures
 		pNextChain = &Features13;
 	}
 
-	VkPhysicalDeviceFeatures2 Features {};
-	VkPhysicalDeviceVulkan11Features Features11 {};
-	VkPhysicalDeviceVulkan12Features Features12 {};
-	VkPhysicalDeviceVulkan13Features Features13 {};
+	VkPhysicalDeviceFeatures2 Features = {};
+	VkPhysicalDeviceVulkan11Features Features11 = {};
+	VkPhysicalDeviceVulkan12Features Features12 = {};
+	VkPhysicalDeviceVulkan13Features Features13 = {};
 	void* pNextChain;
 };
 
@@ -46,10 +46,10 @@ struct VulkanAdapterProperties
 		pNextChain = Properties13.pNext;
 	}
 
-	VkPhysicalDeviceProperties2 Properties {};
-	VkPhysicalDeviceVulkan11Properties Properties11 {};
-	VkPhysicalDeviceVulkan12Properties Properties12 {};
-	VkPhysicalDeviceVulkan13Properties Properties13 {};
+	VkPhysicalDeviceProperties2 Properties = {};
+	VkPhysicalDeviceVulkan11Properties Properties11 = {};
+	VkPhysicalDeviceVulkan12Properties Properties12 = {};
+	VkPhysicalDeviceVulkan13Properties Properties13 = {};
 	void* pNextChain;
 };
 

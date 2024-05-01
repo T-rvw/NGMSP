@@ -10,7 +10,7 @@ namespace ow
 VulkanFence::VulkanFence(const VulkanDevice* pDevice, const RHIFenceCreateInfo& createInfo) :
 	m_pDevice(pDevice)
 {
-	VkFenceCreateInfo fenceCI {};
+	VkFenceCreateInfo fenceCI = {};
 	fenceCI.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceCI.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 

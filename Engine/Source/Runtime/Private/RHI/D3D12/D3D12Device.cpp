@@ -6,6 +6,8 @@
 #include "D3D12CommandPool.h"
 #include "D3D12CommandQueue.h"
 #include "D3D12Fence.h"
+#include "D3D12PipelineLayout.h"
+#include "D3D12PipelineState.h"
 #include "D3D12Semaphore.h"
 #include "D3D12SwapChain.h"
 #include "D3D12Texture.h"
@@ -33,39 +35,40 @@ D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, const RHIDeviceCreateInfo
 	D3D12_VERIFY(D3D12CreateDevice(m_pAdapter->GetHandle(), MinFeatureLevel, IID_PPV_ARGS(&pDevice)));
 	
 	// D3D 11.1
-	D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevelsData {};
+	D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevelsData = {};
 	featureLevelsData.pFeatureLevelsRequested = FeatureLevelsRange;
 	featureLevelsData.NumFeatureLevels = FeatureLevelsCount;
 	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevelsData, sizeof(featureLevelsData)));
 	assert(featureLevelsData.MaxSupportedFeatureLevel >= D3D_FEATURE_LEVEL_11_1);
 
 	// SM 6.6
-	D3D12_FEATURE_DATA_SHADER_MODEL shaderModelData {};
+	D3D12_FEATURE_DATA_SHADER_MODEL shaderModelData = {};
 	shaderModelData.HighestShaderModel = D3D_SHADER_MODEL_6_6;
 	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModelData, sizeof(shaderModelData)));
-	assert(shaderModelData.HighestShaderModel < D3D_SHADER_MODEL_6_6);
+	assert(shaderModelData.HighestShaderModel <= D3D_SHADER_MODEL_6_6);
 
 	// Check resource binding's hardware support.
 	// https://learn.microsoft.com/en-us/windows/win32/direct3d12/hardware-support
-	D3D12_FEATURE_DATA_D3D12_OPTIONS featureOptionsData {};
+	D3D12_FEATURE_DATA_D3D12_OPTIONS featureOptionsData = {};
 	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureOptionsData, sizeof(featureOptionsData)));
 	assert(featureOptionsData.ResourceBindingTier >= D3D12_RESOURCE_BINDING_TIER_3);
 
 	if (createInfo.Features.IsEnabled(RHIFeatures::RayTracing))
 	{
 		// DXR 1.1
-		D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureOptions5Data {};
+		D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureOptions5Data = {};
 		D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureOptions5Data, sizeof(featureOptions5Data)));
 		assert(featureOptions5Data.RaytracingTier >= D3D12_RAYTRACING_TIER_1_1);
 	}
 
-	D3D12_VERIFY(D3D12CreateDevice(m_pAdapter->GetHandle(), featureLevelsData.MaxSupportedFeatureLevel, IID_PPV_ARGS(pDevice.ReleaseAndGetAddressOf())));
-	assert(pDevice);
+	pDevice.Reset();
+	D3D12_VERIFY(D3D12CreateDevice(m_pAdapter->GetHandle(), featureLevelsData.MaxSupportedFeatureLevel, IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf())));
+	assert(m_device);
 
 	if (createInfo.Validation != RHIValidationMode::Disabled)
 	{
 		RefCountPtr<ID3D12InfoQueue1> pInfoQueue;
-		if (D3D12_SUCCEED(D3D12Utils::As<ID3D12InfoQueue1>(pDevice, &pInfoQueue)))
+		if (D3D12_SUCCEED(D3D12Utils::As<ID3D12InfoQueue1>(m_device, &pInfoQueue)))
 		{
 			D3D12_VERIFY(pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE));
 			D3D12_VERIFY(pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE));
@@ -85,10 +88,22 @@ D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, const RHIDeviceCreateInfo
 	if (createInfo.Features.IsEnabled(RHIFeatures::StablePower))
 	{
 		D3D12_VERIFY(D3D12EnableExperimentalFeatures(0, nullptr, nullptr, nullptr));
-		D3D12_VERIFY(pDevice->SetStablePowerState(TRUE));
+		D3D12_VERIFY(m_device->SetStablePowerState(TRUE));
 	}
 
-	m_device = MoveTemp(pDevice);
+	constexpr uint32 commandTypeCount = EnumCount<RHICommandType>();
+	for (uint32 typeIndex = 0; typeIndex < commandTypeCount; ++typeIndex)
+	{
+		auto commandType = static_cast<RHICommandType>(typeIndex);
+		if (!createInfo.CommandQueueTypes.IsEnabled(commandType))
+		{
+			continue;
+		}
+
+		RHICommandQueueCreateInfo queueCI;
+		queueCI.Type = commandType;
+		m_commandQueues[typeIndex] = MakeRefCountPtr<D3D12CommandQueue>(this, queueCI);
+	}
 }
 
 RefCountPtr<IDXGIFactory6> D3D12Device::GetFactory() const
@@ -111,19 +126,39 @@ BarrierHandle D3D12Device::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
 	return nullptr;
 }
 
+BufferHandle D3D12Device::CreateBuffer(const RHIBufferCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12Buffer>(this, createInfo);
+}
+
 FenceHandle D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Fence>(this, createInfo);
 }
 
+PipelineLayoutHandle D3D12Device::CreatePipelineLayout(const RHIPipelineLayoutCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12PipelineLayout>(this, createInfo);
+}
+
+PipelineStateHandle D3D12Device::CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12PipelineState>(this, createInfo);
+}
+
+PipelineStateHandle D3D12Device::CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12PipelineState>(this, createInfo);
+}
+
+PipelineStateHandle D3D12Device::CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12PipelineState>(this, createInfo);
+}
+
 SemaphoreHandle D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Semaphore>(createInfo);
-}
-
-BufferHandle D3D12Device::CreateBuffer(const RHIBufferCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<D3D12Buffer>(this, createInfo);
 }
 
 TextureHandle D3D12Device::CreateTexture(const RHITextureCreateInfo& createInfo)
@@ -133,8 +168,7 @@ TextureHandle D3D12Device::CreateTexture(const RHITextureCreateInfo& createInfo)
 
 CommandQueueHandle D3D12Device::GetCommandQueue(RHICommandType commandType) const
 {
-	int32 typeIndex = static_cast<int32>(commandType);
-	return m_commandQueues[typeIndex];
+	return m_commandQueues[static_cast<uint32>(commandType)];
 }
 
 void D3D12Device::ReportLiveObjects()

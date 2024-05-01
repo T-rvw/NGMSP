@@ -2,6 +2,8 @@
 
 * [Alain Galvan](https://alain.xyz/blog)
 
+* [Faster Than Life](https://www.fasterthan.life/blog)
+
 * [Jolt Physics - Jorrit Rouw](http://jrouwe.nl/articles.php)
 
 * [Maister's Graphics Adventures](https://themaister.net/blog)
@@ -11,3 +13,5 @@
 * [Simon Coenen](https://simoncoenen.com/blog)
 
 * [Tarun Ramaswamy](https://rtarun9.github.io/blogs/)
+
+* [The ryg blog](https://fgiesen.wordpress.com/)

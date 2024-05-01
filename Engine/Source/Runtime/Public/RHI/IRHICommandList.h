@@ -6,10 +6,10 @@
 namespace ow
 {
 
-class IRHICommandBuffer : public RefCountObject
+class IRHICommandList : public RefCountObject
 {
 public:
-	virtual ~IRHICommandBuffer() {}
+	virtual ~IRHICommandList() {}
 
 	virtual void Begin() = 0;
 	virtual void End() = 0;

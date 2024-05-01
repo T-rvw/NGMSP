@@ -22,7 +22,7 @@ public:
 	virtual ~VulkanSwapChain();
 
 	virtual uint32 GetBackBufferCount() const override;
-	virtual void AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore) override;
+	virtual void AcquireNextTexture(IRHISemaphore* pSemaphore) override;
 	virtual void Present(IRHISemaphore* pSemaphore) override;
 
 	VkSwapchainKHR GetHandle() const { return m_swapChain; }

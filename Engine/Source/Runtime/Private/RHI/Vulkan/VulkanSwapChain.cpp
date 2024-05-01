@@ -1,6 +1,6 @@
 #include "VulkanSwapChain.h"
 
-#include "VulkanCommandBuffer.h"
+#include "VulkanCommandList.h"
 #include "VulkanCommandQueue.h"
 #include "VulkanDevice.h"
 #include "VulkanSemaphore.h"
@@ -17,7 +17,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     m_pCommandQueue = static_cast<VulkanCommandQueue*>(m_pDevice->GetCommandQueue(RHICommandType::Graphics).Get());
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo {};
+    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     surfaceCreateInfo.hwnd = (HWND)createInfo.NativeWindowHandle;
     surfaceCreateInfo.hinstance = (HINSTANCE)createInfo.NativeInstanceHandle;
@@ -88,8 +88,8 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         }
         assert(m_swapChainFormat.format != VK_FORMAT_UNDEFINED);
     }
-    
-    VkSwapchainCreateInfoKHR swapChainCreateInfo {};
+
+    VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
     swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     swapChainCreateInfo.surface = m_surface;
     swapChainCreateInfo.minImageCount = createInfo.BackBufferCount;
@@ -125,7 +125,7 @@ VulkanSwapChain::~VulkanSwapChain()
         vkDestroyImageView(m_pDevice->GetHandle(), imageView, nullptr);
     }
 
-	vkDestroySwapchainKHR(m_pDevice->GetHandle(), m_swapChain, nullptr);
+    vkDestroySwapchainKHR(m_pDevice->GetHandle(), m_swapChain, nullptr);
     vkDestroySurfaceKHR(m_pDevice->GetInstance(), m_surface, nullptr);
 }
 
@@ -141,7 +141,7 @@ void VulkanSwapChain::InitBackBufferImages()
     m_swapChainImageViews.resize(swapChainImageCount, VK_NULL_HANDLE);
     for (uint32 imageIndex = 0; imageIndex < swapChainImageCount; ++imageIndex)
     {
-        VkImageViewCreateInfo imageViewCreateInfo{};
+        VkImageViewCreateInfo imageViewCreateInfo = {};
         imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         imageViewCreateInfo.image = m_swapChainImages[imageIndex];
         imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -181,7 +181,6 @@ void VulkanSwapChain::InitFramebuffers(const RHISwapChainCreateInfo& createInfo)
     renderPassCreateInfo.subpassCount = 1;
     renderPassCreateInfo.pSubpasses = &subpassDescription;
     renderPassCreateInfo.pAttachments = &attachmentDescription;
-
     VK_VERIFY(vkCreateRenderPass(m_pDevice->GetHandle(), &renderPassCreateInfo, nullptr, &m_renderPass));
 
     m_framebuffers.resize(createInfo.BackBufferCount, VK_NULL_HANDLE);
@@ -195,7 +194,6 @@ void VulkanSwapChain::InitFramebuffers(const RHISwapChainCreateInfo& createInfo)
         framebufferCreateInfo.height = createInfo.BackBufferHeight;
         framebufferCreateInfo.layers = 1;
         framebufferCreateInfo.renderPass = m_renderPass;
-
         VK_VERIFY(vkCreateFramebuffer(m_pDevice->GetHandle(), &framebufferCreateInfo, nullptr, &m_framebuffers[frameIndex]));
     }
 }
@@ -205,7 +203,7 @@ uint32 VulkanSwapChain::GetBackBufferCount() const
     return static_cast<uint32>(m_swapChainImages.size());
 }
 
-void VulkanSwapChain::AcquireNextBackBufferTexture(IRHISemaphore* pSemaphore)
+void VulkanSwapChain::AcquireNextTexture(IRHISemaphore* pSemaphore)
 {
     auto* pVulkanCommandSemaphore = static_cast<VulkanSemaphore*>(pSemaphore);
     VK_VERIFY(vkAcquireNextImageKHR(m_pDevice->GetHandle(), m_swapChain, UINT64_MAX, pVulkanCommandSemaphore->GetHandle(), VK_NULL_HANDLE, &m_currentBackBufferIndex));

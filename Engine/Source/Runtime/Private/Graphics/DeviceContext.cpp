@@ -17,33 +17,33 @@ DeviceContext::~DeviceContext()
 {
 	for (uint32 frameIndex = 0; frameIndex < BackBufferCount; ++frameIndex)
 	{
-		m_pFrameFences[frameIndex]->Wait(1);
+		m_frameFences[frameIndex]->Wait(1);
 	}
 }
 
 void DeviceContext::Update()
 {
-	auto& graphicsCommandQueue = m_pCommandQueues[static_cast<uint32>(RHICommandType::Graphics)];
+	auto& graphicsCommandQueue = m_commandQueues[static_cast<uint32>(RHICommandType::Graphics)];
 
-	uint32 currentBackBufferIndex = m_pSwapChain->GetCurrentBackBufferIndex();
-	m_pSwapChain->AcquireNextBackBufferTexture(m_acquireImageSemaphores[currentBackBufferIndex]);
-	auto& frameFence = m_pFrameFences[currentBackBufferIndex];
-	auto& frameCommandBuffer = m_pCommandBuffers[currentBackBufferIndex];
+	uint32 currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+	m_swapChain->AcquireNextTexture(m_acquireImageSemaphores[currentBackBufferIndex]);
+	auto& frameFence = m_frameFences[currentBackBufferIndex];
+	auto& frameCommandBuffer = m_commandBuffers[currentBackBufferIndex];
 	frameFence->Wait(1);
 	frameFence->Reset(1);
 
 	frameCommandBuffer->Begin();
-	frameCommandBuffer->BeginRenderPass(m_pSwapChain);
+	frameCommandBuffer->BeginRenderPass(m_swapChain);
 	frameCommandBuffer->EndRenderPass();
 	frameCommandBuffer->End();
 
 	graphicsCommandQueue->Submit(frameCommandBuffer, nullptr, m_acquireImageSemaphores[currentBackBufferIndex], m_renderCompleteSemaphores[currentBackBufferIndex]);
-	m_pSwapChain->Present(m_renderCompleteSemaphores[currentBackBufferIndex]);
+	m_swapChain->Present(m_renderCompleteSemaphores[currentBackBufferIndex]);
 	graphicsCommandQueue->Submit(frameFence);
 
 	for (uint32 frameIndex = 0; frameIndex < BackBufferCount; ++frameIndex)
 	{
-		m_pFrameFences[frameIndex]->Wait(1);
+		m_frameFences[frameIndex]->Wait(1);
 	}
 }
 
@@ -70,7 +70,7 @@ void DeviceContext::LoadRHIModule(RHIBackend backend)
 	}
 
 	assert(pRHILibrary);
-	m_pRHIModule = static_cast<IRHIModule*>(pRHILibrary->InitFunc());
+	m_rhiModule = static_cast<IRHIModule*>(pRHILibrary->InitFunc());
 }
 
 void DeviceContext::CreateRHIInstance()
@@ -79,17 +79,17 @@ void DeviceContext::CreateRHIInstance()
 	instanceCI.Features = m_features;
 	instanceCI.Debug = m_debugMode;
 	instanceCI.Validation = m_validationMode;
-	m_pInstance = m_pRHIModule->CreateRHIInstance(instanceCI);
-	assert(m_pInstance);
+	m_instance = m_rhiModule->CreateRHIInstance(instanceCI);
+	assert(m_instance);
 }
 
 void DeviceContext::CreateLogicalDevice()
 {
 	// Query all RHI adapters.
 	uint32 adapterCount;
-	m_pInstance->EnumerateAdapters(adapterCount, nullptr);
+	m_instance->EnumerateAdapters(adapterCount, nullptr);
 	Vector<IRHIAdapter*> rhiAdapters(adapterCount);
-	m_pInstance->EnumerateAdapters(adapterCount, rhiAdapters.data());
+	m_instance->EnumerateAdapters(adapterCount, rhiAdapters.data());
 
 	for (const auto* rhiAdapter : rhiAdapters)
 	{
@@ -121,26 +121,26 @@ void DeviceContext::CreateLogicalDevice()
 	deviceCI.CommandQueueTypes.Enable(RHICommandType::Copy);
 	deviceCI.Debug = m_debugMode;
 	deviceCI.Validation = m_validationMode;
-	m_pDevice = pBestAdapter->CreateDevice(deviceCI);
+	m_device = pBestAdapter->CreateDevice(deviceCI);
 
-	//CreateCommandQueues(bestQueueCIs);
-}
+	// Get command queue from logical device and create command pools and queue fences.
+	for (uint32 typeIndex = 0; typeIndex < RHICommandTypeCount; ++typeIndex)
+	{
+		auto commandType = static_cast<RHICommandType>(typeIndex);
+		if (!deviceCI.CommandQueueTypes.IsEnabled(commandType))
+		{
+			continue;
+		}
 
-void DeviceContext::CreateCommandQueues(const Vector<RHICommandQueueCreateInfo*>& queueCIs)
-{
-	//for (const auto& queueCI : queueCIs)
-	//{
-	//	auto typeIndex = static_cast<uint32>(queueCI->Type);
-	//	m_pCommandQueues[typeIndex] = m_pDevice->CreateCommandQueue(*queueCI);
-	//
-	//	RHICommandPoolCreateInfo commandPoolCI;
-	//	commandPoolCI.Type = queueCI->Type;
-	//	commandPoolCI.QueueID = queueCI->ID;
-	//	m_pCommandPools[typeIndex] = m_pDevice->CreateCommandPool(commandPoolCI);
-	//
-	//	RHIFenceCreateInfo fenceCI;
-	//	m_pCommandQueueFences[typeIndex] = m_pDevice->CreateFence(fenceCI);
-	//}
+		m_commandQueues[typeIndex] = m_device->GetCommandQueue(commandType);
+
+		RHICommandPoolCreateInfo commandPoolCI;
+		commandPoolCI.Type = commandType;
+		m_commandPools[typeIndex] = m_device->CreateCommandPool(commandPoolCI);
+		
+		RHIFenceCreateInfo fenceCI;
+		m_commandQueueFences[typeIndex] = m_device->CreateFence(fenceCI);
+	}
 }
 
 void DeviceContext::CreateSwapChain(void* pNativeWindow, uint32 width, uint32 height)
@@ -153,36 +153,36 @@ void DeviceContext::CreateSwapChain(void* pNativeWindow, uint32 width, uint32 he
 	swapChainCI.Format = RHIFormat::RGBA8_UNORM;
 	swapChainCI.ColorSpace = RHIColorSpace::SRGB_NONLINEAR;
 	swapChainCI.PresentMode = RHIPresentMode::VSync;
-	m_pSwapChain = m_pDevice->CreateSwapChain(swapChainCI);
+	m_swapChain = m_device->CreateSwapChain(swapChainCI);
 
-	const auto& pGraphicsCommandPool = m_pCommandPools[static_cast<uint32>(RHICommandType::Graphics)];
+	const auto& pGraphicsCommandPool = m_commandPools[static_cast<uint32>(RHICommandType::Graphics)];
 	for (uint32 frameIndex = 0; frameIndex < BackBufferCount; ++frameIndex)
 	{
-		RHICommandBufferCreateInfo commandBufferCI;
-		m_pCommandBuffers[frameIndex] = pGraphicsCommandPool->CreateCommandBuffer(commandBufferCI);
+		RHICommandListCreateInfo commandBufferCI;
+		m_commandBuffers[frameIndex] = pGraphicsCommandPool->CreateCommandList(commandBufferCI);
 
 		RHIFenceCreateInfo fenceCI;
-		m_pFrameFences[frameIndex] = m_pDevice->CreateFence(fenceCI);
+		m_frameFences[frameIndex] = m_device->CreateFence(fenceCI);
 
 		RHISemaphoreCreateInfo semaphoreCI;
-		m_acquireImageSemaphores[frameIndex] = m_pDevice->CreateSemaphore(semaphoreCI);
-		m_renderCompleteSemaphores[frameIndex] = m_pDevice->CreateSemaphore(semaphoreCI);
+		m_acquireImageSemaphores[frameIndex] = m_device->CreateSemaphore(semaphoreCI);
+		m_renderCompleteSemaphores[frameIndex] = m_device->CreateSemaphore(semaphoreCI);
 	}
 
 	// Allocate setup graphics command buffers.
-	RHICommandBufferCreateInfo commandBufferCI;
-	m_pSetupCommandBuffer = pGraphicsCommandPool->CreateCommandBuffer(commandBufferCI);
+	RHICommandListCreateInfo commandBufferCI;
+	m_setupCommandBuffer = pGraphicsCommandPool->CreateCommandList(commandBufferCI);
 
-	auto& graphicsCommandQueue = m_pCommandQueues[static_cast<uint32>(RHICommandType::Graphics)];
+	auto& graphicsCommandQueue = m_commandQueues[static_cast<uint32>(RHICommandType::Graphics)];
 
-	m_pFrameFences[0]->Reset(1);
+	m_frameFences[0]->Reset(1);
 	{
-		m_pSetupCommandBuffer->Begin();
-		m_pSetupCommandBuffer->End();
+		m_setupCommandBuffer->Begin();
+		m_setupCommandBuffer->End();
 
-		graphicsCommandQueue->Submit(m_pSetupCommandBuffer, m_pFrameFences[0]);
+		graphicsCommandQueue->Submit(m_setupCommandBuffer, m_frameFences[0]);
 	}
-	m_pFrameFences[0]->Wait(1);
+	m_frameFences[0]->Wait(1);
 }
 
 std::optional<int32> DeviceContext::FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters)

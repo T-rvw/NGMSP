@@ -22,11 +22,15 @@ public:
 	D3D12CommandPool& operator=(D3D12CommandPool&&) = default;
 	virtual ~D3D12CommandPool() = default;
 
-	virtual CommandBufferHandle CreateCommandBuffer(const RHICommandBufferCreateInfo& createInfo) override;
+	virtual CommandListHandle CreateCommandList(const RHICommandListCreateInfo& createInfo) override;
 
+	const D3D12Device* GetDevice() const { return m_pDevice; }
+	D3D12_COMMAND_LIST_TYPE GetType() const { return m_commandType; }
 	RefCountPtr<ID3D12CommandAllocator> GetHandle() const { return m_commandPool; }
-
+	
 private:
+	const D3D12Device* m_pDevice;
+	D3D12_COMMAND_LIST_TYPE m_commandType;
 	RefCountPtr<ID3D12CommandAllocator> m_commandPool;
 };
 
