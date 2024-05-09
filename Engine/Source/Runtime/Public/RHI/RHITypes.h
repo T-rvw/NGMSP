@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Base/NameOf.h>
+#include <Core/Base/String.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
 #include <RHI/RHIEnums.h>
@@ -77,7 +78,7 @@ struct RHIAdapterInfo
     uint32 DeviceID = 0;
     uint64 VideoMemorySize = 0;
     uint64 SystemMemorySize = 0;
-    std::string Name = "Unknown";
+    String Name = "Unknown";
 
     void Dump() const
     {
@@ -99,7 +100,7 @@ struct RHIOutputInfo
     float MinLuminance;
     float MaxLuminance;
     float MaxFullFrameLuminance;
-    std::string Name = "Unknown";
+    String Name = "Unknown";
 
     void Dump() const
     {

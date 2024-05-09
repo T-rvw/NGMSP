@@ -1,10 +1,9 @@
 #pragma once
 
+#include <Core/Base/Map.h>
+#include <Core/Base/String.h>
 #include <Core/Base/TypeTraits.h>
 #include <Core/Modules/IModule.h>
-
-#include <map>
-#include <string>
 
 namespace ow
 {
@@ -29,7 +28,7 @@ public:
 	void RemoveModule(const char* pModuleName);
 
 private:
-	std::map<std::string, ModuleData> m_allModules;
+	Map<String, ModuleData> m_allModules;
 };
 
 }

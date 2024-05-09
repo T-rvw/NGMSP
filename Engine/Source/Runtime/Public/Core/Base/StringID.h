@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Core/Base/Hash/FastCRC32.h>
+#include <Core/Base/String.h>
+#include <Core/Base/StringView.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
-
-#include <string>
 
 namespace ow
 {
@@ -21,7 +21,7 @@ public:
 
 public:
 	StringID() = default;
-	explicit constexpr StringID(std::string_view sv) : m_hashValue(GetHashValue(sv.data(), sv.size())) {}
+	explicit constexpr StringID(StringView sv) : m_hashValue(GetHashValue(sv.data(), sv.size())) {}
 	explicit constexpr StringID(const char* str, uint64 n) : m_hashValue(GetHashValue(str, n)) {}
 	StringID(const StringID&) = default;
 	StringID& operator=(const StringID&) = default;

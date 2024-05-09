@@ -46,4 +46,6 @@
 
 * Synchronization
 
-	* [Explaining Vulkan Synchronization](https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/)
+	* [D3D12/Vulkan Synchronization Primitives](https://www.gamedev.net/forums/topic/678220-d3d12-vulkan-synchronization-primitives/)
+
+	* [Explaining Vulkan Synchronization](https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/)	

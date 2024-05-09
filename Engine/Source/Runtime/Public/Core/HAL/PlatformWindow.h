@@ -1,6 +1,8 @@
 #pragma once
 
+#include <Core/Base/Vector.h>
 #include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/BasicTypes.h>
 
 namespace ow
 {
@@ -25,6 +27,9 @@ public:
 	void Init(const WindowCreateInfo& createInfo, void* pInstance = nullptr);
 	bool IsValid() const;
 	void* GetHandle() const;
+	Vector<char> GetTitle() const;
+	uint32 GetWidth() const;
+	uint32 GetHeight() const;
 
 private:
 	IPlatformWindow* m_pImpl = nullptr;

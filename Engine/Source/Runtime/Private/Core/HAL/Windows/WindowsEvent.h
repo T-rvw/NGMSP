@@ -2,9 +2,8 @@
 
 #include "WindowsHeader.h"
 
+#include <Core/Base/String.h>
 #include <Core/HAL/Interfaces/IPlatformEvent.h>
-
-#include <string>
 
 namespace ow
 {
@@ -26,7 +25,7 @@ public:
 	virtual void Wait() override;
 
 private:
-	std::string m_name;
+	String m_name;
 	HANDLE m_event;
 };
 

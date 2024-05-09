@@ -185,9 +185,9 @@ void DeviceContext::CreateSwapChain(void* pNativeWindow, uint32 width, uint32 he
 	m_frameFences[0]->Wait(1);
 }
 
-std::optional<int32> DeviceContext::FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters)
+Optional<int32> DeviceContext::FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters)
 {
-	std::optional<int32> bestAdapterIndex;
+	Optional<int32> bestAdapterIndex;
 	uint64 bestScore = 0;
 	for (int32 adapterIndex = 0, adapterCount = static_cast<int32>(adapters.size()); adapterIndex < adapterCount; ++adapterIndex)
 	{

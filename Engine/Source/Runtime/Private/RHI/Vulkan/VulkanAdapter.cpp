@@ -203,9 +203,9 @@ DeviceHandle VulkanAdapter::CreateDevice(const RHIDeviceCreateInfo& createInfo)
 	return MakeRefCountPtr<VulkanDevice>(this, createInfo);
 }
 
-std::optional<int32> VulkanAdapter::FindSuitableCommandQueue(RHICommandType commandType, const Vector<RHICommandQueueCreateInfo>& createInfos)
+Optional<int32> VulkanAdapter::FindSuitableCommandQueue(RHICommandType commandType, const Vector<RHICommandQueueCreateInfo>& createInfos)
 {
-	std::optional<int32> bestCIIndex;
+	Optional<int32> bestCIIndex;
 	float bestScore = -1.0f;
 	for (int32 ciIndex = 0, ciCount = static_cast<int32>(createInfos.size()); ciIndex < ciCount; ++ciIndex)
 	{

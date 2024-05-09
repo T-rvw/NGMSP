@@ -2,9 +2,8 @@
 
 #include "WindowsHeader.h"
 
+#include <Core/Base/String.h>
 #include <Core/HAL/Interfaces/IPlatformModule.h>
-
-#include <string>
 
 namespace ow
 {
@@ -32,8 +31,8 @@ public:
 	virtual void* GetFunctionAddress(const char* pFuncName) override;
 
 private:
-	std::string m_moduleName;
-	std::string m_modulePath;
+	String m_moduleName;
+	String m_modulePath;
 	HMODULE m_module = nullptr;
 };
 

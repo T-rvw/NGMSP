@@ -2,9 +2,8 @@
 
 #include "VulkanHeader.h"
 
+#include <Core/Base/Optional.h>
 #include <RHI//IRHIAdapter.h>
-
-#include <optional>
 
 namespace ow
 {
@@ -80,7 +79,7 @@ public:
 private:
 	void InitOutputInfos();
 	void InitCommandQueueCreateInfos();
-	std::optional<int32> FindSuitableCommandQueue(RHICommandType commandType, const Vector<RHICommandQueueCreateInfo>& createInfos);
+	Optional<int32> FindSuitableCommandQueue(RHICommandType commandType, const Vector<RHICommandQueueCreateInfo>& createInfos);
 	void FindSuitableCommandQueues(Vector<RHICommandQueueCreateInfo>&& createInfos);
 
 private:

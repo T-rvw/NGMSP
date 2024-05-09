@@ -1,6 +1,6 @@
 #include "VulkanInstance.h"
 
-#include <optional>
+#include <Core/Base/Optional.h>
 
 namespace
 {
@@ -71,7 +71,7 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	}
 
 	// Enable debug utils extension.
-	std::optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
+	Optional<VkDebugUtilsMessengerCreateInfoEXT> optDebugUtilsCreateInfo;
 	if (createInfo.Debug != RHIDebugMode::Disabled)
 	{
 		if (VulkanUtils::EnableExtensionSafely(instanceExtensions, m_availableExtensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME))

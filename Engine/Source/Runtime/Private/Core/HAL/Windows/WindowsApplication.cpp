@@ -8,7 +8,6 @@ namespace ow
 {
 
 static WindowsApplication* s_pApplication = nullptr;
-static HINSTANCE s_pProcessInstance = nullptr;
 
 LRESULT CALLBACK WindowsApplication::WindowProcessFunc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
 {
@@ -19,8 +18,9 @@ WindowsApplication::WindowsApplication()
 {
 	assert(!s_pApplication);
 	s_pApplication = this;
-	s_pProcessInstance = ::GetModuleHandle(NULL);
-	RegisterWindowClass(s_pProcessInstance, NULL);
+
+	m_instance = ::GetModuleHandle(NULL);
+	RegisterWindowClass(m_instance, NULL);
 }
 
 bool WindowsApplication::PollMessages()
@@ -42,7 +42,7 @@ bool WindowsApplication::PollMessages()
 
 void* WindowsApplication::GetProcessInstance() const
 {
-	return s_pProcessInstance;
+	return m_instance;
 }
 
 LRESULT WindowsApplication::WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)

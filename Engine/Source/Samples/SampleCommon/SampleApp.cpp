@@ -3,17 +3,18 @@
 namespace ow
 {
 
-SampleApp::SampleApp(SampleBase* pSample) :
-	m_pSample(pSample)
+SampleApp::SampleApp(SampleBase* pSample, int argc, const char** argv)
 {
-	const SampleCreateInfo& createInfo = m_pSample->GetCreateInfo();
+	m_commandLine.Init(argc, argv);
+	uint32 width = m_commandLine.GetUInt("width").value_or(1280);
+	uint32 height = m_commandLine.GetUInt("height").value_or(720);
 
 	PlatformTime::Init();
 
 	WindowCreateInfo windowCI;
-	windowCI.Title = createInfo.Title.c_str();
-	windowCI.Width = createInfo.Width;
-	windowCI.Height = createInfo.Height;
+	windowCI.Title = m_commandLine.GetString("title").value_or("Sample");
+	windowCI.Width = width;
+	windowCI.Height = height;
 	m_mainWindow.Init(windowCI);
 }
 
@@ -31,7 +32,8 @@ bool SampleApp::Run()
 {
 	UpdateTime();
 
-	m_pSample->Init(m_mainWindow.GetHandle());
+	auto backend = m_commandLine.GetEnum<RHIBackend>("backend").value_or(RHIBackend::Vulkan);
+	m_pSample->Init(backend, m_mainWindow.GetHandle(), m_mainWindow.GetWidth(), m_mainWindow.GetHeight());
 
 	while (m_application.PollMessages())
 	{

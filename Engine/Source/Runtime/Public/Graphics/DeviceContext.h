@@ -3,8 +3,6 @@
 #include <Core/Core.h>
 #include <RHI/RHI.h>
 
-#include <optional>
-
 namespace ow
 {
 
@@ -28,7 +26,7 @@ private:
 	void CreateSwapChain(void* pNativeWindow, uint32 width, uint32 height);
 
 private:
-	std::optional<int32> FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters);
+	Optional<int32> FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters);
 
 private:
 	static constexpr int32 RHICommandTypeCount = EnumCount<RHICommandType>();

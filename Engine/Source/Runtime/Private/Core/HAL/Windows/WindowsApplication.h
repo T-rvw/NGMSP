@@ -26,6 +26,9 @@ public:
 private:
 	LRESULT WindowProcessFuncImpl(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam);
 	void RegisterWindowClass(HINSTANCE instance, HICON icon);
+
+private:
+	HINSTANCE m_instance;
 };
 
 }

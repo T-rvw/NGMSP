@@ -2,6 +2,8 @@
 
 #include "SampleBase.h"
 
+#include <memory>
+
 namespace ow
 {
 
@@ -9,7 +11,7 @@ class SampleApp
 {
 public:
 	SampleApp() = delete;
-	explicit SampleApp(SampleBase* pSample);
+	explicit SampleApp(SampleBase* pSample, int argc, const char** argv);
 	SampleApp(const SampleApp&) = delete;
 	SampleApp& operator=(const SampleApp&) = delete;
 	SampleApp(SampleApp&&) = default;
@@ -21,6 +23,7 @@ public:
 	bool Run();
 
 private:
+	CommandLine m_commandLine;
 	PlatformWindow m_mainWindow;
 	PlatformApplication m_application;
 	SampleBase* m_pSample = nullptr;
@@ -30,3 +33,9 @@ private:
 };
 
 }
+
+#define DEFINE_SAMPLE(SampleClass) \
+	int main(int argc, const char** argv) \
+	{ \
+		return SampleApp(std::make_unique<SampleClass>().get(), argc, argv).Run(); \
+	}

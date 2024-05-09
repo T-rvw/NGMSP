@@ -3,9 +3,9 @@
 namespace ow
 {
 
-void SampleBase::Init(void* pNativeWindow)
+void SampleBase::Init(RHIBackend backend, void* pNativeWindow, uint32 width, uint32 height)
 {
-	m_deviceContext = std::make_unique<DeviceContext>(m_createInfo.Backend, pNativeWindow, m_createInfo.Width, m_createInfo.Height);
+	m_deviceContext = std::make_unique<DeviceContext>(backend, pNativeWindow, width, height);
 }
 
 void SampleBase::Shutdown()

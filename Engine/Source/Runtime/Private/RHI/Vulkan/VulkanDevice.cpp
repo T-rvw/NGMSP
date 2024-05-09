@@ -110,7 +110,11 @@ VulkanDevice::VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateI
 	auto* adapterProperties = m_pAdapter->GetProperties();
 
 	// Enable extra extensions/features/properties by requirement.
-	Vector<const char*> enabledExtensions;
+	Vector<const char*> enabledExtensions =
+	{
+		VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME
+	};
+
 	{
 		void** pFeaturesNextChain = &adapterFeatures->pNextChain;
 		void** pPropertiesNextChain = &adapterProperties->pNextChain;

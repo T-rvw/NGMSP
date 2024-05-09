@@ -47,4 +47,19 @@ void* PlatformWindow::GetHandle() const
 	return m_pImpl->GetHandle();
 }
 
+Vector<char> PlatformWindow::GetTitle() const
+{
+	return m_pImpl->GetTitle();
+}
+
+uint32 PlatformWindow::GetWidth() const
+{
+	return m_pImpl->GetWidth();
+}
+
+uint32 PlatformWindow::GetHeight() const
+{
+	return m_pImpl->GetHeight();
+}
+
 }

@@ -35,4 +35,25 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 	::SetFocus(m_handle);
 }
 
+Vector<char> WindowsWindow::GetTitle() const
+{
+	TCHAR title[128];
+	::GetWindowText(m_handle, title, 64);
+	return CreateUTF8StringFromWide(title);
+}
+
+uint32 WindowsWindow::GetWidth() const
+{
+	::RECT rect;
+	::GetWindowRect(m_handle, &rect);
+	return rect.right - rect.left;
+}
+
+uint32 WindowsWindow::GetHeight() const
+{
+	::RECT rect;
+	::GetWindowRect(m_handle, &rect);
+	return rect.bottom - rect.top;
+}
+
 }
