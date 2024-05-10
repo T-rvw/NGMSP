@@ -1,14 +1,13 @@
+#include <Core/Base/Assert.h>
 #include <Core/Base/NameOf.h>
 #include <Core/Misc/CommandLine.h>
-
-#include <cassert>
 
 namespace ow
 {
 
 void CommandLine::Init(int argc, const char** argv)
 {
-	assert(argc > 1);
+	Assert(argc > 1);
 	// The first argument is always the process name. Skip it.
 	int argIndex = 1;
 	while (argIndex < argc)

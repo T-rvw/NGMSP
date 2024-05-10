@@ -60,4 +60,4 @@
 #define DXGI_FORMAT_ASTC_12X12_UNORM_SRGB DXGI_FORMAT(187)
 
 #define D3D12_SUCCEED(result) (HRESULT)result >= 0
-#define D3D12_VERIFY(result) assert((HRESULT)result >= 0)
+#define D3D12_VERIFY(result) Assert((HRESULT)result >= 0)

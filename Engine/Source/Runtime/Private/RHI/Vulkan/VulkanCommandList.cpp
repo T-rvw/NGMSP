@@ -90,7 +90,7 @@ void VulkanCommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 bindin
 void VulkanCommandList::SetVertexBuffers(const Vector<IRHIBuffer*>& vertexBuffers, uint32 bindingStart)
 {
 	constexpr uint64 MaxVertexBufferCount = 4;
-	assert(vertexBuffers.size() <= MaxVertexBufferCount);
+	Assert(vertexBuffers.size() <= MaxVertexBufferCount);
 
 	uint32 bufferCount = 0;
 	VkBuffer buffer[MaxVertexBufferCount];

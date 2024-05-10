@@ -30,7 +30,7 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	for (uint32 memoryTypeIndex = 0; memoryTypeIndex < memoryProperties.memoryTypeCount; ++memoryTypeIndex)
 	{
 		const VkMemoryType& memoryType = memoryProperties.memoryTypes[memoryTypeIndex];
-		assert(memoryType.heapIndex < memoryProperties.memoryHeapCount);
+		Assert(memoryType.heapIndex < memoryProperties.memoryHeapCount);
 		memoryHeapTypes[memoryType.heapIndex].push_back(&memoryType);
 	}
 

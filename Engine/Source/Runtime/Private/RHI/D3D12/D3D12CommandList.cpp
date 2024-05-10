@@ -75,7 +75,7 @@ void D3D12CommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 binding
 void D3D12CommandList::SetVertexBuffers(const Vector<IRHIBuffer*>& vertexBuffers, uint32 bindingStart)
 {
 	constexpr uint64 MaxVertexBufferCount = 4;
-	assert(vertexBuffers.size() <= MaxVertexBufferCount);
+	Assert(vertexBuffers.size() <= MaxVertexBufferCount);
 
 	uint32 bufferCount = 0;
 	D3D12_VERTEX_BUFFER_VIEW bufferViews[MaxVertexBufferCount];

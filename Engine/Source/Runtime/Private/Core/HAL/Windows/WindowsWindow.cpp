@@ -3,8 +3,6 @@
 #include <Core/Base/Vector.h>
 #include <Core/HAL/PlatformTypes.h>
 
-#include <cassert>
-
 namespace ow
 {
 
@@ -29,7 +27,7 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 		windowLeft, windowTop,
 		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		(HWND)createInfo.ParentWindow, NULL, (HINSTANCE)pInstance, NULL);
-	assert(m_handle);
+	Assert(m_handle);
 
 	::ShowWindow(m_handle, SW_SHOW);
 	::SetFocus(m_handle);

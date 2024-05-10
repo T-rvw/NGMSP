@@ -442,7 +442,7 @@ DXGI_FORMAT D3D12Types::ToD3D12(RHIFormat rhiType)
         return DXGI_FORMAT_ASTC_12X12_TYPELESS;
     case RHIFormat::Unknown:
     default:
-        assert("Unknow D3D12 format.");
+        Assert("Unknow D3D12 format.");
         return DXGI_FORMAT_UNKNOWN;
     }
 }

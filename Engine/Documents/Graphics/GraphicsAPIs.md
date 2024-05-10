@@ -18,6 +18,8 @@
         
 		* [Vulkanised 2023 Tutorial: An Introduction to Vulkan](https://www.youtube.com/watch?v=e14z9oOsPu0)
 
+		* [Vulkan Tutorial](https://vulkan-tutorial.com/)
+
 * Graphics
 
 	* [Bindless Rendering in DirectX12 and SM6.6](https://rtarun9.github.io/blogs/bindless_rendering/)
@@ -49,3 +51,7 @@
 	* [D3D12/Vulkan Synchronization Primitives](https://www.gamedev.net/forums/topic/678220-d3d12-vulkan-synchronization-primitives/)
 
 	* [Explaining Vulkan Synchronization](https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/)	
+
+	* [Vulkan Rendering_and_presentation tutorial](https://vulkan-tutorial.com/Drawing_a_triangle/Drawing/Rendering_and_presentation)
+
+	* [Vulkan Timeline Semaphores](https://www.khronos.org/blog/vulkan-timeline-semaphores)

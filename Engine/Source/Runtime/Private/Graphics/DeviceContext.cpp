@@ -64,12 +64,12 @@ void DeviceContext::LoadRHIModule(RHIBackend backend)
 	}
 	default:
 	{
-		assert("Unknown RHI backend.");
+		Assert("Unknown RHI backend.");
 		return;
 	}
 	}
 
-	assert(pRHILibrary);
+	Assert(pRHILibrary);
 	m_rhiModule = static_cast<IRHIModule*>(pRHILibrary->InitFunc());
 }
 
@@ -80,7 +80,7 @@ void DeviceContext::CreateRHIInstance()
 	instanceCI.Debug = m_debugMode;
 	instanceCI.Validation = m_validationMode;
 	m_instance = m_rhiModule->CreateRHIInstance(instanceCI);
-	assert(m_instance);
+	Assert(m_instance);
 }
 
 void DeviceContext::CreateLogicalDevice()
@@ -98,7 +98,7 @@ void DeviceContext::CreateLogicalDevice()
 
 	// Find a proper GPU to create logical device.
 	auto optAdapterIndex = FindSuitableAdapter(rhiAdapters);
-	assert(optAdapterIndex.has_value());
+	Assert(optAdapterIndex.has_value());
 	int32 adapterIndex = optAdapterIndex.value();
 	auto& pBestAdapter = rhiAdapters[adapterIndex];
 	printf("Select adapter : %s\n", pBestAdapter->GetInfo().Name.c_str());

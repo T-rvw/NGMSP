@@ -1,12 +1,14 @@
 #pragma once
 
 #include <Core/Base/BitFlags.h>
+#include <Core/Base/CString.h>
 #include <Core/Base/Hash/FastCRC32.h>
 #include <Core/Base/Hash/FNV1A.h>
 #include <Core/Base/HashMap.h>
 #include <Core/Base/Map.h>
 #include <Core/Base/NameOf.h>
 #include <Core/Base/Optional.h>
+#include <Core/Base/Path.h>
 #include <Core/Base/RefCountPtr.h>
 #include <Core/Base/String.h>
 #include <Core/Base/StringID.h>

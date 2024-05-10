@@ -107,13 +107,13 @@ VulkanInstance::VulkanInstance(const RHIInstanceCreateInfo& createInfo)
 	}
 
 	VK_VERIFY(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
-	assert(m_instance != VK_NULL_HANDLE);
+	Assert(m_instance != VK_NULL_HANDLE);
 	volkLoadInstanceOnly(m_instance);
 
 	if (optDebugUtilsCreateInfo.has_value())
 	{
 		VK_VERIFY(vkCreateDebugUtilsMessengerEXT(m_instance, &optDebugUtilsCreateInfo.value(), nullptr, &m_debugUtilsMessenger));
-		assert(m_debugUtilsMessenger != VK_NULL_HANDLE);
+		Assert(m_debugUtilsMessenger != VK_NULL_HANDLE);
 	}
 
 	InitAdapters();

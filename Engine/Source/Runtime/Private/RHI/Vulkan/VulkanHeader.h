@@ -13,10 +13,10 @@
 #include "VulkanTypes.h"
 #include "VulkanUtils.h"
 
+#include <Core/Base/Assert.h>
 #include <Core/Base/RefCountPtr.h>
 #include <Core/Base/TypeTraits.h>
 
-#include <cassert>
 #include <memory>
 
 #define VK_VERIFY(result) \
@@ -25,6 +25,6 @@
 		if (VK_SUCCESS != result) \
 		{ \
 			printf("Vulkan failure : %s\n", ow::EnumName<VkResult>(result).data()); \
-			assert(false); \
+			Assert(false); \
 		} \
 	} while (false)

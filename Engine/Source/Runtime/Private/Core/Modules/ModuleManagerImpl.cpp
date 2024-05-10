@@ -43,9 +43,9 @@ ModuleData* ModuleManagerImpl::AddModule(const char* pModuleName, const char* pM
 	moduleData.Library.SetModulePath(pModulePath);
 	if (autoLoad)
 	{
-		assert(moduleData.Library.Load());
+		Assert(moduleData.Library.Load());
 		moduleData.InitFunc = (InitializeModuleFunc)moduleData.Library.GetFunctionAddress("InitializeModule");
-		assert(moduleData.InitFunc);
+		Assert(moduleData.InitFunc);
 	}
 	m_allModules[pModuleName] = MoveTemp(moduleData);
 

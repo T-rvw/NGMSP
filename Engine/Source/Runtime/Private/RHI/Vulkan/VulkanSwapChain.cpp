@@ -28,12 +28,12 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
 
     VkBool32 presentSupported;
     VK_VERIFY(vkGetPhysicalDeviceSurfaceSupportKHR(pDevice->GetAdapter(), 0, m_surface, &presentSupported));
-    assert(presentSupported);
+    Assert(presentSupported);
 
     VkSurfaceCapabilitiesKHR surfaceCapabilities;
     VK_VERIFY(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pDevice->GetAdapter(), m_surface, &surfaceCapabilities));
-    assert(createInfo.BackBufferCount >= surfaceCapabilities.minImageCount);
-    assert(0 == surfaceCapabilities.maxImageCount || createInfo.BackBufferCount < surfaceCapabilities.maxImageCount);
+    Assert(createInfo.BackBufferCount >= surfaceCapabilities.minImageCount);
+    Assert(0 == surfaceCapabilities.maxImageCount || createInfo.BackBufferCount < surfaceCapabilities.maxImageCount);
 
     m_swapChainExtent.width = createInfo.BackBufferWidth;
     m_swapChainExtent.height = createInfo.BackBufferHeight;
@@ -86,7 +86,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         {
             m_swapChainFormat = surfaceFormats.front();
         }
-        assert(m_swapChainFormat.format != VK_FORMAT_UNDEFINED);
+        Assert(m_swapChainFormat.format != VK_FORMAT_UNDEFINED);
     }
 
     VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
@@ -133,7 +133,7 @@ void VulkanSwapChain::InitBackBufferImages()
 {
     uint32 swapChainImageCount;
     VK_VERIFY(vkGetSwapchainImagesKHR(m_pDevice->GetHandle(), m_swapChain, &swapChainImageCount, nullptr));
-    assert(swapChainImageCount > 0);
+    Assert(swapChainImageCount > 0);
 
     m_swapChainImages.resize(swapChainImageCount, VK_NULL_HANDLE);
     VK_VERIFY(vkGetSwapchainImagesKHR(m_pDevice->GetHandle(), m_swapChain, &swapChainImageCount, m_swapChainImages.data()));

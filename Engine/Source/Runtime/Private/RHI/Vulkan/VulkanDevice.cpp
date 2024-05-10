@@ -122,7 +122,7 @@ VulkanDevice::VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateI
 		auto requiredFeatrues = createInfo.Features;
 		if (!requiredFeatrues.IsEnabled(RHIFeatures::Headless))
 		{
-			assert(VulkanUtils::EnableExtensionSafely(enabledExtensions, m_pAdapter->GetAvailableExtensions(), VK_KHR_SWAPCHAIN_EXTENSION_NAME));
+			Assert(VulkanUtils::EnableExtensionSafely(enabledExtensions, m_pAdapter->GetAvailableExtensions(), VK_KHR_SWAPCHAIN_EXTENSION_NAME));
 		}
 
 		VulkanAdapterRayTracing rayTracing;
@@ -173,7 +173,7 @@ VulkanDevice::VulkanDevice(const VulkanAdapter* pAdapter, const RHIDeviceCreateI
 	deviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 	VK_VERIFY(vkCreateDevice(m_pAdapter->GetHandle(), &deviceCreateInfo, nullptr, &m_device));
-	assert(m_device != VK_NULL_HANDLE);
+	Assert(m_device != VK_NULL_HANDLE);
 	volkLoadDevice(m_device);
 
 	for (uint32 typeIndex = 0; typeIndex < commandTypeCount; ++typeIndex)

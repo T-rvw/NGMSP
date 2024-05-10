@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Core/Base/CString.h>
 #include <Core/Base/Map.h>
 #include <Core/Base/Optional.h>
 #include <Core/Base/String.h>
@@ -40,7 +41,7 @@ public:
 		for (int32 enumIndex = 0; enumIndex < enumCount; ++enumIndex)
 		{
 			auto enumValue = static_cast<T>(enumIndex);
-			if (0 == std::strcmp(kv->second.c_str(), EnumName<T>(enumValue).data()))
+			if (CString::Compare(kv->second.c_str(), EnumName<T>(enumValue).data(), false))
 			{
 				return enumValue;
 			}

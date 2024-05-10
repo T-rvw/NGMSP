@@ -15,14 +15,14 @@ D3D12Instance::D3D12Instance(const RHIInstanceCreateInfo& createInfo)
 	{
 		RefCountPtr<ID3D12Debug1> pDebugController;
 		D3D12_VERIFY(D3D12GetDebugInterface(IID_PPV_ARGS(&pDebugController)));
-		assert(pDebugController);
+		Assert(pDebugController);
 		pDebugController->EnableDebugLayer();
 		pDebugController->SetEnableGPUBasedValidation(RHIValidationMode::GPU == createInfo.Validation);
 		pDebugController->Release();
 	}
 
 	D3D12_VERIFY(CreateDXGIFactory2(0, IID_PPV_ARGS(&m_factory)));
-	assert(m_factory);
+	Assert(m_factory);
 
 	InitAdapters();
 }

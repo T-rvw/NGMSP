@@ -63,6 +63,10 @@ local function MakeSample(projectPath)
 		links {
 			"Core", SampleFrameworkName
 		}
+
+		debugargs {
+			"-backend vulkan", "-width 1600", "-height 900"
+		}
 end
 
 local sampleProjectFolders = os.matchdirs(path.join(SampleSourcePath, "*"))

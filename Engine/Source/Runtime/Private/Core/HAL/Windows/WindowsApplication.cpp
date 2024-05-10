@@ -2,8 +2,6 @@
 
 #include "WindowsWindow.h"
 
-#include <cassert>
-
 namespace ow
 {
 
@@ -16,7 +14,7 @@ LRESULT CALLBACK WindowsApplication::WindowProcessFunc(HWND hwnd, uint32 msg, WP
 
 WindowsApplication::WindowsApplication()
 {
-	assert(!s_pApplication);
+	Assert(!s_pApplication);
 	s_pApplication = this;
 
 	m_instance = ::GetModuleHandle(NULL);
@@ -71,7 +69,7 @@ void WindowsApplication::RegisterWindowClass(HINSTANCE instance, HICON icon)
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.lpszClassName = WindowsWindow::WindowClassName;
 	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
-	assert(::RegisterClassEx(&wc));
+	Assert(::RegisterClassEx(&wc));
 }
 
 }

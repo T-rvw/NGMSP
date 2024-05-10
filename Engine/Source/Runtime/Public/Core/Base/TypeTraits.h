@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cassert>
-#include <type_traits>
+#include <Core/Base/Assert.h>
+#include <Core/Base/TypeTraits.h>
 
 namespace ow
 {

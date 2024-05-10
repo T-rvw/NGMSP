@@ -2,6 +2,8 @@
 
 #include "VulkanHeader.h"
 
+#include <Core/Base/CString.h>
+
 namespace ow
 {
 
@@ -9,7 +11,7 @@ bool VulkanUtils::FindExtension(const Vector<VkExtensionProperties>& extensions,
 {
 	for (const auto& extension : extensions)
 	{
-		if (0 == strcmp(extension.extensionName, pRequireExtension))
+		if (CString::Compare(extension.extensionName, pRequireExtension))
 		{
 			return true;
 		}
@@ -61,7 +63,7 @@ bool VulkanUtils::FindLayer(const Vector<VkLayerProperties>& layers, const char*
 {
 	for (const auto& layer : layers)
 	{
-		if (0 == strcmp(layer.layerName, pRequireLayer))
+		if (CString::Compare(layer.layerName, pRequireLayer))
 		{
 			return true;
 		}

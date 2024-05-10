@@ -26,7 +26,7 @@ public:
 
 	virtual ~RefCountObject()
 	{
-		assert(0 == m_refCount.load());
+		Assert(0 == m_refCount.load());
 	}
 
 	uint32 AddRef() const
@@ -215,7 +215,7 @@ public:
 		if (m_ptr)
 		{
 			result = m_ptr->GetRefCount();
-			assert(result > 0);
+			Assert(result > 0);
 		}
 
 		return result;

@@ -39,31 +39,31 @@ D3D12Device::D3D12Device(const D3D12Adapter* pAdapter, const RHIDeviceCreateInfo
 	featureLevelsData.pFeatureLevelsRequested = FeatureLevelsRange;
 	featureLevelsData.NumFeatureLevels = FeatureLevelsCount;
 	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevelsData, sizeof(featureLevelsData)));
-	assert(featureLevelsData.MaxSupportedFeatureLevel >= D3D_FEATURE_LEVEL_11_1);
+	Assert(featureLevelsData.MaxSupportedFeatureLevel >= D3D_FEATURE_LEVEL_11_1);
 
 	// SM 6.6
 	D3D12_FEATURE_DATA_SHADER_MODEL shaderModelData = {};
 	shaderModelData.HighestShaderModel = D3D_SHADER_MODEL_6_6;
 	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModelData, sizeof(shaderModelData)));
-	assert(shaderModelData.HighestShaderModel <= D3D_SHADER_MODEL_6_6);
+	Assert(shaderModelData.HighestShaderModel <= D3D_SHADER_MODEL_6_6);
 
 	// Check resource binding's hardware support.
 	// https://learn.microsoft.com/en-us/windows/win32/direct3d12/hardware-support
 	D3D12_FEATURE_DATA_D3D12_OPTIONS featureOptionsData = {};
 	D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureOptionsData, sizeof(featureOptionsData)));
-	assert(featureOptionsData.ResourceBindingTier >= D3D12_RESOURCE_BINDING_TIER_3);
+	Assert(featureOptionsData.ResourceBindingTier >= D3D12_RESOURCE_BINDING_TIER_3);
 
 	if (createInfo.Features.IsEnabled(RHIFeatures::RayTracing))
 	{
 		// DXR 1.1
 		D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureOptions5Data = {};
 		D3D12_VERIFY(pDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureOptions5Data, sizeof(featureOptions5Data)));
-		assert(featureOptions5Data.RaytracingTier >= D3D12_RAYTRACING_TIER_1_1);
+		Assert(featureOptions5Data.RaytracingTier >= D3D12_RAYTRACING_TIER_1_1);
 	}
 
 	pDevice.Reset();
 	D3D12_VERIFY(D3D12CreateDevice(m_pAdapter->GetHandle(), featureLevelsData.MaxSupportedFeatureLevel, IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf())));
-	assert(m_device);
+	Assert(m_device);
 
 	if (createInfo.Validation != RHIValidationMode::Disabled)
 	{
