@@ -7,7 +7,7 @@ namespace ow
 
 class ModuleManagerImpl;
 
-class CORE_API ModuleManager
+class CORE_API ModuleManager final
 {
 public:
 	static ModuleManager& Get();

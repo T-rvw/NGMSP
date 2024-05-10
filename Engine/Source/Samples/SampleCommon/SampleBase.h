@@ -19,7 +19,7 @@ public:
 	SampleBase& operator=(SampleBase&&) = default;
 	virtual ~SampleBase() {}
 	
-	void Init(RHIBackend backend, void* pNativeWindow, uint32 width, uint32 height);
+	void Init(RHIBackend backend, void* pNativeWindow, const Rect& windowRect);
 	void Update(double deltaTime);
 	void Shutdown();
 

@@ -8,7 +8,8 @@
 #include <Core/Container/HashMap.h>
 #include <Core/Container/Map.h>
 #include <Core/Container/Vector.h>
-#include <Core/Modules/IModule.h>
+#include <Core/Math/Rect.hpp>
+#include <Core/Math/Vector.hpp>
 #include <Core/Modules/ModuleManager.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/HAL/PlatformApplication.h>

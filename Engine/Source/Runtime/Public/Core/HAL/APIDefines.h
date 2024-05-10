@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/HAL/CompilerDefines.h>
+
 #ifdef _MSC_VER
 #define API_EXPORT __declspec(dllexport)
 #define API_IMPORT __declspec(dllimport)
@@ -22,6 +24,3 @@
 #endif
 
 #define C_ABI extern "C"
-
-// Language specified helper macros
-#define UNUSED(a) (a)

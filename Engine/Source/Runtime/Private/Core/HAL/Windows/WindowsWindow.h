@@ -25,8 +25,7 @@ public:
 	virtual void Init(const WindowCreateInfo& createInfo, void* pInstance) override;
 	virtual void* GetHandle() const override { return m_handle; }
 	virtual Vector<char> GetTitle() const override;
-	virtual uint32 GetWidth() const override;
-	virtual uint32 GetHeight() const override;
+	virtual Rect GetRect() const override;
 
 private:
 	HWND m_handle;

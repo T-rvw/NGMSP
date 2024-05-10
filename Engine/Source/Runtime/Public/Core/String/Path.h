@@ -1,14 +1,16 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 #include <Core/String/String.h>
 
 namespace ow
 {
 
-class CORE_API Path
+class CORE_API Path final
 {
 public:
+	Path() = delete;
+
 	static String GetFileName(const String& path);
 	static String GetFileNameWithoutExtension(const String& path);
 	static String GetExtension(const String& path);

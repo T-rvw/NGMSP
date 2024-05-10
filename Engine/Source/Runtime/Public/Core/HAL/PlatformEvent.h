@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 
 namespace ow
 {
@@ -11,7 +11,7 @@ class IPlatformEvent;
 /// Event is a named or unnamed synchronization object.
 /// It allows multiple threads in a single process to communicate with each other.
 /// </summary>
-class CORE_API PlatformEvent
+class CORE_API PlatformEvent final
 {
 public:
 	PlatformEvent();

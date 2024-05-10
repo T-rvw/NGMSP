@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/HAL/BasicTypes.h>
+#include <Core/Math/Rect.hpp>
 
 namespace ow
 {
@@ -11,14 +12,14 @@ struct WindowCreateInfo
 	{
 		Title = "MainWindow";
 		ParentWindow = nullptr;
-		Width = 1280;
-		Height = 720;
+		MoveRectCenter = true;
+		WindowRect = Rect(1280, 720);
 	}
 
 	const char* Title;
 	void* ParentWindow;
-	int32 Width;
-	int32 Height;
+	bool MoveRectCenter;
+	Rect WindowRect;
 };
 
 }

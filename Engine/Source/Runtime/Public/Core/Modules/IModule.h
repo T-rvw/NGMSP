@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 #include <Core/HAL/PlatformModule.h>
 
 namespace ow

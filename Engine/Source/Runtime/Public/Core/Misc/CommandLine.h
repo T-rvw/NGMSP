@@ -2,7 +2,7 @@
 
 #include <Core/Base/Optional.h>
 #include <Core/Container/Map.h>
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 #include <Core/HAL/BasicTypes.h>
 #include <Core/String/CString.h>
 #include <Core/String/String.h>

@@ -12,20 +12,19 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 {
 	HINSTANCE processInstance = pInstance ? (HINSTANCE)pInstance : ::GetModuleHandle(NULL);
 
-	int32 windowWidth = createInfo.Width;
-	int32 windowHeight = createInfo.Height;
 	uint32 windowStyle = WS_OVERLAPPEDWINDOW;
-
-	RECT windowRect = { 0, 0, windowWidth, windowHeight };
-	::AdjustWindowRectEx(&windowRect, windowStyle, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-
-	int32 windowLeft = (::GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
-	int32 windowTop = (::GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
+	const auto& rectInfo = createInfo.WindowRect;
+	int32 windowLeft = rectInfo.GetLeft();
+	int32 windowTop = rectInfo.GetTop();
+	if (createInfo.MoveRectCenter)
+	{
+		windowLeft = (::GetSystemMetrics(SM_CXSCREEN) - rectInfo.GetWidth()) / 2;
+		windowTop = (::GetSystemMetrics(SM_CYSCREEN) - rectInfo.GetHeight()) / 2;
+	}
 
 	Vector<TCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
 	m_handle = ::CreateWindowEx(NULL, WindowsWindow::WindowClassName, title.data(), windowStyle,
-		windowLeft, windowTop,
-		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+		windowLeft, windowTop, rectInfo.GetWidth(), rectInfo.GetHeight(),
 		(HWND)createInfo.ParentWindow, NULL, (HINSTANCE)pInstance, NULL);
 	Assert(m_handle);
 
@@ -40,18 +39,11 @@ Vector<char> WindowsWindow::GetTitle() const
 	return CreateUTF8StringFromWide(title);
 }
 
-uint32 WindowsWindow::GetWidth() const
+Rect WindowsWindow::GetRect() const
 {
 	::RECT rect;
 	::GetWindowRect(m_handle, &rect);
-	return rect.right - rect.left;
-}
-
-uint32 WindowsWindow::GetHeight() const
-{
-	::RECT rect;
-	::GetWindowRect(m_handle, &rect);
-	return rect.bottom - rect.top;
+	return Rect(rect.left, rect.top, rect.right, rect.bottom);
 }
 
 }

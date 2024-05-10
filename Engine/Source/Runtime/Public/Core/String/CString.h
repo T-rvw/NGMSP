@@ -1,14 +1,16 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 #include <Core/HAL/BasicTypes.h>
 
 namespace ow
 {
 
-class CORE_API CString
+class CORE_API CString final
 {
 public:
+	CString() = delete;
+
 	static constexpr char ToLower(char c)
 	{
 		constexpr char offset = 'Z' - 'z';

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 #include <Core/HAL/BasicTypes.h>
 
 namespace ow
@@ -11,7 +11,7 @@ class IPlatformSemaphore;
 /// <summary>
 /// Semaphore is a counter used to synchronization orders of multiple threads/processes. 
 /// </summary>
-class CORE_API PlatformSemaphore
+class CORE_API PlatformSemaphore final
 {
 public:
 	PlatformSemaphore();

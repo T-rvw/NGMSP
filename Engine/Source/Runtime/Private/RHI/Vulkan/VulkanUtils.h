@@ -10,9 +10,11 @@ struct VkLayerProperties;
 namespace ow
 {
 
-class VulkanUtils
+class VulkanUtils final
 {
 public:
+	VulkanUtils() = delete;
+
 	static bool FindExtension(const Vector<VkExtensionProperties>& extensions, const char* pRequireExtension);
 	static bool FindExtensions(const Vector<VkExtensionProperties>& extensions, const Vector<const char*>& requireExtensions);
 	static bool EnableExtensionSafely(Vector<const char*>& extensions, const Vector<VkExtensionProperties>& availableExtensions, const char* pRequireExtension);

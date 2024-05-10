@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 
 namespace ow
 {
@@ -10,7 +10,7 @@ class IPlatformProcess;
 /// <summary>
 /// Process is program's runtime context applied by operating system.
 /// </summary>
-class CORE_API PlatformProcess
+class CORE_API PlatformProcess final
 {
 public:
 	PlatformProcess();

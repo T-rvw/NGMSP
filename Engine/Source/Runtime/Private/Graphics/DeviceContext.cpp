@@ -5,12 +5,12 @@
 namespace ow
 {
 
-DeviceContext::DeviceContext(RHIBackend backend, void* pNativeWindow, uint32 width, uint32 height)
+DeviceContext::DeviceContext(RHIBackend backend, void* pNativeWindow, const Rect& windowRect)
 {
 	LoadRHIModule(backend);
 	CreateRHIInstance();
 	CreateLogicalDevice();
-	CreateSwapChain(pNativeWindow, width, height);
+	CreateSwapChain(pNativeWindow, windowRect.GetWidth(), windowRect.GetHeight());
 }
 
 DeviceContext::~DeviceContext()

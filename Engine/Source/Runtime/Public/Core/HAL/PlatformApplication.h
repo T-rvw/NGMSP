@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 
 namespace ow
 {
@@ -11,7 +11,7 @@ class IPlatformApplication;
 /// Application is the current launching program which contains one or more windows.
 /// Or it is headless without GUI windows, such as a batch process to process data.
 /// </summary>
-class CORE_API PlatformApplication
+class CORE_API PlatformApplication final
 {
 public:
 	PlatformApplication();

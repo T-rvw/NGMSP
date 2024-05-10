@@ -10,7 +10,7 @@ class DeviceContext
 {
 public:
 	DeviceContext() = delete;
-	GFX_API explicit DeviceContext(RHIBackend backend, void* pNativeWindow, uint32 width, uint32 height);
+	GFX_API explicit DeviceContext(RHIBackend backend, void* pNativeWindow, const Rect& windowRect);
 	DeviceContext(const DeviceContext&) = delete;
 	DeviceContext& operator=(const DeviceContext&) = delete;
 	DeviceContext(DeviceContext&& other) = default;

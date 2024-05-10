@@ -7,9 +7,11 @@
 namespace ow
 {
 
-class VulkanTypes
+class VulkanTypes final
 {
 public:
+	VulkanTypes() = delete;
+
 	static GPUAdapterType ToRHI(VkPhysicalDeviceType vkType);
 
 	static VkSamplerAddressMode ToVK(RHIAddressMode rhiType);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 #include <Core/HAL/BasicTypes.h>
 #include <Core/Hash/FastCRC32.h>
 #include <Core/String/String.h>

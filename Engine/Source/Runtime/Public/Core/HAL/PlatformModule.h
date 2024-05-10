@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/HAL/APIDefinition.h>
+#include <Core/HAL/APIDefines.h>
 
 namespace ow
 {
@@ -11,7 +11,7 @@ class IPlatformModule;
 /// Module means a dynamicly loading library, such as .dll in Windows.
 /// It is useful to decouple subsystems in different types or implement features such as PluginsManager.
 /// </summary>
-class CORE_API PlatformModule
+class CORE_API PlatformModule final
 {
 public:
 	PlatformModule();

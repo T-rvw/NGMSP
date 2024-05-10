@@ -7,9 +7,11 @@
 namespace ow
 {
 
-class D3D12Types
+class D3D12Types final
 {
 public:
+	D3D12Types() = delete;
+
 	static RHIColorSpace ToRHI(DXGI_COLOR_SPACE_TYPE deviceType);
 
 	static D3D12_BLEND ToD3D12(RHIBlendFactor rhiType);

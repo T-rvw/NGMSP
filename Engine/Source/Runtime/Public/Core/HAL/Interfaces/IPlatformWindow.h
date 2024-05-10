@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Container/Vector.h>
+#include <Core/Math/Rect.hpp>
 
 namespace ow
 {
@@ -15,8 +16,7 @@ public:
 	virtual void Init(const WindowCreateInfo& createInfo, void* pInstance) = 0;
 	virtual void* GetHandle() const = 0;
 	virtual Vector<char> GetTitle() const = 0;
-	virtual uint32 GetWidth() const = 0;
-	virtual uint32 GetHeight() const = 0;
+	virtual Rect GetRect() const = 0;
 };
 
 }

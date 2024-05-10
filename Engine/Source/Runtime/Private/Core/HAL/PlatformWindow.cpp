@@ -52,14 +52,9 @@ Vector<char> PlatformWindow::GetTitle() const
 	return m_pImpl->GetTitle();
 }
 
-uint32 PlatformWindow::GetWidth() const
+Rect PlatformWindow::GetRect() const
 {
-	return m_pImpl->GetWidth();
-}
-
-uint32 PlatformWindow::GetHeight() const
-{
-	return m_pImpl->GetHeight();
+	return m_pImpl->GetRect();
 }
 
 }
