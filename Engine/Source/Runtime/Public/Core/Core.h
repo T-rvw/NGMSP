@@ -5,9 +5,11 @@
 #include <Core/Base/Optional.h>
 #include <Core/Base/RefCountPtr.h>
 #include <Core/Base/TypeTraits.h>
-#include <Core/Container/HashMap.h>
-#include <Core/Container/Map.h>
-#include <Core/Container/Vector.h>
+#include <Core/Containers/HashMap.h>
+#include <Core/Containers/Map.h>
+#include <Core/Containers/Vector.h>
+#include <Core/Delegates/Delegate.hpp>
+#include <Core/Delegates/MulticastDelegate.hpp>
 #include <Core/Math/Rect.hpp>
 #include <Core/Math/Vector.hpp>
 #include <Core/Modules/ModuleManager.h>

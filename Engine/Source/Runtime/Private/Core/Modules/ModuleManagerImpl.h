@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core/Base/TypeTraits.h>
-#include <Core/Container/Map.h>
+#include <Core/Containers/Map.h>
 #include <Core/Modules/IModule.h>
 #include <Core/String/String.h>
 

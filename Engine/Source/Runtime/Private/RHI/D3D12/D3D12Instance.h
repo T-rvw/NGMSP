@@ -2,7 +2,7 @@
 
 #include "D3D12Adapter.h"
 
-#include <Core/Container/Vector.h>
+#include <Core/Containers/Vector.h>
 #include <RHI/IRHIInstance.h>
 
 namespace ow
