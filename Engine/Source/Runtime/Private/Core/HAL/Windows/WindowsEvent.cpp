@@ -1,7 +1,5 @@
 #include "WindowsEvent.h"
 
-#include <cassert>
-
 namespace ow
 {
 

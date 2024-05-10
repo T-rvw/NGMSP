@@ -2,8 +2,8 @@
 
 #include "WindowsHeader.h"
 
-#include <Core/Base/String.h>
 #include <Core/HAL/Interfaces/IPlatformEvent.h>
+#include <Core/String/String.h>
 
 namespace ow
 {

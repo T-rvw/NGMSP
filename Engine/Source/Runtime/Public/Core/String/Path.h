@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core/HAL/APIDefinition.h>
-#include <Core/Base/String.h>
+#include <Core/String/String.h>
 
 namespace ow
 {

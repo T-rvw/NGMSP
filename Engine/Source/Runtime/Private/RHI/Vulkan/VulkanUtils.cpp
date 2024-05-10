@@ -2,7 +2,7 @@
 
 #include "VulkanHeader.h"
 
-#include <Core/Base/CString.h>
+#include <Core/String/CString.h>
 
 namespace ow
 {

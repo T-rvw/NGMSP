@@ -1,20 +1,13 @@
 #pragma once
 
 #include <Core/Base/BitFlags.h>
-#include <Core/Base/CString.h>
-#include <Core/Base/Hash/FastCRC32.h>
-#include <Core/Base/Hash/FNV1A.h>
-#include <Core/Base/HashMap.h>
-#include <Core/Base/Map.h>
 #include <Core/Base/NameOf.h>
 #include <Core/Base/Optional.h>
-#include <Core/Base/Path.h>
 #include <Core/Base/RefCountPtr.h>
-#include <Core/Base/String.h>
-#include <Core/Base/StringID.h>
-#include <Core/Base/StringView.h>
 #include <Core/Base/TypeTraits.h>
-#include <Core/Base/Vector.h>
+#include <Core/Container/HashMap.h>
+#include <Core/Container/Map.h>
+#include <Core/Container/Vector.h>
 #include <Core/Modules/IModule.h>
 #include <Core/Modules/ModuleManager.h>
 #include <Core/Misc/CommandLine.h>
@@ -25,3 +18,10 @@
 #include <Core/HAL/PlatformWindow.h>
 #include <Core/HAL/PlatformTime.h>
 #include <Core/HAL/PlatformTypes.h>
+#include <Core/Hash/FastCRC32.h>
+#include <Core/Hash/FNV1A.h>
+#include <Core/String/CString.h>
+#include <Core/String/Path.h>
+#include <Core/String/String.h>
+#include <Core/String/StringID.h>
+#include <Core/String/StringView.h>

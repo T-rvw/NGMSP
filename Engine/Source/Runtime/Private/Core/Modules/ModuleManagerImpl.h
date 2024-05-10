@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Core/Base/Map.h>
-#include <Core/Base/String.h>
 #include <Core/Base/TypeTraits.h>
+#include <Core/Container/Map.h>
 #include <Core/Modules/IModule.h>
+#include <Core/String/String.h>
 
 namespace ow
 {

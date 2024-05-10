@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Core/Base/NameOf.h>
-#include <Core/Base/String.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
+#include <Core/String/String.h>
 #include <RHI/RHIEnums.h>
 
 namespace ow

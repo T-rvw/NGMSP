@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Core/Base/Hash/FastCRC32.h>
-#include <Core/Base/String.h>
-#include <Core/Base/StringView.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
+#include <Core/Hash/FastCRC32.h>
+#include <Core/String/String.h>
+#include <Core/String/StringView.h>
 
 namespace ow
 {

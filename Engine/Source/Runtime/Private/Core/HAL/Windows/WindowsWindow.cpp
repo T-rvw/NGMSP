@@ -1,6 +1,6 @@
 #include "WindowsWindow.h"
 
-#include <Core/Base/Vector.h>
+#include <Core/Container/Vector.h>
 #include <Core/HAL/PlatformTypes.h>
 
 namespace ow

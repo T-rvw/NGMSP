@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Core/Base/CString.h>
-#include <Core/Base/Map.h>
 #include <Core/Base/Optional.h>
-#include <Core/Base/String.h>
+#include <Core/Container/Map.h>
 #include <Core/HAL/APIDefinition.h>
 #include <Core/HAL/BasicTypes.h>
+#include <Core/String/CString.h>
+#include <Core/String/String.h>
 
 namespace ow
 {
