@@ -8,6 +8,22 @@
 namespace ow
 {
 
+// Concepts
+template <typename T>
+concept Integral = std::is_integral_v<T>;
+
+template <typename T>
+concept FloatingPoint = std::is_floating_point_v<T>;
+
+template <typename T>
+concept Numeric = Integral<T> || FloatingPoint<T>;
+
+template <typename T>
+concept Enumerated = std::is_enum_v<T>;
+
+template <typename T>
+concept Trivial = std::is_trivial_v<T>;
+
 // std::forward
 template<typename T>
 NODISCARD constexpr T&& Forward(std::remove_reference_t<T>& value)

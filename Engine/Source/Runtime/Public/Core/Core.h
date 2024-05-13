@@ -10,10 +10,6 @@
 #include <Core/Containers/Vector.h>
 #include <Core/Delegates/Delegate.hpp>
 #include <Core/Delegates/MulticastDelegate.hpp>
-#include <Core/Math/Rect.hpp>
-#include <Core/Math/Vector.hpp>
-#include <Core/Modules/ModuleManager.h>
-#include <Core/Misc/CommandLine.h>
 #include <Core/HAL/PlatformApplication.h>
 #include <Core/HAL/PlatformEvent.h>
 #include <Core/HAL/PlatformModule.h>
@@ -23,6 +19,12 @@
 #include <Core/HAL/PlatformTypes.h>
 #include <Core/Hash/FastCRC32.h>
 #include <Core/Hash/FNV1A.h>
+#include <Core/Math/Color.hpp>
+#include <Core/Math/Rect.hpp>
+#include <Core/Math/Vector.hpp>
+#include <Core/Math/XYZ.hpp>
+#include <Core/Misc/CommandLine.h>
+#include <Core/Modules/ModuleManager.h>
 #include <Core/String/CString.h>
 #include <Core/String/Path.h>
 #include <Core/String/String.h>

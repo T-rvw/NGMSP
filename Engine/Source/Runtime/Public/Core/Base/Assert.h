@@ -2,9 +2,4 @@
 
 #include <cassert>
 
-namespace ow
-{
-
-}
-
-#define Assert assert
+#define Assert(expression, ...) assert(expression)

@@ -4,6 +4,12 @@
 
 #include <functional>
 
+#define DECLARE_DELEGATE(name, ...) \
+using name = ow::Delegate<void, __VA_ARGS__>
+
+#define DECLARE_DELEGATE_RET(name, retValue, ...) \
+using name = ow::Delegate<retValue, __VA_ARGS__>
+
 namespace ow
 {
 
@@ -70,6 +76,12 @@ public:
 	{
 		m_pInstance = const_cast<C*>(pInstance);
 		m_pProxyFunc = &ConstMethodProxy<C, Function>;
+	}
+
+	void Unbind()
+	{
+		m_pInstance = nullptr;
+		m_pProxyFunc = nullptr;
 	}
 
 	bool Empty() const { return m_pProxyFunc == nullptr; }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include <Core/Base/TypeTraits.h>
 
 namespace ow
 {
@@ -8,12 +8,10 @@ namespace ow
 /// <summary>
 /// Define bit flags in a safe way by using enum class.
 /// </summary>
-/// <typeparam name="T">Type of enum class</typeparam>
-template<typename T>
+template<Enumerated T>
 class BitFlags
 {
 private:
-	static_assert(std::is_enum<T>::value);
 	using UT = std::underlying_type<T>::type;
 
 	static constexpr UT GetFlag(T v)

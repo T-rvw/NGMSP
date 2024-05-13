@@ -5,25 +5,17 @@
 namespace ow
 {
 
-template<typename T, uint32 N>
+template<Numeric T, uint32 N>
 class TVector
 {
 public:
 	constexpr TVector() = default;
-	// Single value constructor.
-	explicit constexpr TVector(T value) { std::fill(begin(), end(), value); }
 	// N value constructor.
 	template <typename... Args>
 	explicit constexpr TVector(Args... args) :
 		m_data { static_cast<T>(args)... }
 	{
 		static_assert(sizeof...(Args) == N);
-	}
-	// N-1 TVector + 1 value constructor.
-	explicit constexpr TVector(TVector<T, N - 1> vec, T value)
-	{
-		std::memcpy(begin(), vec.begin(), sizeof(T) * vec.size());
-		m_data[N - 1] = value;
 	}
 	TVector(const TVector&) = default;
 	TVector& operator=(const TVector&) = default;
@@ -39,18 +31,6 @@ public:
 
 	constexpr T& operator[](uint32 index) { return m_data[index]; }
 	constexpr T operator[](uint32 index) const { return m_data[index]; }
-	constexpr T& x() { static_assert(N >= 1); return m_data[0]; }
-	constexpr T x() const { static_assert(N >= 1); return m_data[0]; }
-	constexpr T& y() { static_assert(N >= 2); return m_data[1]; }
-	constexpr T y() const { static_assert(N >= 2); return m_data[1]; }
-	constexpr T& z() { static_assert(N >= 3); return m_data[2]; }
-	constexpr T z() const { static_assert(N >= 3); return m_data[2]; }
-	constexpr T& w() { static_assert(N >= 4); return m_data[3]; }
-	constexpr T w() const { static_assert(N >= 4); return m_data[3]; }
-	NODISCARD constexpr TVector<T, 3> xxx() const { static_assert(3 <= N); return TVector<T, 3>(x()); }
-	NODISCARD constexpr TVector<T, 3> yyy() const { static_assert(3 <= N); return TVector<T, 3>(y()); }
-	NODISCARD constexpr TVector<T, 3> zzz() const { static_assert(3 <= N); return TVector<T, 3>(z()); }
-	NODISCARD constexpr TVector<T, 3> xyz() const { static_assert(3 <= N); return TVector<T, 3>(x(), y(), z()); }
 
 	NODISCARD bool ContainsInfinite() const
 	{
@@ -152,55 +132,85 @@ public:
 		return *this;
 	}
 
-	NODISCARD T Sum() const
-	{
-		T result = static_cast<T>(0);
-		std::for_each(begin(), end(), [&result](const T& component) { result += component; });
-		return result;
-	}
-
-	NODISCARD T Length() const { return std::sqrt(LengthSquare()); }
-	NODISCARD T LengthSquare() const
-	{
-		T result = static_cast<T>(0);
-		std::for_each(begin(), end(), [&result](const T& component) { result += component * component; });
-		return result;
-	}
-
-	TVector& Normalize()
-	{
-		T length = Length();
-		if (Math::Equals(length, static_cast<T>(0)))
-		{
-			// avoid devide zero to cause nan.
-			return *this;
-		}
-
-		T invLength = static_cast<T>(1) / length;
-		std::for_each(begin(), end(), [&invLength](T& component) { component *= invLength; });
-		return *this;
-	}
-
-	NODISCARD T Dot(const TVector& other) const
-	{
-		static_assert(N >= 3);
-		return x() * other.x() + y() * other.y() + z() * other.z();
-	}
-
-	NODISCARD TVector<T, 3> Cross(const TVector& other) const
-	{
-		static_assert(N >= 3);
-		return TVector<T, 3>(y() * other.z() - z() * other.y(),
-			z() * other.x() - x() * other.z(),
-			x() * other.y() - y() * other.x());
-	}
-
-private:
+protected:
 	T m_data[N];
 };
 
-using Vec2 = TVector<float, 2>;
-using Vec3 = TVector<float, 3>;
-using Vec4 = TVector<float, 4>;
+template<typename T>
+class Vector2 : public TVector<T, 2>
+{
+public:
+	using Base = TVector<T, 2>;
+
+public:
+	constexpr Vector2() = default;
+	explicit constexpr Vector2(T value) { std::fill(this->begin(), this->end(), value); }
+	explicit constexpr Vector2(T x, T y) : Base(x, y) {}
+
+	constexpr T& x() { return this->m_data[0]; }
+	constexpr T x() const { return this->m_data[0]; }
+	constexpr T& y() { return this->m_data[1]; }
+	constexpr T y() const { return this->m_data[1]; }
+};
+
+template<typename T>
+class Vector3 : public TVector<T, 3>
+{
+public:
+	using Base = TVector<T, 3>;
+	using Vector2 = TVector<T, 2>;
+
+public:
+	constexpr Vector3() = default;
+	explicit constexpr Vector3(T value) { std::fill(this->begin(), this->end(), value); }
+	explicit constexpr Vector3(const Vector2& v, T z) : Base(v.x, v.y, z) {}
+	explicit constexpr Vector3(T x, T y, T z) : Base(x, y, z) {}
+
+	constexpr T& x() { return this->m_data[0]; }
+	constexpr T x() const { return this->m_data[0]; }
+	constexpr T& y() { return this->m_data[1]; }
+	constexpr T y() const { return this->m_data[1]; }
+	constexpr T& z() { return this->m_data[2]; }
+	constexpr T z() const { return this->m_data[2]; }
+};
+
+template<typename T>
+class Vector4 : public TVector<T, 4>
+{
+public:
+	using Base = TVector<T, 4>;
+	using Vector3 = TVector<T, 3>;
+
+public:
+	constexpr Vector4() = default;
+	explicit constexpr Vector4(T value) { std::fill(this->begin(), this->end(), value); }
+	explicit constexpr Vector4(const Vector3& v, T w) : Base(v.x, v.y, v.z, w) {}
+	explicit constexpr Vector4(T x, T y, T z, T w) : Base(x, y, z, w) {}
+
+	constexpr T& x() { return this->m_data[0]; }
+	constexpr T x() const { return this->m_data[0]; }
+	constexpr T& y() { return this->m_data[1]; }
+	constexpr T y() const { return this->m_data[1]; }
+	constexpr T& z() { return this->m_data[2]; }
+	constexpr T z() const { return this->m_data[2]; }
+	constexpr T& w() { return this->m_data[3]; }
+	constexpr T w() const { return this->m_data[3]; }
+};
+
+using Int2 = Vector2<int32>;
+using Int3 = Vector3<int32>;
+using Int4 = Vector4<int32>;
+
+using UInt2 = Vector2<uint32>;
+using UInt3 = Vector3<uint32>;
+using UInt4 = Vector4<uint32>;
+
+using Float2 = Vector2<float>;
+using Float3 = Vector3<float>;
+using Float4 = Vector4<float>;
+
+using Double2 = Vector2<double>;
+using Double3 = Vector3<double>;
+using Double4 = Vector4<double>;
 
 }
