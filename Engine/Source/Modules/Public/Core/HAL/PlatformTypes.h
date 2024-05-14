@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core/HAL/BasicTypes.h>
-#include <Core/Math/Rect.hpp>
+#include <Core/Math/Box.hpp>
 
 namespace ow
 {

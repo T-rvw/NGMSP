@@ -10,13 +10,15 @@ class HelloWorldSample : public SampleBase
 public:
 	virtual ~HelloWorldSample()
 	{
+		m_e.GetDirection();
 	}
 
 private:
-	XYZ m_a;
-	XYZW m_b;
+	Float3 m_a;
+	Float4 m_b;
 	Color m_c;
 	LinearColor m_d;
+	Ray m_e;
 };
 
 DEFINE_SAMPLE(HelloWorldSample);

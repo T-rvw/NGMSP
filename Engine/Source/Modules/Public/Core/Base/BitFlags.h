@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Core/Base/NameOf.h>
 #include <Core/Base/TypeTraits.h>
 
 namespace ow
@@ -13,6 +14,8 @@ class BitFlags
 {
 private:
 	using UT = std::underlying_type<T>::type;
+	static constexpr auto BitFlagCount = EnumCount<T>();
+	static_assert(BitFlagCount <= sizeof(UT) * 8);
 
 	static constexpr UT GetFlag(T v)
 	{

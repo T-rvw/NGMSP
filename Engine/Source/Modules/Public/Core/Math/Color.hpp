@@ -56,6 +56,8 @@ public:
 	}
 };
 
+static_assert(4 * sizeof(uint8) == sizeof(Color));
+
 class LinearColor : public TColor<float>
 {
 public:
@@ -66,5 +68,7 @@ public:
 	using Base::Base;
 	explicit constexpr LinearColor(T r, T g, T b) : Base(r, g, b, 1.0f) {}
 };
+
+static_assert(4 * sizeof(float) == sizeof(LinearColor));
 
 }

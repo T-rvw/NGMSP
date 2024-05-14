@@ -19,10 +19,10 @@
 #include <Core/HAL/PlatformTypes.h>
 #include <Core/Hash/FastCRC32.h>
 #include <Core/Hash/FNV1A.h>
+#include <Core/Math/Box.hpp>
 #include <Core/Math/Color.hpp>
-#include <Core/Math/Rect.hpp>
+#include <Core/Math/Ray.hpp>
 #include <Core/Math/Vector.hpp>
-#include <Core/Math/XYZ.hpp>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Modules/ModuleManager.h>
 #include <Core/String/CString.h>

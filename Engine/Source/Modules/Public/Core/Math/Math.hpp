@@ -61,6 +61,18 @@ public:
 	}
 
 	template<typename T>
+	NODISCARD static constexpr T Min(T a, T b)
+	{
+		return std::min(a, b);
+	}
+
+	template<typename T>
+	NODISCARD static constexpr T Max(T a, T b)
+	{
+		return std::max(a, b);
+	}
+
+	template<typename T>
 	NODISCARD static constexpr bool Equals(T a, T b, T eps)
 	{
 		return std::abs(a - b) <= eps;
