@@ -15,6 +15,7 @@ project(SampleFrameworkName)
 	}
 	
 	includedirs {
+		path.join(ModuleSourcePath, "Public"),
 		path.join(RuntimeSourcePath, "Public"),
 		ThirdPartySourcePath
 	}
@@ -34,7 +35,7 @@ project(SampleFrameworkName)
 	}
 
 	links {
-		"Core", "Graphics"
+		"Core", "Runtime"
 	}
 
 local function MakeSample(projectPath)
@@ -51,6 +52,7 @@ local function MakeSample(projectPath)
 		}
 		
 		includedirs {
+			path.join(ModuleSourcePath, "Public"),
 			path.join(RuntimeSourcePath, "Public"),
 			path.join(SampleSourcePath, SampleFrameworkName),
 			ThirdPartySourcePath

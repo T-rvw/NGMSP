@@ -2,7 +2,7 @@ project("Make")
 	kind("Utility")
 	location(path.join(RootPath, "Build/Utility"))
 	files {
-		path.join(RootPath, "Engine/Source/Make/**.lua")
+		path.join(MakefileSourcePath, "**.lua")
 	}
 
 	filter { "system:windows", "action:vs2022" }

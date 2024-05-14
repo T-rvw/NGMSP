@@ -36,7 +36,7 @@ private:
 	RHIDebugMode m_debugMode = RHIDebugMode::Enabled;
 	RHIValidationMode m_validationMode = RHIValidationMode::GPU;
 
-	ModuleHandle m_rhiModule;
+	RHIModuleHandle m_rhiModule;
 	InstanceHandle m_instance;
 	DeviceHandle m_device;
 	SwapChainHandle m_swapChain;

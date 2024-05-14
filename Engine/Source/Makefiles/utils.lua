@@ -73,7 +73,7 @@ Module.Create = function(moduleName, moduleCallback)
 		}
 	
 		includedirs {
-			path.join(RuntimeSourcePath, "Public"),
+			path.join(ModuleSourcePath, "Public"),
 			ThirdPartySourcePath
 		}
 

@@ -74,4 +74,7 @@ private:
 	List<DelegateType> m_delegates;
 };
 
+template<typename... Args>
+using Event = MulticastDelegate<void(Args...)>;
+
 }
