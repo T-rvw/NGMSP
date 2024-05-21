@@ -19,6 +19,8 @@ private:
 	Color m_c;
 	LinearColor m_d;
 	Ray m_e;
+	Quaternion m_g;
+	Matrix4x4 m_f;
 };
 
 DEFINE_SAMPLE(HelloWorldSample);

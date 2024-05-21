@@ -15,3 +15,5 @@
 * [Tarun Ramaswamy](https://rtarun9.github.io/blogs/)
 
 * [The ryg blog](https://fgiesen.wordpress.com/)
+
+* [Wicked Engine](https://wickedengine.net)

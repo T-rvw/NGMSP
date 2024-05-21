@@ -10,6 +10,8 @@
 		
 		* [Microsoft Document](https://learn.microsoft.com/en-us/windows/win32/direct3d12)
 
+		* [Using the DirectXShaderCompiler C++ API](https://simoncoenen.com/blog/programming/graphics/DxcCompiling)
+
     * Vulkan
 
 		* [Samsung GameDev Resources](https://developer.samsung.com/galaxy-gamedev/resources.html)

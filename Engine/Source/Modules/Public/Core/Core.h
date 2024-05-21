@@ -21,6 +21,8 @@
 #include <Core/Hash/FNV1A.h>
 #include <Core/Math/Box.hpp>
 #include <Core/Math/Color.hpp>
+#include <Core/Math/Matrix.hpp>
+#include <Core/Math/Quaternion.hpp>
 #include <Core/Math/Ray.hpp>
 #include <Core/Math/Vector.hpp>
 #include <Core/Misc/CommandLine.h>
