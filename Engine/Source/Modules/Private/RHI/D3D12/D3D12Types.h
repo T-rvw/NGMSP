@@ -2,6 +2,7 @@
 
 #include "D3D12Header.h"
 
+#include <Core/Math/Box.hpp>
 #include <RHI/RHIEnums.h>
 
 namespace ow
@@ -21,6 +22,8 @@ public:
 	static D3D12_CULL_MODE ToD3D12(RHICullMode rhiType);
 	static D3D12_FENCE_FLAGS ToD3D12(RHIFenceType rhiType);
 	static DXGI_FORMAT ToD3D12(RHIFormat rhiType);
+	static D3D12_VIEWPORT ToD3D12(const Viewport& viewport);
+	static D3D12_RECT ToD3D12(const Rect& rect);
 };
 
 }

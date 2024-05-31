@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Core/Containers/Vector.h>
+#include <Core/Math/Box.hpp>
 
 namespace ow
 {
 
-class Rect;
 struct WindowCreateInfo;
 
 class IPlatformWindow

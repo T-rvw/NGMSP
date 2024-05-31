@@ -447,4 +447,26 @@ DXGI_FORMAT D3D12Types::ToD3D12(RHIFormat rhiType)
     }
 }
 
+D3D12_VIEWPORT D3D12Types::ToD3D12(const Viewport& viewport)
+{
+    D3D12_VIEWPORT d3d12Viewport;
+    d3d12Viewport.TopLeftX = viewport.GetLeft();
+    d3d12Viewport.TopLeftY = viewport.GetTop();
+    d3d12Viewport.Height = viewport.GetWidth();
+    d3d12Viewport.Width = viewport.GetHeight();
+    d3d12Viewport.MinDepth = viewport.GetMinDepth();
+    d3d12Viewport.MaxDepth = viewport.GetMaxDepth();
+    return d3d12Viewport;
+}
+
+D3D12_RECT D3D12Types::ToD3D12(const Rect& rect)
+{
+    D3D12_RECT d3d12Rect;
+    d3d12Rect.left = rect.GetLeft();
+    d3d12Rect.top = rect.GetTop();
+    d3d12Rect.right = rect.GetRight();
+    d3d12Rect.bottom = rect.GetBottom();
+    return d3d12Rect;
+}
+
 }

@@ -485,4 +485,26 @@ VkImageUsageFlags VulkanTypes::ToVK(RHITextureUsage rhiType)
     }
 }
 
+VkViewport VulkanTypes::ToVK(const Viewport& viewport)
+{
+    VkViewport vkViewport;
+    vkViewport.x = viewport.GetLeft();
+    vkViewport.y = viewport.GetTop();
+    vkViewport.width = viewport.GetWidth();
+    vkViewport.height = viewport.GetHeight();
+    vkViewport.minDepth = viewport.GetMinDepth();
+    vkViewport.maxDepth = viewport.GetMaxDepth();
+    return vkViewport;
+}
+
+VkRect2D VulkanTypes::ToVK(const Rect& rect)
+{
+    VkRect2D vkRect;
+    vkRect.offset.x = rect.GetLeft();
+    vkRect.offset.y = rect.GetTop();
+    vkRect.extent.width = rect.GetWidth();
+    vkRect.extent.height = rect.GetHeight();
+    return vkRect;
+}
+
 }

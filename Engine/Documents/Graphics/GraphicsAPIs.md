@@ -26,6 +26,8 @@
 
 	* [Bindless Rendering in DirectX12 and SM6.6](https://rtarun9.github.io/blogs/bindless_rendering/)
 
+	* [Indirect Drawing](https://learn.microsoft.com/en-us/windows/win32/direct3d12/indirect-drawing#command-signatures)
+
 * Memory Management
  
 	* [Differences in memory management between Direct3D 12 and Vulkan](https://asawicki.info/articles/memory_management_vulkan_direct3d_12.php5)

@@ -96,26 +96,29 @@ protected:
 };
 
 /// <summary>
-/// 2D Rect such as GUI Window Rect.
+/// 2D Rect such as GUI Window Rect, 3D viewport, scissor.
 /// </summary>
-class Rect : public TBox<uint32, 2>
+template<typename T>
+class TRect : public TBox<T, 2>
 {
 public:
-	using T = uint32;
-	using Base = TBox<uint32, 2>;
+	using Base = TBox<T, 2>;
+	using PointType = Base::PointType;
 
 public:
-	constexpr Rect() = default;
-	explicit constexpr Rect(T width, T height) :
+	constexpr TRect() = default;
+	explicit constexpr TRect(T width, T height) :
 		Base(PointType(static_cast<T>(0), static_cast<T>(0)), PointType(width, height))
 	{
 	}
-	explicit constexpr Rect(T left, T top, T right, T bottom) :
+	explicit constexpr TRect(T left, T top, T right, T bottom) :
 		Base(PointType(left, top), PointType(right, bottom))
 	{
 	}
 
+	PointType& GetLeftTop() { return this->m_min; }
 	const PointType& GetLeftTop() const { return this->m_min; }
+	PointType& GetBottomRight() { return this->m_max; }
 	const PointType& GetBottomRight() const { return this->m_max; }
 
 	constexpr T GetLeft() const { return this->m_min[0]; }
@@ -126,21 +129,49 @@ public:
 	constexpr T GetHeight() const { return this->m_max[1] - this->m_min[1]; }
 };
 
-static_assert(4 * sizeof(uint32) == sizeof(Rect));
+using Rect = TRect<uint32>;
+static_assert(sizeof(Rect) == 4 * sizeof(uint32));
+
+/// <summary>
+/// Viewport inherited from Rect which adds MinDepth and MaxDepth.
+/// </summary>
+template<typename T>
+class TViewport : public TRect<T>
+{
+public:
+	using Base = TRect<T>;
+
+public:
+	using Base::Base;
+
+	constexpr T GetMinDepth() const { return m_minDepth; }
+	void SetMinDepth(T depth) { m_minDepth = depth; }
+
+	constexpr T GetMaxDepth() const { return m_maxDepth; }
+	void SetMaxDepth(T depth) { m_maxDepth = depth; }
+
+private:
+	T m_minDepth;
+	T m_maxDepth;
+};
+
+using Viewport = TViewport<float>;
+static_assert(6 * sizeof(float) == sizeof(Viewport));
 
 /// <summary>
 /// Axis Aligned Bounding Box.
 /// </summary>
-class AABB : public TBox<float, 3>
+template<typename T>
+class TAABB : public TBox<T, 3>
 {
 public:
-	using T = float;
-	using Base = TBox<float, 3>;
+	using Base = TBox<T, 3>;
 
 public:
 	using Base::Base;
 };
 
+using AABB = TAABB<float>;
 static_assert(6 * sizeof(float) == sizeof(AABB));
 
 }

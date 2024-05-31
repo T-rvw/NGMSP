@@ -16,6 +16,8 @@
 
 * [MJP - The Danger Zone](https://therealmjp.github.io/)
 
+* [REAC](https://enginearchitecture.org/index.htm)
+
 * [Self Shadow](https://blog.selfshadow.com)
 
 * [Simon Coenen](https://simoncoenen.com/blog)

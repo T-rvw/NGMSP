@@ -2,6 +2,7 @@
 
 #include "VulkanHeader.h"
 
+#include <Core/Math/Box.hpp>
 #include <RHI/RHITypes.h>
 
 namespace ow
@@ -27,6 +28,8 @@ public:
 	static VkShaderStageFlagBits ToVK(RHIShaderStage rhiType);
 	static VkImageViewType ToVK(RHITextureType rhiType);
 	static VkImageUsageFlags ToVK(RHITextureUsage rhiType);
+	static VkViewport ToVK(const Viewport& viewport);
+	static VkRect2D ToVK(const Rect& rect);
 };
 
 }

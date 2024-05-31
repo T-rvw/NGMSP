@@ -38,29 +38,7 @@ void D3D12CommandList::EndRenderPass()
 	m_commandList->EndRenderPass();
 }
 
-void D3D12CommandList::SetViewport(float width, float height, float x, float y)
-{
-	D3D12_VIEWPORT viewport;
-	viewport.TopLeftX = x;
-	viewport.TopLeftY = y;
-	viewport.Height = width;
-	viewport.Width = height;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	m_commandList->RSSetViewports(1, &viewport);
-}
-
-void D3D12CommandList::SetScissor(uint32 width, uint32 height, uint32 x, uint32 y)
-{
-	D3D12_RECT rect;
-	rect.left = x;
-	rect.top = y;
-	rect.right = x + width;
-	rect.bottom = y + height;
-	m_commandList->RSSetScissorRects(1, &rect);
-}
-
-void D3D12CommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 bindingStart)
+void D3D12CommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 bindingSlot)
 {
 	D3D12Buffer* pD3D12Buffer = static_cast<D3D12Buffer*>(pVertexBuffer);
 
@@ -69,25 +47,7 @@ void D3D12CommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 binding
 	bufferView.BufferLocation;
 	bufferView.SizeInBytes = bufferCreateInfo.SizeInBytes;
 	bufferView.StrideInBytes = bufferCreateInfo.Stride;
-	m_commandList->IASetVertexBuffers(bindingStart, 1, &bufferView);
-}
-
-void D3D12CommandList::SetVertexBuffers(const Vector<IRHIBuffer*>& vertexBuffers, uint32 bindingStart)
-{
-	constexpr uint64 MaxVertexBufferCount = 4;
-	Assert(vertexBuffers.size() <= MaxVertexBufferCount);
-
-	uint32 bufferCount = 0;
-	D3D12_VERTEX_BUFFER_VIEW bufferViews[MaxVertexBufferCount];
-	for (auto* pVertexBuffer : vertexBuffers)
-	{
-		auto& bufferView = bufferViews[bufferCount];
-		bufferView.BufferLocation = 0;
-		bufferView.StrideInBytes = 0;
-		bufferView.SizeInBytes = 0;
-		++bufferCount;
-	}
-	m_commandList->IASetVertexBuffers(bindingStart, bufferCount, bufferViews);
+	m_commandList->IASetVertexBuffers(bindingSlot, 1, &bufferView);
 }
 
 void D3D12CommandList::SetIndexBuffer(IRHIBuffer* pIndexBuffer, bool useUInt16)
@@ -99,24 +59,37 @@ void D3D12CommandList::SetIndexBuffer(IRHIBuffer* pIndexBuffer, bool useUInt16)
 	m_commandList->IASetIndexBuffer(&view);
 }
 
-void D3D12CommandList::Draw(uint32 vertexCount, uint32 vertexStart)
+void D3D12CommandList::SetViewport(const Viewport& viewport)
 {
-	m_commandList->DrawInstanced(vertexCount, 1, vertexStart, 0);
+	auto d3d12Viewport = D3D12Types::ToD3D12(viewport);
+	m_commandList->RSSetViewports(1, &d3d12Viewport);
 }
 
-void D3D12CommandList::DrawInstanced(uint32 vertexCount, uint32 vertexStart, uint32 instanceCount, uint32 instanceStart)
+void D3D12CommandList::SetScissor(const Rect& rect)
 {
-	m_commandList->DrawInstanced(vertexCount, instanceCount, vertexStart, instanceStart);
+	auto d3d12Rect = D3D12Types::ToD3D12(rect);
+	m_commandList->RSSetScissorRects(1, &d3d12Rect);
 }
 
-void D3D12CommandList::DrawIndexed(uint32 indexCount, uint32 indexStart, uint32_t vertexOffset)
+void D3D12CommandList::Dispath(uint32 threadGroupCountX, uint32 threadGroupCountY, uint32 threadGroupCountZ)
 {
-	m_commandList->DrawIndexedInstanced(indexCount, 1, indexStart, vertexOffset, 0);
+	m_commandList->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }
 
-void D3D12CommandList::DrawIndexedInstanced(uint32 indexCount, uint32 instanceCount, uint32 indexStart, uint32 instanceStart, uint32_t vertexOffset)
+void D3D12CommandList::Draw(uint32 vertexCount, uint32 instanceCount, uint32 firstVertex, uint32 firstInstance)
 {
-	m_commandList->DrawIndexedInstanced(indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
+	m_commandList->DrawInstanced(vertexCount, instanceCount, firstVertex, firstInstance);
+}
+
+void D3D12CommandList::DrawIndirect(IRHIBuffer* pArgBuffer, uint32 offset, uint32 drawCount, uint32 stride)
+{
+	// CommandSignature storage in device.
+	//m_commandList->ExecuteIndirect;
+}
+
+void D3D12CommandList::DrawIndexed(uint32 indexCount, uint32 instanceCount, uint32 firstIndex, uint32 vertexOffset, uint32 firstInstance)
+{
+	m_commandList->DrawIndexedInstanced(indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 
 }

@@ -63,45 +63,12 @@ void VulkanCommandList::EndRenderPass()
 	vkCmdEndRenderPass(m_commandBuffer);
 }
 
-void VulkanCommandList::SetViewport(float width, float height, float x, float y)
-{
-	VkViewport viewport = { x, y + height, width, height, 0.f, 1.f };
-	vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
-}
-
-void VulkanCommandList::SetScissor(uint32 width, uint32 height, uint32 x, uint32 y)
-{
-	VkRect2D rect;
-	rect.offset.x = x;
-	rect.offset.y = y;
-	rect.extent.width = width;
-	rect.extent.height = height;
-	vkCmdSetScissor(m_commandBuffer, 0, 1, &rect);
-}
-
-void VulkanCommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 bindingStart)
+void VulkanCommandList::SetVertexBuffer(IRHIBuffer* pVertexBuffer, uint32 bindingSlot)
 {
 	auto* pVulkanVertexBuffer = static_cast<VulkanBuffer*>(pVertexBuffer);
 
 	VkDeviceSize offset[] = { 0 };
-	vkCmdBindVertexBuffers(m_commandBuffer, bindingStart, 1, pVulkanVertexBuffer->GetAddressOf(), offset);
-}
-
-void VulkanCommandList::SetVertexBuffers(const Vector<IRHIBuffer*>& vertexBuffers, uint32 bindingStart)
-{
-	constexpr uint64 MaxVertexBufferCount = 4;
-	Assert(vertexBuffers.size() <= MaxVertexBufferCount);
-
-	uint32 bufferCount = 0;
-	VkBuffer buffer[MaxVertexBufferCount];
-	for (auto* pVertexBuffer : vertexBuffers)
-	{
-		buffer[bufferCount] = static_cast<VulkanBuffer*>(pVertexBuffer)->GetHandle();
-		++bufferCount;
-	}
-
-	VkDeviceSize offset[] = { 0 };
-	vkCmdBindVertexBuffers(m_commandBuffer, bindingStart, bufferCount, buffer, offset);
+	vkCmdBindVertexBuffers(m_commandBuffer, bindingSlot, 1, pVulkanVertexBuffer->GetAddressOf(), offset);
 }
 
 void VulkanCommandList::SetIndexBuffer(IRHIBuffer* pIndexBuffer, bool useUInt16)
@@ -111,24 +78,37 @@ void VulkanCommandList::SetIndexBuffer(IRHIBuffer* pIndexBuffer, bool useUInt16)
 	vkCmdBindIndexBuffer(m_commandBuffer, pVulkanIndexBuffer->GetHandle(), 0, useUInt16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 }
 
-void VulkanCommandList::Draw(uint32 vertexCount, uint32 vertexStart)
+void VulkanCommandList::SetViewport(const Viewport& viewport)
 {
-	vkCmdDraw(m_commandBuffer, vertexCount, 1, vertexStart, 0);
+	auto vkViewport = VulkanTypes::ToVK(viewport);
+	vkCmdSetViewport(m_commandBuffer, 0, 1, &vkViewport);
 }
 
-void VulkanCommandList::DrawInstanced(uint32 vertexCount, uint32 vertexStart, uint32 instanceCount, uint32 instanceStart)
+void VulkanCommandList::SetScissor(const Rect& rect)
 {
-	vkCmdDraw(m_commandBuffer, vertexCount, instanceCount, vertexStart, instanceStart);
+	auto vkRect = VulkanTypes::ToVK(rect);
+	vkCmdSetScissor(m_commandBuffer, 0, 1, &vkRect);
 }
 
-void VulkanCommandList::DrawIndexed(uint32 indexCount, uint32 indexStart, uint32_t vertexOffset)
+void VulkanCommandList::Dispath(uint32 threadGroupCountX, uint32 threadGroupCountY, uint32 threadGroupCountZ)
 {
-	vkCmdDrawIndexed(m_commandBuffer, indexCount, 1, indexStart, vertexOffset, 0);
+	vkCmdDispatch(m_commandBuffer, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }
 
-void VulkanCommandList::DrawIndexedInstanced(uint32 indexCount, uint32 instanceCount, uint32 indexStart, uint32 instanceStart, uint32_t vertexOffset)
+void VulkanCommandList::Draw(uint32 vertexCount, uint32 instanceCount, uint32 firstVertex, uint32 firstInstance)
 {
-	vkCmdDrawIndexed(m_commandBuffer, indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
+	vkCmdDraw(m_commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+}
+
+void VulkanCommandList::DrawIndirect(IRHIBuffer* pArgBuffer, uint32 offset, uint32 drawCount, uint32 stride)
+{
+	auto* pVulkanArgBuffer = static_cast<VulkanBuffer*>(pArgBuffer);
+	vkCmdDrawIndirect(m_commandBuffer, pVulkanArgBuffer->GetHandle(), offset, drawCount, stride);
+}
+
+void VulkanCommandList::DrawIndexed(uint32 indexCount, uint32 instanceCount, uint32 firstIndex, uint32 vertexOffset, uint32 firstInstance)
+{
+	vkCmdDrawIndexed(m_commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 
 }
