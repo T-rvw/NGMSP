@@ -7,7 +7,6 @@
 #include "VulkanCommandQueue.h"
 #include "VulkanFence.h"
 #include "VulkanPipelineLayout.h"
-#include "VulkanPipelineState.h"
 #include "VulkanInstance.h"
 #include "VulkanSemaphore.h"
 #include "VulkanSwapChain.h"
@@ -227,21 +226,6 @@ FenceHandle VulkanDevice::CreateFence(const RHIFenceCreateInfo& createInfo)
 PipelineLayoutHandle VulkanDevice::CreatePipelineLayout(const RHIPipelineLayoutCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanPipelineLayout>(this, createInfo);
-}
-
-PipelineStateHandle VulkanDevice::CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<VulkanPipelineState>(this, createInfo);
-}
-
-PipelineStateHandle VulkanDevice::CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<VulkanPipelineState>(this, createInfo);
-}
-
-PipelineStateHandle VulkanDevice::CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<VulkanPipelineState>(this, createInfo);
 }
 
 SemaphoreHandle VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)

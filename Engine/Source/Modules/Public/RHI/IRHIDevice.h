@@ -19,9 +19,6 @@ public:
 	virtual CommandPoolHandle CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) = 0;
 	virtual FenceHandle CreateFence(const RHIFenceCreateInfo& createInfo) = 0;
 	virtual PipelineLayoutHandle CreatePipelineLayout(const RHIPipelineLayoutCreateInfo& createInfo) = 0;
-	virtual PipelineStateHandle CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo) = 0;
-	virtual PipelineStateHandle CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo) = 0;
-	virtual PipelineStateHandle CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo) = 0;
 	virtual SemaphoreHandle CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) = 0;
 	virtual SwapChainHandle CreateSwapChain(const RHISwapChainCreateInfo& createInfo) = 0;
 	virtual TextureHandle CreateTexture(const RHITextureCreateInfo& createInfo) = 0;

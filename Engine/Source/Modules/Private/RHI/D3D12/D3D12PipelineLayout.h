@@ -20,6 +20,10 @@ public:
 	D3D12PipelineLayout& operator=(D3D12PipelineLayout&&) = default;
 	virtual ~D3D12PipelineLayout() = default;
 
+	virtual PipelineStateHandle CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo) override;
+	virtual PipelineStateHandle CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo) override;
+	virtual PipelineStateHandle CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo) override;
+
 private:
 	RefCountPtr<ID3D12RootSignature> m_rootSignature;
 };

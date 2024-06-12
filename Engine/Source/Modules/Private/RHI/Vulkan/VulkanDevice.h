@@ -30,9 +30,6 @@ public:
 	virtual FenceHandle CreateFence(const RHIFenceCreateInfo& createInfo) override;
 	virtual CommandPoolHandle CreateCommandPool(const RHICommandPoolCreateInfo& createInfo) override;
 	virtual PipelineLayoutHandle CreatePipelineLayout(const RHIPipelineLayoutCreateInfo& createInfo) override;
-	virtual PipelineStateHandle CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo) override;
-	virtual PipelineStateHandle CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo) override;
-	virtual PipelineStateHandle CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo) override;
 	virtual SemaphoreHandle CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
 	virtual SwapChainHandle CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
 	virtual TextureHandle CreateTexture(const RHITextureCreateInfo& createInfo) override;

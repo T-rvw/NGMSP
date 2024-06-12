@@ -1,6 +1,7 @@
 #include "VulkanPipelineLayout.h"
 
 #include "VulkanDevice.h"
+#include "VulkanPipelineState.h"
 
 #include <RHI/RHITypes.h>
 
@@ -18,6 +19,21 @@ VulkanPipelineLayout::VulkanPipelineLayout(const VulkanDevice* pDevice, const RH
 VulkanPipelineLayout::~VulkanPipelineLayout()
 {
 	vkDestroyPipelineLayout(m_pDevice->GetHandle(), m_pipelineLayout, nullptr);
+}
+
+PipelineStateHandle VulkanPipelineLayout::CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<VulkanPipelineState>(this, createInfo);
+}
+
+PipelineStateHandle VulkanPipelineLayout::CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<VulkanPipelineState>(this, createInfo);
+}
+
+PipelineStateHandle VulkanPipelineLayout::CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<VulkanPipelineState>(this, createInfo);
 }
 
 }

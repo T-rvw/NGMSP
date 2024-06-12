@@ -1,24 +1,26 @@
 #include "VulkanPipelineState.h"
 
 #include "VulkanDevice.h"
+#include "VulkanPipelineLayout.h"
+#include "VulkanSwapChain.h"
 
 #include <RHI/RHITypes.h>
 
 namespace ow
 {
 
-VulkanPipelineState::VulkanPipelineState(const VulkanDevice* pDevice, const RHIComputePipelineStateCreateInfo& createInfo) :
-	m_pDevice(pDevice)
+VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, const RHIComputePipelineStateCreateInfo& createInfo) :
+	m_pPipelineLayout(pLayout)
 {
 	VkComputePipelineCreateInfo pipelineCI = {};
 	pipelineCI.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 	pipelineCI.stage;
-	pipelineCI.layout;
-	VK_VERIFY(vkCreateComputePipelines(m_pDevice->GetHandle(), nullptr, 1, &pipelineCI, nullptr, &m_pipelineState));
+	pipelineCI.layout = m_pPipelineLayout->GetHandle();
+	VK_VERIFY(vkCreateComputePipelines(GetDevice()->GetHandle(), nullptr, 1, &pipelineCI, nullptr, &m_pipelineState));
 }
 
-VulkanPipelineState::VulkanPipelineState(const VulkanDevice* pDevice, const RHIGraphicsPipelineStateCreateInfo& createInfo) :
-	m_pDevice(pDevice)
+VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, const RHIGraphicsPipelineStateCreateInfo& createInfo) :
+	m_pPipelineLayout(pLayout)
 {
 	// Vertex Input
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCI = {};
@@ -116,10 +118,20 @@ VulkanPipelineState::VulkanPipelineState(const VulkanDevice* pDevice, const RHIG
 	dynamicStateCI.pDynamicStates = DynamicStates;
 	dynamicStateCI.dynamicStateCount = static_cast<uint32>(sizeof(DynamicStates) / sizeof(VkDynamicState));
 
+	Array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
+	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+	//shaderStages[0].module = load_shader_module(context, "triangle.vert");
+	shaderStages[0].pName = "main";
+	shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	//shaderStages[1].module = load_shader_module(context, "triangle.frag");
+	shaderStages[1].pName = "main";
+
 	VkGraphicsPipelineCreateInfo pipelineCI = {};
 	pipelineCI.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	//pipelineCI.stageCount = vkb::to_u32(shader_stages.size());
-	//pipelineCI.pStages = shader_stages.data();
+	pipelineCI.stageCount = static_cast<uint32>(shaderStages.size());
+	pipelineCI.pStages = shaderStages.data();
 	pipelineCI.pVertexInputState = &vertexInputStateCI;
 	pipelineCI.pInputAssemblyState = &inputAssemblyStateCI;
 	pipelineCI.pRasterizationState = &rasterizationStateCI;
@@ -128,13 +140,17 @@ VulkanPipelineState::VulkanPipelineState(const VulkanDevice* pDevice, const RHIG
 	pipelineCI.pViewportState = &viewportStateCI;
 	pipelineCI.pDepthStencilState = &depthStencilStateCI;
 	pipelineCI.pDynamicState = &dynamicStateCI;
-	//pipelineCI.renderPass = context.render_pass;
-	//pipelineCI.layout = context.pipeline_layout;
-	VK_VERIFY(vkCreateGraphicsPipelines(m_pDevice->GetHandle(), VK_NULL_HANDLE, 1, &pipelineCI, nullptr, &m_pipelineState));
+	pipelineCI.renderPass = static_cast<VulkanSwapChain*>(createInfo.SwapChain)->GetRenderPass();
+	pipelineCI.layout = m_pPipelineLayout->GetHandle();
+	VK_VERIFY(vkCreateGraphicsPipelines(GetDevice()->GetHandle(), VK_NULL_HANDLE, 1, &pipelineCI, nullptr, &m_pipelineState));
+
+	// Pipeline is baked, we can delete the shader modules now.
+	vkDestroyShaderModule(GetDevice()->GetHandle(), shaderStages[0].module, nullptr);
+	vkDestroyShaderModule(GetDevice()->GetHandle(), shaderStages[1].module, nullptr);
 }
 
-VulkanPipelineState::VulkanPipelineState(const VulkanDevice* pDevice, const RHIRaytracingPipelineStateCreateInfo& createInfo) :
-	m_pDevice(pDevice)
+VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, const RHIRaytracingPipelineStateCreateInfo& createInfo) :
+	m_pPipelineLayout(pLayout)
 {
 	VkRayTracingPipelineCreateInfoKHR pipelineCI = {};
 	pipelineCI.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR;
@@ -143,13 +159,18 @@ VulkanPipelineState::VulkanPipelineState(const VulkanDevice* pDevice, const RHIR
 	pipelineCI.groupCount;
 	pipelineCI.pGroups;
 	pipelineCI.maxPipelineRayRecursionDepth;
-	pipelineCI.layout;
-	VK_VERIFY(vkCreateRayTracingPipelinesKHR(m_pDevice->GetHandle(), VK_NULL_HANDLE, VK_NULL_HANDLE, 1, &pipelineCI, nullptr, &m_pipelineState));
+	pipelineCI.layout = m_pPipelineLayout->GetHandle();
+	VK_VERIFY(vkCreateRayTracingPipelinesKHR(GetDevice()->GetHandle(), VK_NULL_HANDLE, VK_NULL_HANDLE, 1, &pipelineCI, nullptr, &m_pipelineState));
 }
 
 VulkanPipelineState::~VulkanPipelineState()
 {
-	vkDestroyPipeline(m_pDevice->GetHandle(), m_pipelineState, nullptr);
+	vkDestroyPipeline(GetDevice()->GetHandle(), m_pipelineState, nullptr);
+}
+
+const VulkanDevice* VulkanPipelineState::GetDevice() const
+{
+	return m_pPipelineLayout->GetDevice();
 }
 
 }

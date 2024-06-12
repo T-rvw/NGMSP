@@ -5,22 +5,14 @@
 
 using namespace ow;
 
-class HelloWorldSample : public SampleBase
+class HelloTriangle : public SampleBase
 {
 public:
-	virtual ~HelloWorldSample()
+	virtual ~HelloTriangle()
 	{
-		m_e.GetDirection();
 	}
 
 private:
-	Float3 m_a;
-	Float4 m_b;
-	Color m_c;
-	LinearColor m_d;
-	Ray m_e;
-	Quaternion m_g;
-	Matrix4x4 m_f;
 };
 
-DEFINE_SAMPLE(HelloWorldSample);
+DEFINE_SAMPLE(HelloTriangle);

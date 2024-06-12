@@ -9,6 +9,8 @@
 namespace ow
 {
 
+class IRHISwapChain;
+
 template<GPUVendor T>
 constexpr uint32 GetGPUVendorID()
 {
@@ -170,13 +172,10 @@ struct RHIPipelineLayoutCreateInfo
 {
 };
 
-struct RHIComputePipelineStateCreateInfo
-{
-
-};
-
 struct RHIGraphicsPipelineStateCreateInfo
 {
+    IRHISwapChain* SwapChain = nullptr;
+
     // Input Assembly
     RHIPrimitiveTopology Topology = RHIPrimitiveTopology::TriangleList;
 

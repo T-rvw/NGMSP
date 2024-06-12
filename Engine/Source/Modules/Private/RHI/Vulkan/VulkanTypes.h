@@ -2,6 +2,7 @@
 
 #include "VulkanHeader.h"
 
+#include <Core/Containers/Array.h>
 #include <Core/Math/Box.hpp>
 #include <RHI/RHITypes.h>
 

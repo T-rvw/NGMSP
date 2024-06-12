@@ -89,6 +89,25 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
         Assert(m_swapChainFormat.format != VK_FORMAT_UNDEFINED);
     }
 
+    // Find a supported composite type.
+    VkCompositeAlphaFlagBitsKHR composite = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    if (surfaceCapabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+    {
+        composite = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    }
+    else if (surfaceCapabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR)
+    {
+        composite = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+    }
+    else if (surfaceCapabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR)
+    {
+        composite = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+    }
+    else if (surfaceCapabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR)
+    {
+        composite = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+    }
+
     VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
     swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     swapChainCreateInfo.surface = m_surface;
@@ -101,7 +120,7 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     swapChainCreateInfo.queueFamilyIndexCount = 0;
     swapChainCreateInfo.clipped = VK_TRUE;
     swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-    swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    swapChainCreateInfo.compositeAlpha = composite;
     swapChainCreateInfo.imageExtent = m_swapChainExtent;
     swapChainCreateInfo.imageArrayLayers = 1;
     swapChainCreateInfo.presentMode = swapChainPresentMode;

@@ -21,17 +21,25 @@ public:
 
 private:
 	void LoadRHIModule(RHIBackend backend);
-	void CreateRHIInstance();
-	void CreateLogicalDevice();
-	void CreateSwapChain(void* pNativeWindow, uint32 width, uint32 height);
-
-private:
+	void InitRHIInstance();
+	void InitLogicalDevice();
+	void InitSwapChain(void* pNativeWindow, uint32 width, uint32 height);
+	void InitPerFrameData();
+	void InitPipeline();
 	Optional<int32> FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters);
 
 private:
 	static constexpr int32 RHICommandTypeCount = EnumCount<RHICommandType>();
 	static constexpr int32 BackBufferCount = 2;
-	
+	struct PerFrame
+	{
+		FenceHandle QueueSubmitFence;
+		CommandPoolHandle PrimaryCommandPool;
+		CommandListHandle PrimaryCommandList;
+		SemaphoreHandle AcquireNextSemaphore;
+		SemaphoreHandle RenderCompleteSemaphore;
+	};
+
 	RHIFeatureFlags m_features;
 	RHIDebugMode m_debugMode = RHIDebugMode::Enabled;
 	RHIValidationMode m_validationMode = RHIValidationMode::GPU;
@@ -40,15 +48,9 @@ private:
 	InstanceHandle m_instance;
 	DeviceHandle m_device;
 	SwapChainHandle m_swapChain;
-	CommandPoolHandle m_commandPools[RHICommandTypeCount];
-	CommandQueueHandle m_commandQueues[RHICommandTypeCount];
-	FenceHandle m_commandQueueFences[RHICommandTypeCount];
-
-	CommandListHandle m_setupCommandBuffer;
-	CommandListHandle m_commandBuffers[BackBufferCount];
-	FenceHandle m_frameFences[BackBufferCount];
-	SemaphoreHandle m_acquireImageSemaphores[BackBufferCount];
-	SemaphoreHandle m_renderCompleteSemaphores[BackBufferCount];
+	Vector<PerFrame> m_perFrameData;
+	PipelineLayoutHandle m_pipelineLayout;
+	PipelineStateHandle m_pipelineState;
 };
 
 }

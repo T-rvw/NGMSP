@@ -141,21 +141,6 @@ PipelineLayoutHandle D3D12Device::CreatePipelineLayout(const RHIPipelineLayoutCr
 	return MakeRefCountPtr<D3D12PipelineLayout>(this, createInfo);
 }
 
-PipelineStateHandle D3D12Device::CreateComputePipelineState(const RHIComputePipelineStateCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<D3D12PipelineState>(this, createInfo);
-}
-
-PipelineStateHandle D3D12Device::CreateGraphicsPipelineState(const RHIGraphicsPipelineStateCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<D3D12PipelineState>(this, createInfo);
-}
-
-PipelineStateHandle D3D12Device::CreateRaytracingPipelineState(const RHIRaytracingPipelineStateCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<D3D12PipelineState>(this, createInfo);
-}
-
 SemaphoreHandle D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Semaphore>(createInfo);
