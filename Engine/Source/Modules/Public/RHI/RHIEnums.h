@@ -350,6 +350,16 @@ enum class RHIPrimitiveTopology
     PatchList
 };
 
+enum class RHIShaderLanguage
+{
+    DXIL,
+    GLSL,
+    HLSL,
+    PSSL,
+    SPIRV,
+    MSL,
+};
+
 enum class RHIShaderStage
 {
     Vertex,

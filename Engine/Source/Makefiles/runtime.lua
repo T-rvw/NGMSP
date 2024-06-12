@@ -21,7 +21,7 @@ Module.Create("Runtime", function()
 	}
 
 	dependson {
-		"RHID3D12", "RHIVulkan", "GUI", "Scene"
+		"RHID3D12", "RHIVulkan", "ShaderCompiler", "GUI", "Scene"
 	}
 
 	links {

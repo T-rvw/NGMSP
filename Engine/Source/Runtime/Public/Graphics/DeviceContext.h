@@ -2,6 +2,7 @@
 
 #include <Core/Core.h>
 #include <RHI/RHI.h>
+#include <ShaderCompiler/IShaderCompilerModule.h>
 
 namespace ow
 {
@@ -28,6 +29,8 @@ private:
 	void InitPipeline();
 	Optional<int32> FindSuitableAdapter(const Vector<IRHIAdapter*>& adapters);
 
+	void LoadShaderCompileModule();
+
 private:
 	static constexpr int32 RHICommandTypeCount = EnumCount<RHICommandType>();
 	static constexpr int32 BackBufferCount = 2;
@@ -51,6 +54,8 @@ private:
 	Vector<PerFrame> m_perFrameData;
 	PipelineLayoutHandle m_pipelineLayout;
 	PipelineStateHandle m_pipelineState;
+
+	ShaderCompilerModuleHandle m_shaderCompileModule;
 };
 
 }

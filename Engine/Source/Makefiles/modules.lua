@@ -22,6 +22,9 @@ Module.Create("Core", function()
 		["Interfaces/Scene"] = {
 			path.join(ModuleSourcePath, "Public/Scene/**.*"),
 		},
+		["Interfaces/ShaderCompiler"] = {
+			path.join(ModuleSourcePath, "Public/ShaderCompiler/**.*"),
+		},
 		["Private/*"] = {
 			path.join(ModuleSourcePath, "Private/**.*"),
 		}
@@ -39,22 +42,9 @@ Module.Create("RHID3D12", function()
 		["*"] = path.join(ModuleSourcePath, "Private/RHI/D3D12/**.*"),
 	}
 
-	includedirs {
-		path.join(ThirdPartyPath, "dxc/include/**.*"),
-	}
-
-	libdirs {
-		path.join(ThirdPartyPath, "dxc/lib/**.*"),
-	}
-
 	links {
 		"Core",
 		"d3d12", "dxgi", "d3dcompiler",
-		"dxcompiler"
-	}
-
-	postbuildcommands {
-		"{COPYFILE} \""..path.join(ThirdPartyPath, "dxc/bin/*.*").."\" \""..Project.GetBinariesDirectory().."\"",
 	}
 end)
 
@@ -82,6 +72,33 @@ Module.Create("RHIVulkan", function()
 		links { "$(VULKAN_SDK)/lib/vulkan-1" }
 		includedirs { "$(VULKAN_SDK)/include" }
 	end
+end)
+
+Module.Create("ShaderCompiler", function()
+	files {
+		path.join(ModuleSourcePath, "Private/ShaderCompiler/**.*"),
+	}
+
+	vpaths {
+		["*"] = path.join(ModuleSourcePath, "Private/ShaderCompiler/**.*"),
+	}
+
+	includedirs {
+		path.join(ThirdPartyPath, "dxc/include"),
+	}
+
+	libdirs {
+		path.join(ThirdPartyPath, "dxc/lib"),
+	}
+
+	links {
+		"Core",
+		"dxcompiler"
+	}
+
+	postbuildcommands {
+		"{COPYFILE} \""..path.join(ThirdPartyPath, "dxc/bin/*.*").."\" \""..Project.GetBinariesDirectory().."\"",
+	}
 end)
 
 Module.Create("GUI", function()

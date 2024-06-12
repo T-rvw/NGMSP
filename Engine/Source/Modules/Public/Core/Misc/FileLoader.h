@@ -1,11 +1,12 @@
 #pragma once
 
+#include <Core/HAL/APIDefines.h>
 #include <Core/Containers/Vector.h>
 
 namespace ow
 {
 
-class FileLoader final
+class CORE_API FileLoader final
 {
 public:
 	FileLoader() = delete;

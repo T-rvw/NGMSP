@@ -180,4 +180,11 @@ Optional<int32> DeviceContext::FindSuitableAdapter(const Vector<IRHIAdapter*>& a
 	return bestAdapterIndex;
 }
 
+void DeviceContext::LoadShaderCompileModule()
+{
+	ModuleData* pShaderCompilerLibrary = ModuleManager::Get().AddModule("[ShaderCompiler]", "ShaderCompiler");
+	Assert(pShaderCompilerLibrary);
+	m_shaderCompileModule = static_cast<IShaderCompilerModule*>(pShaderCompilerLibrary->InitFunc());
+}
+
 }
