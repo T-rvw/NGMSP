@@ -13,6 +13,7 @@ PluginSourcePath = path.join(RootPath, "Engine/Source/Plugins")
 ModuleSourcePath = path.join(RootPath, "Engine/Source/Modules")
 RuntimeSourcePath = path.join(RootPath, "Engine/Source/Runtime")
 SampleSourcePath = path.join(RootPath, "Engine/Source/Samples")
+ThirdPartyPath = path.join(RootPath, "Engine/ThirdParty")
 ThirdPartySourcePath = path.join(RootPath, "Engine/Source/ThirdParty")
 
 --------------------------------------------------------------
@@ -27,6 +28,7 @@ Dump.PrintVar("RuntimeSourcePath", RuntimeSourcePath)
 Dump.PrintVar("SampleSourcePath", SampleSourcePath)
 Dump.PrintVar("ThirdPartySourcePath", ThirdPartySourcePath)
 Log.Info("------------------------------------------------------")
+
 --------------------------------------------------------------
 -- Workspace
 --------------------------------------------------------------

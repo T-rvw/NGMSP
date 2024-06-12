@@ -50,6 +50,10 @@
 	
 	* [Sig 2015 - An Overview of Next-Generation Graphics APIs](https://nextgenapis.realtimerendering.com/)
 
+* ShaderCompile
+
+	* [Using the DirectXShaderCompiler C++ API](https://simoncoenen.com/blog/programming/graphics/DxcCompiling)
+
 * Synchronization
 
 	* [D3D12/Vulkan Synchronization Primitives](https://www.gamedev.net/forums/topic/678220-d3d12-vulkan-synchronization-primitives/)

@@ -39,10 +39,18 @@ Project.CppLanguage = function()
 	cppdialect("c++20")
 end
 
+Project.GetIntermediateDirectory = function()
+	return "%{prj.location}/Intermediate/%{cfg.buildcfg}_%{cfg.architecture}"
+end
+
+Project.GetBinariesDirectory = function()
+	return "%{prj.location}/Binaries/%{cfg.buildcfg}_%{cfg.architecture}"
+end
+
 Project.Location = function(outputPath)
 	location(outputPath)
-	objdir("%{prj.location}/Intermediate/%{cfg.buildcfg}_%{cfg.architecture}")
-	targetdir("%{prj.location}/Binaries/%{cfg.buildcfg}_%{cfg.architecture}")
+	objdir(Project.GetIntermediateDirectory())
+	targetdir(Project.GetBinariesDirectory())
 end
 
 Project.StaticRuntime = function(flag)

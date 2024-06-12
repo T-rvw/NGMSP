@@ -39,9 +39,22 @@ Module.Create("RHID3D12", function()
 		["*"] = path.join(ModuleSourcePath, "Private/RHI/D3D12/**.*"),
 	}
 
+	includedirs {
+		path.join(ThirdPartyPath, "dxc/include/**.*"),
+	}
+
+	libdirs {
+		path.join(ThirdPartyPath, "dxc/lib/**.*"),
+	}
+
 	links {
 		"Core",
-		"d3d12.lib", "dxgi.lib", "d3dcompiler.lib"
+		"d3d12", "dxgi", "d3dcompiler",
+		"dxcompiler"
+	}
+
+	postbuildcommands {
+		"{COPYFILE} \""..path.join(ThirdPartyPath, "dxc/bin/*.*").."\" \""..Project.GetBinariesDirectory().."\"",
 	}
 end)
 
@@ -66,7 +79,7 @@ Module.Create("RHIVulkan", function()
 	else
 		Log.Info("Find VULKAN_SDK : "..vulkanSDKPath)
 
-		links { "$(VULKAN_SDK)/lib/vulkan-1.lib" }
+		links { "$(VULKAN_SDK)/lib/vulkan-1" }
 		includedirs { "$(VULKAN_SDK)/include" }
 	end
 end)
