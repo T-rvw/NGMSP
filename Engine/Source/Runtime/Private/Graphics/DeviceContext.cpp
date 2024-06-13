@@ -7,6 +7,10 @@ namespace ow
 
 DeviceContext::DeviceContext(RHIBackend backend, void* pNativeWindow, const Rect& windowRect)
 {
+	// ShaderCompiler
+	LoadShaderCompileModule();
+
+	// RHI
 	LoadRHIModule(backend);
 	InitRHIInstance();
 	InitLogicalDevice();

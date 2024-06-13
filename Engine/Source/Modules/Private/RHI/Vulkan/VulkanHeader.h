@@ -1,7 +1,11 @@
 #pragma once
 
+#include <Core/Base/Assert.h>
+#include <Core/Base/RefCountPtr.h>
+#include <Core/Base/TypeTraits.h>
+
 #ifdef PLATFORM_WINDOWS
-#include "../../Core/HAL/Windows/WindowsUndefines.h"
+#include <Core/HAL/Windows/WindowsUndefines.h>
 #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
@@ -12,10 +16,6 @@
 
 #include "VulkanTypes.h"
 #include "VulkanUtils.h"
-
-#include <Core/Base/Assert.h>
-#include <Core/Base/RefCountPtr.h>
-#include <Core/Base/TypeTraits.h>
 
 #include <memory>
 

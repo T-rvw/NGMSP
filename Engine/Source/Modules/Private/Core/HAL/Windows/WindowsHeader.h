@@ -1,5 +1,4 @@
 #pragma once
 
-#include "WindowsUtils.hpp"
-
 #include <Core/Base/Assert.h>
+#include <Core/HAL/Windows/WindowsUtils.hpp>

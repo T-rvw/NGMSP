@@ -350,9 +350,15 @@ enum class RHIPrimitiveTopology
     PatchList
 };
 
+enum class RHIShaderByteCode
+{
+    DXBC,
+    DXIL
+};
+
 enum class RHIShaderLanguage
 {
-    DXIL,
+    DXIR,
     GLSL,
     HLSL,
     PSSL,

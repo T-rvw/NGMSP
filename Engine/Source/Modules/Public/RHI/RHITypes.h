@@ -5,11 +5,10 @@
 #include <Core/HAL/BasicTypes.h>
 #include <Core/String/String.h>
 #include <RHI/RHIEnums.h>
+#include <RHI/RHIFoward.h>
 
 namespace ow
 {
-
-class IRHISwapChain;
 
 template<GPUVendor T>
 constexpr uint32 GetGPUVendorID()
@@ -172,9 +171,15 @@ struct RHIPipelineLayoutCreateInfo
 {
 };
 
+struct RHIComputePipelineStateCreateInfo
+{
+};
+
 struct RHIGraphicsPipelineStateCreateInfo
 {
     IRHISwapChain* SwapChain = nullptr;
+    RefCountPtr<IRHIShader> VertexShaderBlob;
+    RefCountPtr<IRHIShader> FragmentShaderBlob;
 
     // Input Assembly
     RHIPrimitiveTopology Topology = RHIPrimitiveTopology::TriangleList;

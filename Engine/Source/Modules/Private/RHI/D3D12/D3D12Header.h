@@ -1,7 +1,9 @@
 #pragma once
 
+#include <Core/Base/RefCountPtr.h>
+#include <Core/Base/TypeTraits.h>
 #ifdef PLATFORM_WINDOWS
-#include "../../Core/HAL/Windows/WindowsUtils.hpp"
+#include <Core/HAL/Windows/WindowsUtils.hpp>
 #endif
 
 #include <d3d12.h>
@@ -10,9 +12,6 @@
 
 #include "D3D12Types.h"
 #include "D3D12Utils.h"
-
-#include <Core/Base/RefCountPtr.h>
-#include <Core/Base/TypeTraits.h>
 
 // DXGI extended ASTC formats from 133 to 187.
 // But not all DDS readers support these.

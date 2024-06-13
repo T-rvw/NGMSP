@@ -50,9 +50,11 @@
 	
 	* [Sig 2015 - An Overview of Next-Generation Graphics APIs](https://nextgenapis.realtimerendering.com/)
 
-* ShaderCompile
+* Shader Compile
 
 	* [Using the DirectXShaderCompiler C++ API](https://simoncoenen.com/blog/programming/graphics/DxcCompiling)
+
+	* [Building the DirectX shader compiler better than Microsoft?](https://devlog.hexops.com/2024/building-the-directx-shader-compiler-better-than-microsoft/)
 
 * Synchronization
 
