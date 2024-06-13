@@ -60,7 +60,6 @@ group("")
 
 group("Resources")
 dofile("documents.lua")
-dofile("shaders.lua")
 group("")
 
 group("Modules")

@@ -46,7 +46,7 @@ public:
 		}
 		else
 		{
-			AddArgument("-D", std::format("%s=%s", pDefine, pValue ? pValue : "1").c_str());
+			AddArgument("-D", std::format("{}={}", pDefine, pValue ? pValue : "1").c_str());
 		}
 	}
 
@@ -77,10 +77,15 @@ public:
 
 	void Init();
 	String GetShaderTypeName(RHIShaderType shaderType);
+	ShaderCompileResult Compile(const char* pShaderFilePath, const ShaderCompileInfo& compileInfo);
 	ShaderCompileResult Compile(const Vector<std::byte>& fileBlob, const ShaderCompileInfo& compileInfo);
 
 private:
+	ShaderCompileResult CompileImpl(RefCountPtr<IDxcBlobEncoding> dxcBlob, const ShaderCompileInfo& compileInfo);
+
+private:
 	PlatformModule m_dxcModule;
+	RefCountPtr<IDxcLibrary> m_pDxcLibrary;
 	RefCountPtr<IDxcCompiler3> m_pDxcCompiler;
 	RefCountPtr<IDxcValidator> m_pDxcValidator;
 	RefCountPtr<IDxcUtils> m_pDxcUtils;

@@ -7,14 +7,14 @@ namespace ow
 
 DeviceContext::DeviceContext(RHIBackend backend, void* pNativeWindow, const Rect& windowRect)
 {
-	// ShaderCompiler
-	LoadShaderCompileModule();
-
 	// RHI
 	LoadRHIModule(backend);
 	InitRHIInstance();
 	InitLogicalDevice();
 	InitSwapChain(pNativeWindow, windowRect.GetWidth(), windowRect.GetHeight());
+
+	// Shader Compiler
+	LoadShaderCompileModule();
 }
 
 DeviceContext::~DeviceContext()
@@ -189,6 +189,16 @@ void DeviceContext::LoadShaderCompileModule()
 	ModuleData* pShaderCompilerLibrary = ModuleManager::Get().AddModule("[ShaderCompiler]", "ShaderCompiler");
 	Assert(pShaderCompilerLibrary);
 	m_shaderCompileModule = static_cast<IShaderCompilerModule*>(pShaderCompilerLibrary->InitFunc());
+
+	ShaderCompileInfo compileInfo;
+	compileInfo.Source = RHIShaderLanguage::HLSL;
+	compileInfo.Target = RHIShaderByteCode::SPIRV;
+	compileInfo.Type = RHIShaderType::Fragment;
+	compileInfo.EntryPointName = "main";
+	compileInfo.Features.Enable(ShaderCompileFeatures::DebugInfo);
+	compileInfo.FileName = "PixelShader.hlsl";
+	compileInfo.IncludeDirectories.push_back("Z:\\NGMSP\\Engine\\Assets\\Shaders");
+	auto compileResult = m_shaderCompileModule->CompileShader("Z:\\NGMSP\\Engine\\Assets\\Shaders\\PixelShader.hlsl", compileInfo);
 }
 
 }

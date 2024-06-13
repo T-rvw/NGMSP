@@ -18,9 +18,9 @@ using ShaderCompileFeatureFlags = BitFlags<ShaderCompileFeatures>;
 
 struct ShaderCompileInfo
 {
-	RHIShaderLanguage Source;
-	RHIShaderLanguage Target;
 	RHIShaderType Type;
+	RHIShaderLanguage Source;
+	RHIShaderByteCode Target;
 	ShaderCompileFeatureFlags Features;
 	String FileName;
 	String EntryPointName;
@@ -31,7 +31,7 @@ struct ShaderCompileInfo
 struct ShaderCompileResult
 {
 	String ErrorMessage;
-	String ValidateMessgae;
+	String ValidateMessage;
 	uint64 ShaderHash[2];
 	RefCountPtr<IRHIShader> ShaderBlob;
 };

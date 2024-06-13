@@ -17,9 +17,12 @@ void DirectXShaderCompiler::Init()
 
 	using DxcCreateInstanceFunc = decltype(&DxcCreateInstance);
 	auto DxcCreateInstance = (DxcCreateInstanceFunc)m_dxcModule.GetFunctionAddress("DxcCreateInstance");
+	DXC_VERIFY(DxcCreateInstance(CLSID_DxcLibrary, IID_PPV_ARGS(m_pDxcLibrary.GetAddressOf())));
 	DXC_VERIFY(DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(m_pDxcCompiler.GetAddressOf())));
 	DXC_VERIFY(DxcCreateInstance(CLSID_DxcValidator, IID_PPV_ARGS(m_pDxcValidator.GetAddressOf())));
 	DXC_VERIFY(DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(m_pDxcUtils.GetAddressOf())));
+
+
 }
 
 String DirectXShaderCompiler::GetShaderTypeName(RHIShaderType shaderType)
@@ -41,16 +44,30 @@ String DirectXShaderCompiler::GetShaderTypeName(RHIShaderType shaderType)
 	}
 }
 
+ShaderCompileResult DirectXShaderCompiler::Compile(const char* pShaderFilePath, const ShaderCompileInfo& compileInfo)
+{
+	RefCountPtr<IDxcBlobEncoding> dxcBlob;
+	DXC_VERIFY(m_pDxcLibrary->CreateBlobFromFile(CreateWideStringFromUTF8(pShaderFilePath).data(), nullptr, &dxcBlob));
+	return CompileImpl(dxcBlob, compileInfo);
+}
+
 ShaderCompileResult DirectXShaderCompiler::Compile(const Vector<std::byte>& fileBlob, const ShaderCompileInfo& compileInfo)
+{
+	RefCountPtr<IDxcBlobEncoding> dxcBlob;
+	DXC_VERIFY(m_pDxcUtils->CreateBlob(fileBlob.data(), static_cast<uint32>(fileBlob.size()), DXC_CP_ACP, dxcBlob.GetAddressOf()));
+	return CompileImpl(dxcBlob, compileInfo);
+}
+
+ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncoding> dxcBlob, const ShaderCompileInfo& compileInfo)
 {
 	DXCArguments compileArguments;
 
 	// Arguments
 	compileArguments.AddArgument(compileInfo.FileName.c_str());
 	compileArguments.AddArgument("-E", compileInfo.EntryPointName.c_str());
-	auto shaderModel = std::format("%s_%d_%d", GetShaderTypeName(compileInfo.Type), m_shaderModelMajorVersion, m_shaderModelMinorVersion);
+	auto shaderModel = std::format("{}_{}_{}", GetShaderTypeName(compileInfo.Type), m_shaderModelMajorVersion, m_shaderModelMinorVersion);
 	compileArguments.AddArgument("-T", shaderModel.c_str());
-	compileArguments.AddArgument("-HV", "2021");
+	compileArguments.AddArgument(L"-HV", L"2021");
 	compileArguments.AddArgument(DXC_ARG_ALL_RESOURCES_BOUND);
 	compileArguments.AddArgument(DXC_ARG_WARNINGS_ARE_ERRORS);
 	compileArguments.AddArgument(DXC_ARG_PACK_MATRIX_ROW_MAJOR);
@@ -59,12 +76,26 @@ ShaderCompileResult DirectXShaderCompiler::Compile(const Vector<std::byte>& file
 	{
 		// Expect embed pdb data to blob.
 		compileArguments.AddArgument(DXC_ARG_DEBUG);
-		compileArguments.AddArgument("-Qembed_debug");
+		compileArguments.AddArgument(L"-Qembed_debug");
 	}
 
 	if (compileInfo.Features.IsEnabled(ShaderCompileFeatures::NoOptimization))
 	{
 		compileArguments.AddArgument(DXC_ARG_SKIP_OPTIMIZATIONS);
+	}
+
+	if (RHIShaderByteCode::SPIRV == compileInfo.Target)
+	{
+		compileArguments.AddArgument(L"-spirv");
+		compileArguments.AddArgument(L"-fspv-target-env=vulkan1.2");
+		compileArguments.AddArgument(L"-fspv-extension=KHR");
+		compileArguments.AddArgument(L"-fspv-extension=SPV_NV_mesh_shader");
+		compileArguments.AddArgument(L"-fspv-extension=SPV_EXT_descriptor_indexing");
+		compileArguments.AddArgument(L"-fspv-extension=SPV_EXT_shader_viewport_index_layer");
+		compileArguments.AddArgument(L"-fspv-extension=SPV_GOOGLE_hlsl_functionality1");
+		compileArguments.AddArgument(L"-fspv-extension=SPV_GOOGLE_user_type");
+		compileArguments.AddArgument(L"-fvk-use-dx-layout");
+		compileArguments.AddArgument(L"-fspv-reflect");
 	}
 
 	// Includes
@@ -75,19 +106,16 @@ ShaderCompileResult DirectXShaderCompiler::Compile(const Vector<std::byte>& file
 
 	// Defines
 	compileArguments.AddDefine("_DXC");
-	compileArguments.AddDefine(std::format("_SM_MAJ=%d", m_shaderModelMajorVersion).c_str());
-	compileArguments.AddDefine(std::format("_SM_MIN=%d", m_shaderModelMinorVersion).c_str());
+	compileArguments.AddDefine(std::format("_SM_MAJ={}", m_shaderModelMajorVersion).c_str());
+	compileArguments.AddDefine(std::format("_SM_MIN={}", m_shaderModelMinorVersion).c_str());
 	for (const auto& define : compileInfo.Defines)
 	{
-		compileArguments.AddArgument(define.c_str());
+		compileArguments.AddDefine(define.c_str());
 	}
 
 	auto resultArguments = compileArguments.GetArguments();
 
 	// Compile
-	RefCountPtr<IDxcBlobEncoding> dxcBlob;
-	DXC_VERIFY(m_pDxcUtils->CreateBlob(fileBlob.data(), static_cast<uint32>(fileBlob.size()), DXC_CP_ACP, dxcBlob.GetAddressOf()));
-
 	DxcBuffer sourceBuffer;
 	sourceBuffer.Ptr = dxcBlob->GetBufferPointer();
 	sourceBuffer.Size = dxcBlob->GetBufferSize();
@@ -98,7 +126,7 @@ ShaderCompileResult DirectXShaderCompiler::Compile(const Vector<std::byte>& file
 
 	// Pack results to return
 	ShaderCompileResult compileResult;
-	
+
 	// Query error messages.
 	RefCountPtr<IDxcBlobUtf8> pCompileErrors;
 	if (DXC_SUCCEED(pDxcResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pCompileErrors.GetAddressOf()), nullptr)))
@@ -121,18 +149,18 @@ ShaderCompileResult DirectXShaderCompiler::Compile(const Vector<std::byte>& file
 	RefCountPtr<ID3DBlob> shaderBlobData = dxcShaderBlob->GetHandle();
 	DXC_VERIFY(pDxcResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(shaderBlobData.GetAddressOf()), nullptr));
 
-	RefCountPtr<IDxcOperationResult> pValidateResult;
-	DXC_VERIFY(m_pDxcValidator->Validate((IDxcBlob*)shaderBlobData.Get(), DxcValidatorFlags_InPlaceEdit, pValidateResult.GetAddressOf()));
-	HRESULT validateStatus;
-	if (FAILED(pValidateResult->GetStatus(&validateStatus)) || FAILED(validateStatus))
-	{
-		RefCountPtr<IDxcBlobEncoding> pPrintBlob;
-		DXC_VERIFY(pValidateResult->GetErrorBuffer(pPrintBlob.GetAddressOf()));
-		RefCountPtr<IDxcBlobUtf8> pPrintBlobUtf8;
-		DXC_VERIFY(m_pDxcUtils->GetBlobAsUtf8(pPrintBlob.Get(), pPrintBlobUtf8.GetAddressOf()));
-		compileResult.ValidateMessgae = pPrintBlobUtf8->GetStringPointer();
-		return compileResult;
-	}
+	//RefCountPtr<IDxcOperationResult> pValidateResult;
+	//DXC_VERIFY(m_pDxcValidator->Validate((IDxcBlob*)shaderBlobData.Get(), DxcValidatorFlags_InPlaceEdit, pValidateResult.GetAddressOf()));
+	//HRESULT validateStatus;
+	//if (FAILED(pValidateResult->GetStatus(&validateStatus)) || FAILED(validateStatus))
+	//{
+	//	RefCountPtr<IDxcBlobEncoding> pPrintBlob;
+	//	DXC_VERIFY(pValidateResult->GetErrorBuffer(pPrintBlob.GetAddressOf()));
+	//	RefCountPtr<IDxcBlobUtf8> pPrintBlobUtf8;
+	//	DXC_VERIFY(m_pDxcUtils->GetBlobAsUtf8(pPrintBlob.Get(), pPrintBlobUtf8.GetAddressOf()));
+	//	compileResult.ValidateMessage = pPrintBlobUtf8->GetStringPointer();
+	//	return compileResult;
+	//}
 
 	// Get shader hash.
 	RefCountPtr<IDxcBlob> pShaderHash;

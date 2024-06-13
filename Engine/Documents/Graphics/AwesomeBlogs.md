@@ -24,6 +24,8 @@
 
 * [Tarun Ramaswamy](https://rtarun9.github.io/blogs/)
 
+* [The Code Corsair](https://www.elopezr.com/)
+
 * [The ryg blog](https://fgiesen.wordpress.com/)
 
 * [Wicked Engine](https://wickedengine.net)

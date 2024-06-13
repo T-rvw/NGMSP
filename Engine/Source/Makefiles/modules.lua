@@ -87,13 +87,8 @@ Module.Create("ShaderCompiler", function()
 		path.join(ThirdPartyPath, "dxc/include"),
 	}
 
-	libdirs {
-		path.join(ThirdPartyPath, "dxc/lib"),
-	}
-
 	links {
-		"Core",
-		"dxcompiler"
+		"Core"
 	}
 
 	postbuildcommands {

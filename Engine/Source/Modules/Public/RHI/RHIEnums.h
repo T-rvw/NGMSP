@@ -353,7 +353,8 @@ enum class RHIPrimitiveTopology
 enum class RHIShaderByteCode
 {
     DXBC,
-    DXIL
+    DXIL,
+    SPIRV
 };
 
 enum class RHIShaderLanguage
@@ -362,7 +363,6 @@ enum class RHIShaderLanguage
     GLSL,
     HLSL,
     PSSL,
-    SPIRV,
     MSL,
 };
 
