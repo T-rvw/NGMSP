@@ -105,9 +105,6 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 	}
 
 	// Defines
-	compileArguments.AddDefine("_DXC");
-	compileArguments.AddDefine(std::format("_SM_MAJ={}", m_shaderModelMajorVersion).c_str());
-	compileArguments.AddDefine(std::format("_SM_MIN={}", m_shaderModelMinorVersion).c_str());
 	for (const auto& define : compileInfo.Defines)
 	{
 		compileArguments.AddDefine(define.c_str());
@@ -124,7 +121,6 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 	RefCountPtr<IDxcResult> pDxcResult;
 	DXC_VERIFY(m_pDxcCompiler->Compile(&sourceBuffer, resultArguments.data(), static_cast<uint32>(resultArguments.size()), nullptr, IID_PPV_ARGS(pDxcResult.GetAddressOf())));
 
-	// Pack results to return
 	ShaderCompileResult compileResult;
 
 	// Query error messages.
@@ -141,6 +137,7 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 	HRESULT dxcStatus;
 	if (FAILED(pDxcResult->GetStatus(&dxcStatus)) || FAILED(dxcStatus))
 	{
+		printf("[ShaderCompiler] Failed to compile shader %s : %s\n", compileInfo.FileName.c_str(), compileResult.ErrorMessage);
 		return compileResult;
 	}
 

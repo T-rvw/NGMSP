@@ -14,8 +14,11 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 
 	uint32 windowStyle = WS_OVERLAPPEDWINDOW;
 	const auto& rectInfo = createInfo.WindowRect;
-	int32 windowLeft = rectInfo.GetLeft();
-	int32 windowTop = rectInfo.GetTop();
+	RECT windowRect = { 0, 0, static_cast<LONG>(rectInfo.GetRight()), static_cast<LONG>(rectInfo.GetBottom()) };
+	::AdjustWindowRect(&windowRect, windowStyle, false);
+
+	int32 windowLeft = windowRect.left;
+	int32 windowTop = windowRect.top;
 	if (createInfo.MoveRectCenter)
 	{
 		windowLeft = (::GetSystemMetrics(SM_CXSCREEN) - rectInfo.GetWidth()) / 2;
@@ -24,7 +27,7 @@ void WindowsWindow::Init(const WindowCreateInfo& createInfo, void* pInstance)
 
 	Vector<TCHAR> title = CreateWideStringFromUTF8(createInfo.Title);
 	m_handle = ::CreateWindowEx(NULL, WindowsWindow::WindowClassName, title.data(), windowStyle,
-		windowLeft, windowTop, rectInfo.GetWidth(), rectInfo.GetHeight(),
+		windowLeft, windowTop, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		(HWND)createInfo.ParentWindow, NULL, (HINSTANCE)pInstance, NULL);
 	Assert(m_handle);
 

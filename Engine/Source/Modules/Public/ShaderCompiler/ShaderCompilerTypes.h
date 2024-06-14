@@ -30,8 +30,8 @@ struct ShaderCompileInfo
 
 struct ShaderCompileResult
 {
-	String ErrorMessage;
-	String ValidateMessage;
+	const char* ErrorMessage;
+	const char* ValidateMessage;
 	uint64 ShaderHash[2];
 	RefCountPtr<IRHIShader> ShaderBlob;
 };

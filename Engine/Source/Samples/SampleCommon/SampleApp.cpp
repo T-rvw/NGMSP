@@ -24,14 +24,14 @@ void SampleApp::Init(int argc, const char** argv)
 	windowCI.Title = m_commandLine.GetString("title").value_or("Sample");
 	windowCI.WindowRect = Rect(width, height);
 	m_mainWindow.Init(windowCI);
+
+	auto backend = m_commandLine.GetEnum<RHIBackend>("backend").value_or(RHIBackend::Vulkan);
+	m_pSample->Init(backend, m_mainWindow.GetHandle(), windowCI.WindowRect);
 }
 
 bool SampleApp::Run()
 {
 	UpdateTime();
-
-	auto backend = m_commandLine.GetEnum<RHIBackend>("backend").value_or(RHIBackend::Vulkan);
-	m_pSample->Init(backend, m_mainWindow.GetHandle(), m_mainWindow.GetRect());
 
 	while (m_application.PollMessages())
 	{

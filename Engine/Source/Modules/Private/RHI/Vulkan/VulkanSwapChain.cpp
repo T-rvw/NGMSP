@@ -34,6 +34,8 @@ VulkanSwapChain::VulkanSwapChain(const VulkanDevice* pDevice, const RHISwapChain
     VK_VERIFY(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pDevice->GetAdapter(), m_surface, &surfaceCapabilities));
     Assert(createInfo.BackBufferCount >= surfaceCapabilities.minImageCount);
     Assert(0 == surfaceCapabilities.maxImageCount || createInfo.BackBufferCount < surfaceCapabilities.maxImageCount);
+    Assert(createInfo.BackBufferWidth == surfaceCapabilities.currentExtent.width);
+    Assert(createInfo.BackBufferHeight == surfaceCapabilities.currentExtent.height);
 
     m_swapChainExtent.width = createInfo.BackBufferWidth;
     m_swapChainExtent.height = createInfo.BackBufferHeight;
