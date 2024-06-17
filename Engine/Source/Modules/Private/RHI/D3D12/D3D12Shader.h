@@ -7,10 +7,13 @@
 namespace ow
 {
 
+class D3D12Device;
+
 class D3D12Shader : public IRHIShader
 {
 public:
-	D3D12Shader() = default;
+	D3D12Shader() = delete;
+	D3D12Shader(const D3D12Device* pDevice, const RHIShaderCreateInfo& createInfo);
 	D3D12Shader(const D3D12Shader&) = delete;
 	D3D12Shader& operator=(const D3D12Shader&) = delete;
 	D3D12Shader(D3D12Shader&&) = default;

@@ -116,7 +116,8 @@ enum class RHICommandType
     Graphics,
     Compute,
     Copy,
-    VideoDecode
+    VideoDecode,
+    VideoEncode
 };
 using RHICommandTypeFlags = BitFlags<RHICommandType>;
 

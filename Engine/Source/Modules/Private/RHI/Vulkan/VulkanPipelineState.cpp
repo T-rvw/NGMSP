@@ -2,6 +2,7 @@
 
 #include "VulkanDevice.h"
 #include "VulkanPipelineLayout.h"
+#include "VulkanShader.h"
 #include "VulkanSwapChain.h"
 
 #include <RHI/RHITypes.h>
@@ -58,7 +59,7 @@ VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, co
 	VkPipelineMultisampleStateCreateInfo multisampleStateCI = {};
 	multisampleStateCI.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	multisampleStateCI.sampleShadingEnable;
-	multisampleStateCI.rasterizationSamples;
+	multisampleStateCI.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 	multisampleStateCI.minSampleShading;
 	multisampleStateCI.alphaToCoverageEnable;
 	multisampleStateCI.alphaToOneEnable;
@@ -88,12 +89,15 @@ VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, co
 	depthStencilStateCI.back.reference = ~0U;
 
 	// Blend
+	VkPipelineColorBlendAttachmentState blendAttachment{};
+	blendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
 	VkPipelineColorBlendStateCreateInfo colorBlendStateCI = {};
 	colorBlendStateCI.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	colorBlendStateCI.logicOpEnable;
 	colorBlendStateCI.logicOp;
-	colorBlendStateCI.attachmentCount;
-	colorBlendStateCI.pAttachments;
+	colorBlendStateCI.attachmentCount = 1;
+	colorBlendStateCI.pAttachments = &blendAttachment;
 	colorBlendStateCI.blendConstants[0] = 1.0f;
 	colorBlendStateCI.blendConstants[1] = 1.0f;
 	colorBlendStateCI.blendConstants[2] = 1.0f;
@@ -118,14 +122,18 @@ VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, co
 	dynamicStateCI.pDynamicStates = DynamicStates;
 	dynamicStateCI.dynamicStateCount = static_cast<uint32>(sizeof(DynamicStates) / sizeof(VkDynamicState));
 
+	auto vulkanVertexShader = static_cast<VulkanShader*>(createInfo.VertexShaderBlob);
+	auto vulkanFragmentShader = static_cast<VulkanShader*>(createInfo.FragmentShaderBlob);
+
 	Array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
 	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-	//shaderStages[0].module = load_shader_module(context, "triangle.vert");
+	shaderStages[0].module = vulkanVertexShader->GetHandle();
 	shaderStages[0].pName = "main";
+
 	shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-	//shaderStages[1].module = load_shader_module(context, "triangle.frag");
+	shaderStages[1].module = vulkanFragmentShader->GetHandle();
 	shaderStages[1].pName = "main";
 
 	VkGraphicsPipelineCreateInfo pipelineCI = {};
@@ -143,10 +151,6 @@ VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, co
 	pipelineCI.renderPass = static_cast<VulkanSwapChain*>(createInfo.SwapChain)->GetRenderPass();
 	pipelineCI.layout = m_pPipelineLayout->GetHandle();
 	VK_VERIFY(vkCreateGraphicsPipelines(GetDevice()->GetHandle(), VK_NULL_HANDLE, 1, &pipelineCI, nullptr, &m_pipelineState));
-
-	// Pipeline is baked, we can delete the shader modules now.
-	vkDestroyShaderModule(GetDevice()->GetHandle(), shaderStages[0].module, nullptr);
-	vkDestroyShaderModule(GetDevice()->GetHandle(), shaderStages[1].module, nullptr);
 }
 
 VulkanPipelineState::VulkanPipelineState(const VulkanPipelineLayout* pLayout, const RHIRaytracingPipelineStateCreateInfo& createInfo) :

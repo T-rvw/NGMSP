@@ -15,6 +15,9 @@ DeviceContext::DeviceContext(RHIBackend backend, void* pNativeWindow, const Rect
 
 	// Shader Compiler
 	LoadShaderCompileModule();
+
+	// Pipeline
+	InitPipeline();
 }
 
 DeviceContext::~DeviceContext()
@@ -150,6 +153,8 @@ void DeviceContext::InitPipeline()
 
 	RHIGraphicsPipelineStateCreateInfo pipelineStateCI;
 	pipelineStateCI.SwapChain = m_swapChain;
+	pipelineStateCI.VertexShaderBlob = m_vsHandle;
+	pipelineStateCI.FragmentShaderBlob = m_fsHandle;
 	m_pipelineState = m_pipelineLayout->CreateGraphicsPipelineState(pipelineStateCI);
 }
 
@@ -200,6 +205,16 @@ void DeviceContext::LoadShaderCompileModule()
 		compileInfo.FileName = "VertexShader.hlsl";
 		compileInfo.IncludeDirectories.push_back("Z:\\NGMSP\\Engine\\Assets\\Shaders");
 		auto compileResult = m_shaderCompileModule->CompileShader("Z:\\NGMSP\\Engine\\Assets\\Shaders\\VertexShader.hlsl", compileInfo);
+		if (ShaderCompileStatus::Success == compileResult.Status)
+		{
+			const IBlob* pCompiledShaderBlob = compileResult.ShaderBlob;
+
+			RHIShaderCreateInfo shaderCI;
+			shaderCI.Type = RHIShaderType::Vertex;
+			shaderCI.Data = pCompiledShaderBlob->GetData();
+			shaderCI.DataSize = pCompiledShaderBlob->GetSize();
+			m_vsHandle = m_device->CreateShader(shaderCI);
+		}
 	}
 
 	{
@@ -212,6 +227,16 @@ void DeviceContext::LoadShaderCompileModule()
 		compileInfo.FileName = "PixelShader.hlsl";
 		compileInfo.IncludeDirectories.push_back("Z:\\NGMSP\\Engine\\Assets\\Shaders");
 		auto compileResult = m_shaderCompileModule->CompileShader("Z:\\NGMSP\\Engine\\Assets\\Shaders\\PixelShader.hlsl", compileInfo);
+		if (ShaderCompileStatus::Success == compileResult.Status)
+		{
+			const IBlob* pCompiledShaderBlob = compileResult.ShaderBlob;
+
+			RHIShaderCreateInfo shaderCI;
+			shaderCI.Type = RHIShaderType::Fragment;
+			shaderCI.Data = pCompiledShaderBlob->GetData();
+			shaderCI.DataSize = pCompiledShaderBlob->GetSize();
+			m_fsHandle = m_device->CreateShader(shaderCI);
+		}
 	}
 }
 

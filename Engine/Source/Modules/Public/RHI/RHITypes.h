@@ -178,8 +178,8 @@ struct RHIComputePipelineStateCreateInfo
 struct RHIGraphicsPipelineStateCreateInfo
 {
     IRHISwapChain* SwapChain = nullptr;
-    RefCountPtr<IRHIShader> VertexShaderBlob;
-    RefCountPtr<IRHIShader> FragmentShaderBlob;
+    IRHIShader* VertexShaderBlob;
+    IRHIShader* FragmentShaderBlob;
 
     // Input Assembly
     RHIPrimitiveTopology Topology = RHIPrimitiveTopology::TriangleList;
@@ -207,6 +207,9 @@ struct RHISemaphoreCreateInfo
 
 struct RHIShaderCreateInfo
 {
+    RHIShaderType Type;
+    const void* Data = nullptr;
+    uint32 DataSize = 0;
 };
 
 struct RHISwapChainCreateInfo

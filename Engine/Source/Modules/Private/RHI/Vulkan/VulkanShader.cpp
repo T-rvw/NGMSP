@@ -12,7 +12,8 @@ VulkanShader::VulkanShader(const VulkanDevice* pDevice, const RHIShaderCreateInf
 {
     VkShaderModuleCreateInfo shaderCI = {};
     shaderCI.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-
+    shaderCI.pCode = static_cast<const uint32*>(createInfo.Data);
+    shaderCI.codeSize = createInfo.DataSize;
     VK_VERIFY(vkCreateShaderModule(m_pDevice->GetHandle(), &shaderCI, nullptr, &m_shaderModule));
 }
 

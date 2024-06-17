@@ -20,6 +20,7 @@ public:
 	virtual FenceHandle CreateFence(const RHIFenceCreateInfo& createInfo) = 0;
 	virtual PipelineLayoutHandle CreatePipelineLayout(const RHIPipelineLayoutCreateInfo& createInfo) = 0;
 	virtual SemaphoreHandle CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) = 0;
+	virtual ShaderHandle CreateShader(const RHIShaderCreateInfo& createInfo) = 0;
 	virtual SwapChainHandle CreateSwapChain(const RHISwapChainCreateInfo& createInfo) = 0;
 	virtual TextureHandle CreateTexture(const RHITextureCreateInfo& createInfo) = 0;
 	virtual CommandQueueHandle GetCommandQueue(RHICommandType commandType) const = 0;

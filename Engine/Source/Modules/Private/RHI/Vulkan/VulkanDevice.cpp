@@ -9,6 +9,7 @@
 #include "VulkanPipelineLayout.h"
 #include "VulkanInstance.h"
 #include "VulkanSemaphore.h"
+#include "VulkanShader.h"
 #include "VulkanSwapChain.h"
 #include "VulkanTexture.h"
 
@@ -231,6 +232,11 @@ PipelineLayoutHandle VulkanDevice::CreatePipelineLayout(const RHIPipelineLayoutC
 SemaphoreHandle VulkanDevice::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<VulkanSemaphore>(this, createInfo);
+}
+
+ShaderHandle VulkanDevice::CreateShader(const RHIShaderCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<VulkanShader>(this, createInfo);
 }
 
 SwapChainHandle VulkanDevice::CreateSwapChain(const RHISwapChainCreateInfo& createInfo)

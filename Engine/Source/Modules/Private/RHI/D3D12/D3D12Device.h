@@ -33,6 +33,7 @@ public:
 	virtual FenceHandle CreateFence(const RHIFenceCreateInfo& createInfo) override;
 	virtual PipelineLayoutHandle CreatePipelineLayout(const RHIPipelineLayoutCreateInfo& createInfo) override;
 	virtual SemaphoreHandle CreateSemaphore(const RHISemaphoreCreateInfo& createInfo) override;
+	virtual ShaderHandle CreateShader(const RHIShaderCreateInfo& createInfo) override;
 	virtual SwapChainHandle CreateSwapChain(const RHISwapChainCreateInfo& createInfo) override;
 	virtual TextureHandle CreateTexture(const RHITextureCreateInfo& createInfo) override;
 	virtual CommandQueueHandle GetCommandQueue(RHICommandType commandType) const;

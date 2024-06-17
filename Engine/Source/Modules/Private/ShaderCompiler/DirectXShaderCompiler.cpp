@@ -1,6 +1,6 @@
 #include "DirectXShaderCompiler.h"
 
-#include "DXCShader.h"
+#include "DXCShaderBlob.h"
 
 namespace ow
 {
@@ -87,7 +87,7 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 	if (RHIShaderByteCode::SPIRV == compileInfo.Target)
 	{
 		compileArguments.AddArgument(L"-spirv");
-		compileArguments.AddArgument(L"-fspv-target-env=vulkan1.2");
+		compileArguments.AddArgument(L"-fspv-target-env=vulkan1.3");
 		compileArguments.AddArgument(L"-fspv-extension=KHR");
 		compileArguments.AddArgument(L"-fspv-extension=SPV_NV_mesh_shader");
 		compileArguments.AddArgument(L"-fspv-extension=SPV_EXT_descriptor_indexing");
@@ -118,33 +118,34 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 	sourceBuffer.Size = dxcBlob->GetBufferSize();
 	sourceBuffer.Encoding = DXC_CP_ACP;
 
-	RefCountPtr<IDxcResult> pDxcResult;
-	DXC_VERIFY(m_pDxcCompiler->Compile(&sourceBuffer, resultArguments.data(), static_cast<uint32>(resultArguments.size()), nullptr, IID_PPV_ARGS(pDxcResult.GetAddressOf())));
+	RefCountPtr<IDxcResult> pCompileResult;
+	DXC_VERIFY(m_pDxcCompiler->Compile(&sourceBuffer, resultArguments.data(), static_cast<uint32>(resultArguments.size()), nullptr, IID_PPV_ARGS(pCompileResult.GetAddressOf())));
 
-	ShaderCompileResult compileResult;
+	ShaderCompileResult packedResult;
 
 	// Query error messages.
 	RefCountPtr<IDxcBlobUtf8> pCompileErrors;
-	if (DXC_SUCCEED(pDxcResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pCompileErrors.GetAddressOf()), nullptr)))
+	if (DXC_SUCCEED(pCompileResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pCompileErrors.GetAddressOf()), nullptr)))
 	{
 		if (pCompileErrors && pCompileErrors->GetStringLength())
 		{
-			compileResult.ErrorMessage = (char*)pCompileErrors->GetStringPointer();
+			packedResult.ErrorMessage = (char*)pCompileErrors->GetStringPointer();
 		}
 	}
 
 	// Check compile status.
 	HRESULT dxcStatus;
-	if (FAILED(pDxcResult->GetStatus(&dxcStatus)) || FAILED(dxcStatus))
+	if (FAILED(pCompileResult->GetStatus(&dxcStatus)) || FAILED(dxcStatus))
 	{
-		printf("[ShaderCompiler] Failed to compile shader %s : %s\n", compileInfo.FileName.c_str(), compileResult.ErrorMessage);
-		return compileResult;
+		printf("[ShaderCompiler] Failed to compile shader %s : %s\n", compileInfo.FileName.c_str(), packedResult.ErrorMessage);
+		return packedResult;
 	}
 
 	// Get generated shader blob and validate it.
-	auto dxcShaderBlob = MakeRefCountPtr<DXCShader>();
-	RefCountPtr<ID3DBlob> shaderBlobData = dxcShaderBlob->GetHandle();
-	DXC_VERIFY(pDxcResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(shaderBlobData.GetAddressOf()), nullptr));
+	RefCountPtr<IDxcBlob> shaderBlobData;
+	DXC_VERIFY(pCompileResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(shaderBlobData.GetAddressOf()), nullptr));
+
+	auto dxcShaderBlob = MakeRefCountPtr<DXCShaderBlob>(shaderBlobData->GetBufferPointer(), static_cast<uint32>(shaderBlobData->GetBufferSize()));
 
 	//RefCountPtr<IDxcOperationResult> pValidateResult;
 	//DXC_VERIFY(m_pDxcValidator->Validate((IDxcBlob*)shaderBlobData.Get(), DxcValidatorFlags_InPlaceEdit, pValidateResult.GetAddressOf()));
@@ -161,10 +162,10 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 
 	// Get shader hash.
 	RefCountPtr<IDxcBlob> pShaderHash;
-	if (DXC_SUCCEED(pDxcResult->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(pShaderHash.GetAddressOf()), nullptr)))
+	if (DXC_SUCCEED(pCompileResult->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(pShaderHash.GetAddressOf()), nullptr)))
 	{
 		auto* pHashBuf = (DxcShaderHash*)pShaderHash->GetBufferPointer();
-		memcpy(compileResult.ShaderHash, pHashBuf->HashDigest, sizeof(uint64) * 2);
+		memcpy(packedResult.ShaderHash, pHashBuf->HashDigest, sizeof(uint64) * 2);
 	}
 
 	// Get shader reflection.
@@ -179,8 +180,9 @@ ShaderCompileResult DirectXShaderCompiler::CompileImpl(RefCountPtr<IDxcBlobEncod
 	//	RefCountPtr<IUnknown> pReflection;
 	//	DXC_VERIFY(m_pDxcUtils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(pReflection.GetAddressOf())));
 	//}
-	compileResult.ShaderBlob = dxcShaderBlob;
-	return compileResult;
+	packedResult.ShaderBlob = dxcShaderBlob;
+	packedResult.Status = ShaderCompileStatus::Success;
+	return packedResult;
 }
 
 }

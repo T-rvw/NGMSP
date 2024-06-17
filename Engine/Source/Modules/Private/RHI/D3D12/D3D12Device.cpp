@@ -9,6 +9,7 @@
 #include "D3D12PipelineLayout.h"
 #include "D3D12PipelineState.h"
 #include "D3D12Semaphore.h"
+#include "D3D12Shader.h"
 #include "D3D12SwapChain.h"
 #include "D3D12Texture.h"
 
@@ -111,16 +112,6 @@ RefCountPtr<IDXGIFactory6> D3D12Device::GetFactory() const
 	return m_pAdapter->GetFactory();
 }
 
-SwapChainHandle D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<D3D12SwapChain>(this, createInfo);
-}
-
-CommandPoolHandle D3D12Device::CreateCommandPool(const RHICommandPoolCreateInfo& createInfo)
-{
-	return MakeRefCountPtr<D3D12CommandPool>(this, createInfo);
-}
-
 BarrierHandle D3D12Device::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
 {
 	return nullptr;
@@ -129,6 +120,11 @@ BarrierHandle D3D12Device::CreateBarrier(const RHIBarrierCreateInfo& createInfo)
 BufferHandle D3D12Device::CreateBuffer(const RHIBufferCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Buffer>(this, createInfo);
+}
+
+CommandPoolHandle D3D12Device::CreateCommandPool(const RHICommandPoolCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12CommandPool>(this, createInfo);
 }
 
 FenceHandle D3D12Device::CreateFence(const RHIFenceCreateInfo& createInfo)
@@ -144,6 +140,16 @@ PipelineLayoutHandle D3D12Device::CreatePipelineLayout(const RHIPipelineLayoutCr
 SemaphoreHandle D3D12Device::CreateSemaphore(const RHISemaphoreCreateInfo& createInfo)
 {
 	return MakeRefCountPtr<D3D12Semaphore>(createInfo);
+}
+
+ShaderHandle D3D12Device::CreateShader(const RHIShaderCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12Shader>(this, createInfo);
+}
+
+SwapChainHandle D3D12Device::CreateSwapChain(const RHISwapChainCreateInfo& createInfo)
+{
+	return MakeRefCountPtr<D3D12SwapChain>(this, createInfo);
 }
 
 TextureHandle D3D12Device::CreateTexture(const RHITextureCreateInfo& createInfo)

@@ -20,6 +20,8 @@ public:
 	VulkanShader& operator=(VulkanShader&&) = default;
 	virtual ~VulkanShader();
 
+	VkShaderModule GetHandle() const { return m_shaderModule; }
+
 private:
 	const VulkanDevice* m_pDevice;
 	VkShaderModule m_shaderModule;

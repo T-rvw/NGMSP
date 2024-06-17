@@ -56,6 +56,10 @@ private:
 	PipelineStateHandle m_pipelineState;
 
 	ShaderCompilerModuleHandle m_shaderCompileModule;
+	// test resources
+	RefCountPtr<IRHIShader> m_vsHandle;
+	RefCountPtr<IRHIShader> m_fsHandle;
+
 };
 
 }
