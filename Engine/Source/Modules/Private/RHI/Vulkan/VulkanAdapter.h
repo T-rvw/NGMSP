@@ -3,6 +3,7 @@
 #include "VulkanHeader.h"
 
 #include <Core/Base/Optional.h>
+#include <Core/Base/UniquePtr.h>
 #include <RHI//IRHIAdapter.h>
 
 namespace ow
@@ -73,8 +74,8 @@ public:
 
 	const RHICommandQueueCreateInfo& GetCommandQueueCreateInfo(RHICommandType commandType) const { return m_commandQueueCIs[static_cast<uint32>(commandType)]; }
 	const Vector<VkExtensionProperties>& GetAvailableExtensions() const { return m_availableExtensions; }
-	VulkanAdapterFeatures* GetFeatures() const { return m_adapterFeatures.get(); }
-	VulkanAdapterProperties* GetProperties() const { return m_adapterProperties.get(); }
+	VulkanAdapterFeatures* GetFeatures() const { return m_adapterFeatures.Get(); }
+	VulkanAdapterProperties* GetProperties() const { return m_adapterProperties.Get(); }
 
 private:
 	void InitOutputInfos();
@@ -87,8 +88,8 @@ private:
 
 	VkPhysicalDevice m_physicalDevice;
 	Vector<VkExtensionProperties> m_availableExtensions;
-	std::unique_ptr<VulkanAdapterFeatures> m_adapterFeatures;
-	std::unique_ptr<VulkanAdapterProperties> m_adapterProperties;
+	UniquePtr<VulkanAdapterFeatures> m_adapterFeatures;
+	UniquePtr<VulkanAdapterProperties> m_adapterProperties;
 	Vector<RHIOutputInfo> m_outputInfos;
 	RHICommandQueueCreateInfo m_commandQueueCIs[EnumCount<RHICommandType>()];
 };

@@ -37,8 +37,8 @@ private:
 #define DEFINE_SAMPLE(SampleClass) \
 	int main(int argc, const char** argv) \
 	{ \
-		auto pSample = std::make_unique<SampleClass>(); \
-		auto sampleApp = SampleApp(pSample.get()); \
+		auto pSample = MakeUniquePtr<SampleClass>(); \
+		auto sampleApp = SampleApp(pSample.Get()); \
 		sampleApp.Init(argc, argv); \
 		return sampleApp.Run(); \
 	}

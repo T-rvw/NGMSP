@@ -24,7 +24,7 @@ public:
 	void Shutdown();
 
 protected:
-	std::unique_ptr<DeviceContext> m_deviceContext;
+	UniquePtr<DeviceContext> m_deviceContext;
 	SampleApp* m_pSampleApp = nullptr;
 };
 

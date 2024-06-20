@@ -57,8 +57,8 @@ VulkanAdapter::VulkanAdapter(const VulkanInstance* m_pInstance, VkPhysicalDevice
 	m_availableExtensions.resize(extensionCount);
 	VK_VERIFY(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, m_availableExtensions.data()));
 
-	m_adapterFeatures = std::make_unique<VulkanAdapterFeatures>();
-	m_adapterProperties = std::make_unique<VulkanAdapterProperties>();
+	m_adapterFeatures = MakeUniquePtr<VulkanAdapterFeatures>();
+	m_adapterProperties = MakeUniquePtr<VulkanAdapterProperties>();
 
 	InitOutputInfos();
 	InitCommandQueueCreateInfos();

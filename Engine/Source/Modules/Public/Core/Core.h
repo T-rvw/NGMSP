@@ -5,6 +5,7 @@
 #include <Core/Base/Optional.h>
 #include <Core/Base/RefCountPtr.h>
 #include <Core/Base/TypeTraits.h>
+#include <Core/Base/UniquePtr.h>
 #include <Core/Containers/Array.h>
 #include <Core/Containers/HashMap.h>
 #include <Core/Containers/Map.h>

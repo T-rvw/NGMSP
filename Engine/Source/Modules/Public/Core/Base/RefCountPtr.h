@@ -64,6 +64,7 @@ template<typename T>
 class RefCountPtr
 {
 public:
+	// Contructors
 	RefCountPtr() :
 		m_ptr(nullptr)
 	{
@@ -74,9 +75,16 @@ public:
 	{
 	}
 
-	template<typename U>
-	RefCountPtr(U* ptr) :
-		m_ptr(ptr)
+	RefCountPtr(T* pOther) :
+		m_ptr(pOther)
+	{
+		InternalAddRef();
+	}
+
+	template<typename U,
+		typename = std::enable_if<std::is_convertible_v<U*, T*>>>
+	explicit RefCountPtr(U* pOther) :
+		m_ptr(pOther)
 	{
 		InternalAddRef();
 	}
@@ -88,15 +96,23 @@ public:
 		InternalAddRef();
 	}
 
-	template<typename U>
+	template<typename U,
+		typename = std::enable_if<std::is_convertible_v<U*, T*>>>
 	RefCountPtr(const RefCountPtr<U>& other) :
 		m_ptr(other.m_ptr)
 	{
-		static_assert(std::is_convertible_v<U*, T*>);
 		InternalAddRef();
 	}
 
 	// Move
+	RefCountPtr(RefCountPtr&& other) :
+		m_ptr(other.m_ptr)
+	{
+		other.m_ptr = nullptr;
+	}
+
+	template<typename U,
+		typename = std::enable_if<std::is_convertible_v<U*, T*>>>
 	RefCountPtr(RefCountPtr&& other) :
 		m_ptr(other.m_ptr)
 	{
@@ -125,10 +141,10 @@ public:
 		return *this;
 	}
 
-	template<typename U>
+	template<typename U,
+		typename = std::enable_if<std::is_convertible_v<U*, T*>>>
 	RefCountPtr& operator=(U* pOther)
 	{
-		static_assert(std::is_convertible_v<U*, T*>);
 		RefCountPtr(pOther).Swap(*this);
 		return *this;
 	}
@@ -138,10 +154,10 @@ public:
 		return *this = other.m_ptr;
 	}
 
-	template<typename U>
+	template<typename U,
+		typename = std::enable_if<std::is_convertible_v<U*, T*>>>
 	RefCountPtr& operator=(const RefCountPtr<U>& other)
 	{
-		static_assert(std::is_convertible_v<U*, T*>);
 		return *this = other.m_ptr;
 	}
 
@@ -151,10 +167,11 @@ public:
 		return *this;
 	}
 
-	template<typename U>
+	template<typename U,
+		typename = std::enable_if<std::is_convertible_v<U*, T*>>>
 	RefCountPtr& operator=(RefCountPtr<U>&& other)
 	{
-		return *this = other;
+		return *this;
 	}
 
 	// Operations
@@ -198,15 +215,27 @@ public:
 		return &m_ptr;
 	}
 
-	T** ReleaseAndGetAddressOf()
+	[[nodiscard]] T** ReleaseAndGetAddressOf()
 	{
 		InternalRelease();
 		return &m_ptr;
 	}
 
-	void Reset()
+	void Reset(T* ptr = nullptr)
 	{
-		InternalRelease();
+		T* pTemp = m_ptr;
+		if (pTemp)
+		{
+			m_ptr = ptr;
+			pTemp->Release();
+		}
+	}
+
+	[[nodiscard]] T* Relinquish()
+	{
+		T* pTemp = m_ptr;
+		m_ptr = nullptr;
+		return pTemp;
 	}
 
 	uint32 GetRefCount() const
@@ -226,23 +255,6 @@ public:
 		T* pTemp = m_ptr;
 		m_ptr = other.m_ptr;
 		other.m_ptr = pTemp;
-	}
-
-	void Attach(T* pOther)
-	{
-		if (m_ptr != nullptr)
-		{
-			m_ptr->Release();
-		}
-
-		m_ptr = pOther;
-	}
-
-	T* Detach()
-	{
-		T* pTemp = m_ptr;
-		m_ptr = nullptr;
-		return pTemp;
 	}
 
 	bool operator==(const RefCountPtr& other) const
