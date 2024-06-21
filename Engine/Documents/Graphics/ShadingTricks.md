@@ -25,3 +25,5 @@
 * [Monte Carlo methods for volumetric light transport simulation](https://cs.dartmouth.edu/~wjarosz/publications/novak18monte.html)
 
 * [MikkTSpace](http://www.mikktspace.com/)
+
+* [Rendering Parametrizable Planetary Atmospheres with Multiple Scattering in Real-Time](https://old.cescg.org/CESCG-2009/papers/PragueCUNI-Elek-Oskar09.pdf)
